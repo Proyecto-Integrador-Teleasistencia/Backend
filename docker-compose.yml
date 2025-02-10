@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  laravel.test:
+    build:
+      context: './docker'
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    image: 'sail-8.3/app'
+    container_name: laravel-app
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'  # Puerto para Vite si lo usas
+    environment:
+        WWWUSER: '${WWWUSER}'
+        LARAVEL_SAIL: 1
+        XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+        XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+        IGNITION_LOCAL_SITES_PATH: '${PWD}'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - sail
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.3.0
+    container_name: laravel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: bdintegrador
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - './basededatos.sql:/docker-entrypoint-initdb.d/basededatos.sql'
+      - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+    restart: always
+    networks:
+      - sail
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - '-p1234'
+      retries: 3
+      timeout: 5s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db:db
+    ports:
+      - 8000:80
+    environment:
+      PMA_HOST: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+  nginx:
+    build:
+      context: ./nginx
+    container_name: laravel-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - '.:/var/www/html'
+    depends_on:
+      - laravel.test
+    restart: always
+    networks:
+      - sail
+
+networks:
+  sail:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
