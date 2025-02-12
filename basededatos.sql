@@ -1,6 +1,6 @@
+DROP DATABASE IF EXISTS bdintegrador;
 CREATE DATABASE bdintegrador;
-DROP DATABASE bdintegrador;
-	USE bdintegrador;
+USE bdintegrador;
 	
 	CREATE TABLE zonas (
 		id int AUTO_INCREMENT PRIMARY KEY,
