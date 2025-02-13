@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
@@ -14,11 +15,6 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $validated = $request->validated();
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'device_name' => 'required',
-        ]);
 
         $user = User::where('email', $request->email)->first();
 
@@ -28,19 +24,25 @@ class AuthController extends Controller
             ]);
         }
 
-        // Revocar tokens anteriores del dispositivo
-        $user->tokens()->where('name', $request->device_name)->delete();
+        // Verificar si la cuenta está activa
+        if (!$user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => ['Esta cuenta ha sido desactivada.'],
+            ]);
+        }
 
-        $token = $user->createToken($request->device_name);
+        // Limitar el número de tokens activos por usuario
+        if ($user->tokens()->count() >= 5) {
+            $user->tokens()->orderBy('created_at')->first()->delete();
+        }
+
+        // Crear token con habilidades basadas en el rol
+        $abilities = $this->getAbilitiesForRole($user->role);
+        $token = $user->createToken($request->device_name, $abilities);
 
         return response()->json([
             'token' => $token->plainTextToken,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-            ]
+            'user' => new UserResource($user)
         ]);
     }
 
@@ -50,6 +52,31 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Sesión cerrada correctamente']);
+    }
+
+    public function logoutAll(Request $request)
+    {
+        // Revocar todos los tokens del usuario
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Se han cerrado todas las sesiones']);
+    }
+
+    private function getAbilitiesForRole(string $role): array
+    {
+        return match ($role) {
+            'admin' => ['*'], // Acceso total
+            'operator' => [
+                'patients:view',
+                'patients:update',
+                'calls:create',
+                'calls:view',
+                'calls:update',
+                'alerts:view',
+                'alerts:update',
+            ],
+            default => [],
+        };
     }
 
     public function me(Request $request)

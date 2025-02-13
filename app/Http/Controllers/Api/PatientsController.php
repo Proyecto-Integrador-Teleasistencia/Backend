@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PatientResource;
 use App\Models\Patient;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
@@ -22,7 +23,7 @@ class PatientsController extends Controller
             $query->whereIn('zone_id', $zoneIds);
         }
 
-        return response()->json($query->paginate(10));
+        return PatientResource::collection($query->paginate(10));
     }
 
     public function store(StorePatientRequest $request)
@@ -47,7 +48,8 @@ class PatientsController extends Controller
     {
         $patient = Patient::findOrFail($id);
         $this->authorize('update', $patient);
-        $validated = $request->validated();
+        $validated = $request->validated([
+            'name' => 'sometimes|required|string',
             'address' => 'sometimes|required|string',
             'dni' => 'sometimes|required|string|unique:patients,dni,' . $id,
             'health_card' => 'sometimes|required|string|unique:patients,health_card,' . $id,

@@ -27,7 +27,7 @@ class CallsController extends Controller
             });
         }
 
-        return response()->json($query->paginate(10));
+        return CallResource::collection($query->paginate(10));
     }
 
     /**
