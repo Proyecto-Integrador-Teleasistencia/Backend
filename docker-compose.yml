@@ -10,7 +10,8 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'  # Puerto para Vite si lo usas
+      - '${APP_PORT:-9090}:80'  # Puerto principal de Laravel
+      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'  # Puerto para Vite
     environment:
         WWWUSER: '${WWWUSER}'
         LARAVEL_SAIL: 1
@@ -23,6 +24,8 @@ services:
       - sail
     depends_on:
       - db
+    links:
+      - db:db
 
   db:
       container_name: laravel-mysql
@@ -30,10 +33,12 @@ services:
       ports:
           - '${FORWARD_DB_PORT:-3306}:3306'
       environment:
-          MARIADB_DATABASE: '${DB_DATABASE}'
-          MARIADB_USER: '${DB_USERNAME}'
-          MARIADB_PASSWORD: '${DB_PASSWORD}'
-          MARIADB_ROOT_PASSWORD: '${DB_PASSWORD}'
+          MYSQL_DATABASE: '${DB_DATABASE}'
+          MYSQL_USER: '${DB_USERNAME}'
+          MYSQL_PASSWORD: '${DB_PASSWORD}'
+          MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_ROOT_HOST: '%'
       volumes:
           - 'sail-mysql:/var/lib/mysql'
           - './basededatos.sql:/docker-entrypoint-initdb.d/basededatos.sql'
@@ -61,7 +66,7 @@ services:
       context: ./nginx
     container_name: laravel-nginx
     ports:
-      - "80:80"
+      - "9000:80"
     volumes:
       - '.:/var/www/html'
     depends_on:

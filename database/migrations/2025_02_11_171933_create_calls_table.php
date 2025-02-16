@@ -23,7 +23,6 @@ return new class extends Migration
             $table->foreignId('alert_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
             
-            // Indexar campos de búsqueda frecuente
             $table->index('datetime');
             $table->index('type');
             $table->index('scheduled');
