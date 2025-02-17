@@ -20,11 +20,11 @@ jobs:
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
             DEPLOY_DIR="/var/www/back"
-            REPO_URL="git@github.com:Proyecto-Integrador-Teleasistencia/Backend.git"
+            REPO_URL="https://${{ secrets.GH_PAT }}@github.com/Proyecto-Integrador-Teleasistencia/Backend.git"
 
             if [ ! -d "$DEPLOY_DIR/.git" ]; then
               echo "📥 Clonando el repositorio en $DEPLOY_DIR..."
-              sudo git clone $REPO_URL $DEPLOY_DIR
+              git clone $REPO_URL $DEPLOY_DIR
             else
               echo "🔄 El repositorio ya existe. Haciendo pull..."
               cd $DEPLOY_DIR
