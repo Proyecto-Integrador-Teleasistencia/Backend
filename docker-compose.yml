@@ -60,9 +60,6 @@ services:
       - '.:/var/www/html'
     depends_on:
       - laravel.test
-    restart: always
-    networks:
-      - sail
 
 networks:
   sail:
