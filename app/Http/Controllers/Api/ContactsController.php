@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseController;
 use App\Models\ContactPerson;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use Illuminate\Http\Request;
 
-class ContactsController extends Controller
+class ContactsController extends BaseController
 {
     /**
      * Display a listing of the resource.

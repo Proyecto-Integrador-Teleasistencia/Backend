@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseController;
 use App\Models\Alert;
 use App\Models\Call;
 use App\Models\Patient;
@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ReportsController extends Controller
+class ReportsController extends BaseController
 {
     /**
      * Display a listing of the resource.

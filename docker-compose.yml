@@ -10,7 +10,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '${APP_PORT:-9090}:80'  # Puerto principal de Laravel
+      - '${APP_PORT:-80}:80'  # Puerto principal de Laravel
       - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'  # Puerto para Vite
     environment:
         WWWUSER: '${WWWUSER}'
@@ -50,17 +50,6 @@ services:
           timeout: 5s
           retries: 3
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    links:
-      - db:db
-    ports:
-      - 8000:80
-    environment:
-      PMA_HOST: db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 1234
-      MYSQL_ROOT_PASSWORD: 1234
   nginx:
     build:
       context: ./nginx

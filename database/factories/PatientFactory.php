@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Zone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,7 +26,7 @@ class PatientFactory extends Factory
             'dni' => fake()->unique()->numerify('#########'),
             'health_card' => fake()->unique()->numerify('SIP########'),
             'phone' => fake()->phoneNumber(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => fake()->unique()->safeEmail() . '.patient',
             'zone_id' => Zone::factory(),
             'personal_situation' => fake()->optional()->paragraph(),
             'health_condition' => fake()->optional()->paragraph(),

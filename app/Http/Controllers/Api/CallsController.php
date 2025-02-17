@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseController;
 use App\Models\Call;
 use App\Http\Requests\StoreCallRequest;
 use App\Http\Requests\UpdateCallRequest;
 use Illuminate\Http\Request;
 
-class CallsController extends Controller
+class CallsController extends BaseController
 {
     /**
      * Display a listing of the resource.

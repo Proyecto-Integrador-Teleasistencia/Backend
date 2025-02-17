@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseController;
 use App\Models\Zone;
 use App\Http\Requests\StoreZoneRequest;
 use App\Http\Requests\UpdateZoneRequest;
 use Illuminate\Http\Request;
 
-class ZonesController extends Controller
+class ZonesController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -49,11 +49,6 @@ class ZonesController extends Controller
     public function update(UpdateZoneRequest $request, string $id)
     {
         $zone = Zone::findOrFail($id);
-        $validated = $request->validated();
-            'name' => 'sometimes|required|string|max:255|unique:zones,name,' . $id,
-            'description' => 'nullable|string',
-            'active' => 'sometimes|boolean',
-        ]);
 
         $zone->update($validated);
 

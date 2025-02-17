@@ -1,88 +1,150 @@
-<?php
-
+<?php 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\Api\BaseController as BaseController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
-    public function login(LoginRequest $request)
+    /**
+     * @OA\Post(
+     *     path="/api/login",
+     *     summary="User Login",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User signed in successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="token", type="string", example="sample_token"),
+     *             @OA\Property(property="name", type="string", example="John Doe")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorised",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="incorrect Email/Password")
+     *         )
+     *     )
+     * )
+     */
+    public function login(Request $request)
     {
-        $validated = $request->validated();
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            $authUser = Auth::user();
+            $result['token'] =  $authUser->createToken('MyAuthApp')->plainTextToken;
+            $result['name'] =  $authUser->name;
 
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Las credenciales proporcionadas son incorrectas.'],
-            ]);
+            return $this->sendResponse($result, 'User signed in');
         }
-
-        // Verificar si la cuenta está activa
-        if (!$user->is_active) {
-            throw ValidationException::withMessages([
-                'email' => ['Esta cuenta ha sido desactivada.'],
-            ]);
-        }
-
-        // Limitar el número de tokens activos por usuario
-        if ($user->tokens()->count() >= 5) {
-            $user->tokens()->orderBy('created_at')->first()->delete();
-        }
-
-        // Crear token con habilidades basadas en el rol
-        $abilities = $this->getAbilitiesForRole($user->role);
-        $token = $user->createToken($request->device_name, $abilities);
-
-        return response()->json([
-            'token' => $token->plainTextToken,
-            'user' => new UserResource($user)
-        ]);
+        return $this->sendError('Unauthorised.', ['error'=>'incorrect Email/Password']);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     summary="User Registration",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "confirm_password"},
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123"),
+     *             @OA\Property(property="confirm_password", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User registered successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="token", type="string", example="sample_token"),
+     *             @OA\Property(property="name", type="string", example="John Doe")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="object")
+     *         )
+     *     )
+     * )
+     */
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'confirm_password' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()){
+            return $this->sendError('Error validation', $validator->errors());
+        }
+
+        try {
+            $input = $request->all();
+            $input['password'] = bcrypt($input['password']);
+            $user = User::create($input);
+            $result['token'] =  $user->createToken('MyAuthApp')->plainTextToken;
+            $result['name'] =  $user->name;
+
+            return $this->sendResponse($result, 'User created successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Registration Error' , $e->getMessage());
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/logout",
+     *     summary="User Logout",
+     *     tags={"Authentication"},
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response=200,
+     *         description="User logged out successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="message", type="string", example="User successfully signed out.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorised",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function logout(Request $request)
     {
-        // Revocar el token actual
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Sesión cerrada correctamente']);
-    }
-
-    public function logoutAll(Request $request)
-    {
-        // Revocar todos los tokens del usuario
-        $request->user()->tokens()->delete();
-
-        return response()->json(['message' => 'Se han cerrado todas las sesiones']);
-    }
-
-    private function getAbilitiesForRole(string $role): array
-    {
-        return match ($role) {
-            'admin' => ['*'], // Acceso total
-            'operator' => [
-                'patients:view',
-                'patients:update',
-                'calls:create',
-                'calls:view',
-                'calls:update',
-                'alerts:view',
-                'alerts:update',
-            ],
-            default => [],
-        };
-    }
-
-    public function me(Request $request)
-    {
-        return response()->json([
-            'user' => $request->user()->load('zones')
-        ]);
+        $user = request()->user();
+        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+        $success['name'] =  $user->name;
+        return $this->sendResponse($success, 'User successfully signed out.');
     }
 }

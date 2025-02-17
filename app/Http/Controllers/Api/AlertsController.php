@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Alert;
+use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreAlertRequest;
 use App\Http\Requests\UpdateAlertRequest;
+use App\Models\Alert;
+use App\Http\Resources\AlertResource;
 use Illuminate\Http\Request;
 
-class AlertsController extends Controller
+class AlertsController extends BaseController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return response()->json(Alert::with(['category'])->paginate(10));
+        return AlertResource::collection(Alert::with(['category'])->paginate(10));
     }
 
     /**
@@ -27,43 +28,36 @@ class AlertsController extends Controller
 
         $alert = Alert::create($validated);
 
-        return response()->json($alert, 201);
+        return $this->sendResponse($alert, 'Alerta creada ambèxit', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Alert $alert)
     {
-        $alert = Alert::with(['category'])->findOrFail($id);
-        return response()->json($alert);
+        return $this->sendResponse(new AlertResource($alert), 'Alerta recuperada ambèxit', 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAlertRequest $request, string $id)
+    public function update(UpdateAlertRequest $request, Alert $alert)
     {
-        $alert = Alert::findOrFail($id);
         $validated = $request->validated();
-            'periodicity' => 'sometimes|required|string|in:one-time,periodic',
-            'datetime' => 'sometimes|required|date',
-            'category_id' => 'sometimes|required|exists:categories,id',
-        ]);
 
         $alert->update($validated);
 
-        return response()->json($alert);
+        return $this->sendResponse(new AlertResource($alert), 'Alerta actualitzada ambèxit', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Alert $alert)
     {
-        $alert = Alert::findOrFail($id);
         $alert->delete();
 
-        return response()->json(null, 204);
+        return $this->sendResponse(null, 'Alerta eliminada ambèxit', 200);
     }
 }
