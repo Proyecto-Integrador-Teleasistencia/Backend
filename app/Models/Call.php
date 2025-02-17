@@ -69,6 +69,7 @@ class Call extends Model
     public function operator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'operator_id')->withDefault(['name' => 'Operador no asignado']);
+    }
 
     public function patient(): BelongsTo
     {

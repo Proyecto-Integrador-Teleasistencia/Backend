@@ -13,67 +13,36 @@ class PatientsController extends BaseController
 {
     public function index()
     {
-        $this->authorize('viewAny', Patient::class);
-
-        $query = Patient::with('zone', 'contacts');
-
-        // Si es operador, filtrar solo los pacientes de sus zonas
-        if (auth()->user()->role === 'operator') {
-            $zoneIds = auth()->user()->zones->pluck('id');
-            $query->whereIn('zone_id', $zoneIds);
-        }
-
-        return PatientResource::collection($query->paginate(10));
+        return PatientResource::collection(Patient::paginate(10));
     }
 
     public function store(StorePatientRequest $request)
     {
-        $this->authorize('create', Patient::class);
-        
         $validated = $request->validated();
 
         $patient = Patient::create($validated);
 
-        return response()->json($patient, 201);
+        return $this->sendResponse(new PatientResource($patient), 'Paciente creat ambèxit', 201);
     }
 
-    public function show($id)
+    public function show(Patient $patient)
     {
-        $patient = Patient::with('zone', 'contacts')->findOrFail($id);
-        $this->authorize('view', $patient);
-        return response()->json($patient);
+        return $this->sendResponse(new PatientResource($patient), 'Paciente recuperat ambèxit', 200);
     }
 
-    public function update(UpdatePatientRequest $request, $id)
+    public function update(UpdatePatientRequest $request, Patient $patient)
     {
-        $patient = Patient::findOrFail($id);
-        $this->authorize('update', $patient);
-        $validated = $request->validated([
-            'name' => 'sometimes|required|string',
-            'address' => 'sometimes|required|string',
-            'dni' => 'sometimes|required|string|unique:patients,dni,' . $id,
-            'health_card' => 'sometimes|required|string|unique:patients,health_card,' . $id,
-            'phone' => 'sometimes|required|string|max:20',
-            'email' => 'sometimes|required|email|unique:patients,email,' . $id,
-            'zone_id' => 'sometimes|required|exists:zones,id',
-            'personal_situation' => 'nullable|string',
-            'health_condition' => 'nullable|string',
-            'home_condition' => 'nullable|string',
-            'autonomy_level' => 'nullable|string',
-            'economic_situation' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $patient->update($validated);
 
-        return response()->json($patient);
+        return $this->sendResponse(new PatientResource($patient), 'Paciente actualitzat ambèxit', 200);
     }
 
-    public function destroy($id)
+    public function destroy(Patient $patient)
     {
-        $patient = Patient::findOrFail($id);
-        $this->authorize('delete', $patient);
         $patient->delete();
 
-        return response()->json(['message' => 'Paciente eliminado correctamente']);
+        return $this->sendResponse([], 'Paciente eliminado correctamente', 200);
     }
 }

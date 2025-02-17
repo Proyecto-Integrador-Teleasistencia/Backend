@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Call;
+use App\Models\Patient;
 use App\Http\Requests\StoreCallRequest;
 use App\Http\Requests\UpdateCallRequest;
+use App\Http\Resources\CallResource;
 use Illuminate\Http\Request;
 
 class CallsController extends BaseController
@@ -15,19 +17,7 @@ class CallsController extends BaseController
      */
     public function index()
     {
-        $this->authorize('viewAny', Call::class);
-
-        $query = Call::with(['patient', 'operator', 'category', 'alert']);
-
-        // Si es operador, filtrar solo las llamadas de sus zonas
-        if (auth()->user()->role === 'operator') {
-            $zoneIds = auth()->user()->zones->pluck('id');
-            $query->whereHas('patient', function ($q) use ($zoneIds) {
-                $q->whereIn('zone_id', $zoneIds);
-            });
-        }
-
-        return CallResource::collection($query->paginate(10));
+        return CallResource::collection(Call::paginate(10));
     }
 
     /**
@@ -35,8 +25,6 @@ class CallsController extends BaseController
      */
     public function store(StoreCallRequest $request)
     {
-        $this->authorize('create', Call::class);
-        
         $validated = $request->validated();
 
         // Verificar si es una llamada saliente y el usuario tiene permiso
@@ -54,51 +42,39 @@ class CallsController extends BaseController
 
         $call = Call::create($validated);
 
-        return response()->json($call, 201);
+        return $this->sendResponse($call, 'Llamada creada ambèxit', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Call $call)
     {
-        $call = Call::with(['patient', 'operator', 'category', 'alert'])->findOrFail($id);
+        $call = Call::with(['patient', 'operator', 'category', 'alert'])->findOrFail($call->id);
         $this->authorize('view', $call);
-        return response()->json($call);
+        return $this->sendResponse(new CallResource($call), 'Llamada recuperada ambèxit', 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCallRequest $request, string $id)
+    public function update(UpdateCallRequest $request, Call $call)
     {
-        $call = Call::findOrFail($id);
         $this->authorize('update', $call);
         $validated = $request->validated();
-            'datetime' => 'sometimes|required|date',
-            'description' => 'nullable|string',
-            'type' => 'sometimes|required|string|in:outgoing,incoming',
-            'scheduled' => 'sometimes|required|boolean',
-            'operator_id' => 'sometimes|required|exists:users,id',
-            'patient_id' => 'sometimes|required|exists:patients,id',
-            'category_id' => 'sometimes|required|exists:categories,id',
-            'alert_id' => 'nullable|exists:alerts,id',
-        ]);
 
         $call->update($validated);
 
-        return response()->json($call);
+        return $this->sendResponse(new CallResource($call), 'Llamada actualitzada ambèxit', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Call $call)
     {
-        $call = Call::findOrFail($id);
-        $this->authorize('delete', $call);
         $call->delete();
 
-        return response()->json(null, 204);
+        return $this->sendResponse(null, 'Llamada eliminada ambèxit', 204);
     }
 }

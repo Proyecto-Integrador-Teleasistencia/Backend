@@ -15,7 +15,7 @@ class ContactsController extends BaseController
      */
     public function index()
     {
-        return response()->json(ContactPerson::with('patient')->paginate(10));
+        return $this->sendResponse(ContactPerson::with('patient')->paginate(10), 'Contacts recuperats ambèxit', 200);
     }
 
     /**
@@ -27,48 +27,37 @@ class ContactsController extends BaseController
 
         $contact = ContactPerson::create($validated);
 
-        return response()->json($contact, 201);
+        return $this->sendResponse($contact, 'Contacte creat ambèxit', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(ContactPerson $contact)
     {
-        $contact = ContactPerson::with('patient')->findOrFail($id);
-        return response()->json($contact);
+        $contact = ContactPerson::with('patient')->findOrFail($contact->id);
+        return $this->sendResponse($contact, 'Contacte recuperat ambèxit', 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateContactRequest $request, string $id)
+    public function update(UpdateContactRequest $request, ContactPerson $contact)
     {
-        $contact = ContactPerson::findOrFail($id);
         $validated = $request->validated();
-            'patient_id' => 'sometimes|required|exists:patients,id',
-            'name' => 'sometimes|required|string|max:255',
-            'relationship' => 'sometimes|required|string|max:100',
-            'phone' => 'sometimes|required|string|max:20',
-            'address' => 'sometimes|required|string',
-            'availability' => 'sometimes|required|string',
-            'has_keys' => 'sometimes|required|boolean',
-            'priority_level' => 'sometimes|required|integer|min:1|max:5',
-        ]);
 
         $contact->update($validated);
 
-        return response()->json($contact);
+        return $this->sendResponse($contact, 'Contacte actualitzat ambèxit', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(ContactPerson $contact)
     {
-        $contact = ContactPerson::findOrFail($id);
         $contact->delete();
 
-        return response()->json(null, 204);
+        return $this->sendResponse(null, 'Contacte esborrat ambèxit', 204);
     }
 }

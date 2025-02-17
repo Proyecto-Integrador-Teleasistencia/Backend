@@ -15,7 +15,7 @@ class ZonesController extends BaseController
      */
     public function index()
     {
-        return response()->json(Zone::withCount(['patients', 'operators'])
+        return $this->sendResponse(Zone::withCount(['patients', 'operators'])
             ->with('operators')
             ->paginate(10));
     }
@@ -29,57 +29,56 @@ class ZonesController extends BaseController
 
         $zone = Zone::create($validated);
 
-        return response()->json($zone, 201);
+        return $this->sendResponse(new ZoneResource($zone), 'Zona creada ambèxit', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Zone $zone)
     {
         $zone = Zone::withCount(['patients', 'operators'])
             ->with('operators')
-            ->findOrFail($id);
-        return response()->json($zone);
+            ->findOrFail($zone->id);
+
+        return $this->sendResponse(new ZoneResource($zone), 'Zona obtenida ambèxit', 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateZoneRequest $request, string $id)
+    public function update(UpdateZoneRequest $request, Zone $zone)
     {
-        $zone = Zone::findOrFail($id);
+        $zone = Zone::findOrFail($zone->id);
 
         $zone->update($validated);
 
-        return response()->json($zone);
+        return $this->sendResponse(new ZoneResource($zone), 'Zona actualizada ambèxit', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Zone $zone)
     {
-        $zone = Zone::findOrFail($id);
-        
+        $zone = Zone::findOrFail($zone->id);
+
         // Check if zone has patients
         if ($zone->patients()->exists()) {
-            return response()->json([
-                'message' => 'Cannot delete zone with associated patients'
-            ], 422);
+            return $this->sendResponse(null, 'No se puede eliminar la zona con pacientes asociados', 422);
         }
 
         $zone->delete();
 
-        return response()->json(null, 204);
+        return $this->sendResponse(null, 'Zona eliminada ambèxit', 204);
     }
 
     /**
      * Assign operators to a zone
      */
-    public function assignOperators(Request $request, string $id)
+    public function assignOperators(Request $request, Zone $zone)
     {
-        $zone = Zone::findOrFail($id);
+        $zone = Zone::findOrFail($zone->id);
 
         $validated = $request->validate([
             'operators' => 'required|array',
@@ -88,15 +87,15 @@ class ZonesController extends BaseController
 
         $zone->operators()->sync($validated['operators']);
 
-        return response()->json($zone->load('operators'));
+        return $this->sendResponse(new ZoneResource($zone->load('operators')), 'Operadores asignados a la zona ambèxit', 200);
     }
 
     /**
      * Remove operators from a zone
      */
-    public function removeOperators(Request $request, string $id)
+    public function removeOperators(Request $request, Zone $zone)
     {
-        $zone = Zone::findOrFail($id);
+        $zone = Zone::findOrFail($zone->id);
 
         $validated = $request->validate([
             'operators' => 'required|array',
@@ -105,6 +104,6 @@ class ZonesController extends BaseController
 
         $zone->operators()->detach($validated['operators']);
 
-        return response()->json($zone->load('operators'));
+        return $this->sendResponse(new ZoneResource($zone->load('operators')), 'Operadores eliminados de la zona ambèxit', 200);
     }
 }

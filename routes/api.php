@@ -12,38 +12,14 @@ use App\Http\Controllers\Api\PatientsController;
 use App\Http\Controllers\Api\SubcategoriesController;
 use App\Http\Controllers\Api\ZonesController;
 
-// Aplicar rate limiting a todas las rutas de la API
-Route::middleware('throttle:api')->group(function () {
-    // Rutas públicas de autenticación
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login')
-        ->middleware('throttle:6,1'); // Limitar intentos de login
+Route::post('login', [AuthController::class, 'login'])->middleware('api');
+Route::post('register', [AuthController::class, 'register'])->middleware('api');
 
-    Route::post('/register', [AuthController::class, 'register'])
-        ->name('register')
-        ->middleware('throttle:6,1');
-
-    // Rutas protegidas que requieren autenticación
-    Route::middleware(['auth:sanctum'])->group(function () {
-        // Rutas de autenticación
-        Route::get('/me', [AuthController::class, 'me']);
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::post('/logout-all', [AuthController::class, 'logoutAll']);
-
-        // Rutas para administradores
-        Route::middleware(['role:admin'])->group(function () {
-            Route::apiResource('operators', OperatorsController::class);
-            Route::apiResource('zones', ZonesController::class);
-            Route::apiResource('categories', CategoriesController::class);
-            Route::apiResource('subcategories', SubcategoriesController::class);
-        });
-
-        // Rutas para operadores
-        Route::middleware(['role:operator'])->group(function () {
-            Route::apiResource('patients', PatientsController::class);
-            Route::apiResource('contacts', ContactsController::class);
-            Route::apiResource('calls', CallsController::class);
-            Route::apiResource('alerts', AlertsController::class);
-        });
-    });
-});
+Route::apiResource('alerts', AlertsController::class)->middleware('api');
+Route::apiResource('calls', CallsController::class)->middleware('api');
+Route::apiResource('categories', CategoriesController::class)->middleware('api');
+Route::apiResource('contacts', ContactsController::class)->middleware('api');
+Route::apiResource('operators', OperatorsController::class)->middleware('api');
+Route::apiResource('patients', PatientsController::class)->middleware('api');
+Route::apiResource('subcategories', SubcategoriesController::class)->middleware('api');
+Route::apiResource('zones', ZonesController::class)->middleware('api');

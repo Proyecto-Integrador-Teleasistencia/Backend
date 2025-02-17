@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\PatientResource;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\AlertResource;
 
 class CallResource extends JsonResource
 {

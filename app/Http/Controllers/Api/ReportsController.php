@@ -37,7 +37,7 @@ class ReportsController extends BaseController
                 ->get(),
         ];
 
-        return response()->json($stats);
+        return $this->sendResponse($stats);
     }
 
     /**
@@ -45,47 +45,40 @@ class ReportsController extends BaseController
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'type' => 'required|string|in:daily,weekly,monthly',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'format' => 'required|string|in:pdf,csv,excel',
-        ]);
+        $validated = $request->validate();
 
         // Here you would implement the logic to generate and store reports
         // This is a placeholder that returns a success message
-        return response()->json([
+        return $this->sendResponse([
             'message' => 'Report generation started',
             'report_id' => uniqid('report_'),
-        ], 202);
+        ], 'Reporte generado', 202);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Report $report)
     {
-        // Here you would implement the logic to retrieve a specific report
-        // This is a placeholder that returns a not found response
-        return response()->json(['message' => 'Report not found'], 404);
+        return $this->sendResponse(new ReportResource($report), 'Reporte recuperado', 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Report $report)
     {
         // Reports typically don't need to be updated
-        return response()->json(['message' => 'Method not allowed'], 405);
+        return $this->sendResponse(['message' => 'Method not allowed'], 'Metodo no permitido', 405);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Report $report)
     {
-        // Here you would implement the logic to delete a stored report
-        // This is a placeholder that returns a success message
-        return response()->json(null, 204);
+        $report->delete();
+
+        return $this->sendResponse(['message' => 'Reporte eliminado'], 'Reporte eliminado', 200);
     }
 }

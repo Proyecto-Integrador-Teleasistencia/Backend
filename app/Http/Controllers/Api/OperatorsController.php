@@ -14,7 +14,7 @@ class OperatorsController extends BaseController
      */
     public function index()
     {
-        return response()->json(User::where('role', 'operator')
+        return $this->sendResponse(User::where('role', 'operator')
             ->with('zones')
             ->paginate(10));
     }
@@ -36,38 +36,25 @@ class OperatorsController extends BaseController
             $operator->zones()->attach($validated['zones']);
         }
 
-        return response()->json($operator, 201);
+        return $this->sendResponse($operator, 'Operador creat ambèxit', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $operator)
     {
-        $operator = User::where('role', 'operator')->findOrFail($id);
-        return response()->json($operator);
+        return $this->sendResponse(new OperatorResource($operator));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $operator)
     {
-        $operator = User::where('role', 'operator')->findOrFail($id);
+        $this->authorize('update', $operator);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'sometimes|required|string|min:8',
-            'phone' => 'sometimes|required|string|max:20',
-            'shift' => 'sometimes|required|string|in:morning,afternoon,night',
-            'status' => 'sometimes|required|string|in:active,inactive,on_leave',
-            'hire_date' => 'sometimes|required|date',
-            'termination_date' => 'nullable|date|after:hire_date',
-            'zone_id' => 'nullable|exists:zones,id',
-            'zones' => 'sometimes|required|array',
-            'zones.*' => 'required|exists:zones,id',
-        ]);
+        $validated = $request->validate();
 
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
@@ -80,17 +67,16 @@ class OperatorsController extends BaseController
             $operator->zones()->sync($validated['zones']);
         }
 
-        return response()->json($operator);
+        return $this->sendResponse(new OperatorResource($operator), 'Operador actualitzat ambèxit', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $operator)
     {
-        $operator = User::where('role', 'operator')->findOrFail($id);
         $operator->delete();
 
-        return response()->json(null, 204);
+        return $this->sendResponse(null, 'Operador eliminat ambèxit', 204);
     }
 }
