@@ -24,7 +24,7 @@ jobs:
 
             if [ ! -d "$DEPLOY_DIR/.git" ]; then
               echo "📥 Clonando el repositorio en $DEPLOY_DIR..."
-              git clone $REPO_URL $DEPLOY_DIR
+              sudo git clone $REPO_URL $DEPLOY_DIR
             else
               echo "🔄 El repositorio ya existe. Haciendo pull..."
               cd $DEPLOY_DIR
