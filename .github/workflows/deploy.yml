@@ -1,0 +1,35 @@
+name: CI/CD Laravel API Deployment
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    name: 🚀 Desplegar API Laravel en AWS
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Acceder al servidor y actualizar el código
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            DEPLOY_DIR="/var/www/back"
+            REPO_URL="https://github.com/Proyecto-Integrador-Teleasistencia/Backend.git"
+
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              echo "📥 Clonando el repositorio en $DEPLOY_DIR..."
+              git clone $REPO_URL $DEPLOY_DIR
+            else
+              echo "🔄 El repositorio ya existe. Haciendo pull..."
+              cd $DEPLOY_DIR
+              git reset --hard origin/main  # Restablecer cambios locales
+              git pull origin main
+            fi
+
+            sudo chown -R $USER:$USER $DEPLOY_DIR
