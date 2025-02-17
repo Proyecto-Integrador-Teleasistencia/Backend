@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('alerts', function (Blueprint $table) {
             $table->id();
+            $table->enum('periodicity', ['one-time', 'periodic']);
+            $table->dateTime('datetime');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            
+            // Indexar campos de búsqueda frecuente
+            $table->index('datetime');
+            $table->index('periodicity');
+            $table->index('category_id');
         });
     }
 

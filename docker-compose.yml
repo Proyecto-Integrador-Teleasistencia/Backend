@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   laravel.test:
     build:
@@ -12,7 +10,8 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'  # Puerto para Vite si lo usas
+      - '${APP_PORT:-80}:80'  # Puerto principal de Laravel
+      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'  # Puerto para Vite
     environment:
         WWWUSER: '${WWWUSER}'
         LARAVEL_SAIL: 1
@@ -25,62 +24,47 @@ services:
       - sail
     depends_on:
       - db
-
-  db:
-    image: mysql:8.3.0
-    container_name: laravel-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: bdintegrador
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 1234
-    ports:
-      - '${FORWARD_DB_PORT:-3306}:3306'
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - './basededatos.sql:/docker-entrypoint-initdb.d/basededatos.sql'
-      - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
-    restart: always
-    networks:
-      - sail
-    healthcheck:
-      test:
-        - CMD
-        - mysqladmin
-        - ping
-        - '-p1234'
-      retries: 3
-      timeout: 5s
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
     links:
       - db:db
-    ports:
-      - 8000:80
-    environment:
-      PMA_HOST: db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 1234
-      MYSQL_ROOT_PASSWORD: 1234
+
+  db:
+      container_name: laravel-mysql
+      image: 'mariadb:10.6'
+      ports:
+          - '${FORWARD_DB_PORT:-3306}:3306'
+      environment:
+          MYSQL_DATABASE: '${DB_DATABASE}'
+          MYSQL_USER: '${DB_USERNAME}'
+          MYSQL_PASSWORD: '${DB_PASSWORD}'
+          MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_ROOT_HOST: '%'
+      volumes:
+          - 'sail-mysql:/var/lib/mysql'
+          - './basededatos.sql:/docker-entrypoint-initdb.d/basededatos.sql'
+      networks:
+          - sail
+      healthcheck:
+          test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+          interval: 10s
+          timeout: 5s
+          retries: 3
+
   nginx:
     build:
       context: ./nginx
     container_name: laravel-nginx
     ports:
-      - "80:80"
+      - "9000:80"
     volumes:
       - '.:/var/www/html'
     depends_on:
       - laravel.test
-    restart: always
-    networks:
-      - sail
 
 networks:
   sail:
     driver: bridge
 
 volumes:
-  mysql-data:
+  sail-mysql:
     driver: local

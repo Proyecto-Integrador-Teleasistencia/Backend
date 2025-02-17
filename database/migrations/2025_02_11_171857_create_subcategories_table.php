@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('zones', function (Blueprint $table) {
+        Schema::create('subcategories', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 100)->unique();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            
+            // Indexar campos de búsqueda frecuente
+            $table->index('name');
+            $table->index('category_id');
         });
     }
 
@@ -22,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('zones');
+        Schema::dropIfExists('subcategories');
     }
 };
