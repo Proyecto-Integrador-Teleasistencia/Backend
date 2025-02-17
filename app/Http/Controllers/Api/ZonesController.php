@@ -4,106 +4,132 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Zone;
-use App\Http\Requests\StoreZoneRequest;
-use App\Http\Requests\UpdateZoneRequest;
+use App\Http\Resources\ZoneResource;
+use App\Http\Resources\PatientResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 
 class ZonesController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/zones",
+     *     summary="List all zones",
+     *     tags={"Zones"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of zones",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/Zone")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
-        return $this->sendResponse(Zone::withCount(['patients', 'operators'])
+        $zones = Zone::withCount(['patients', 'operators'])
             ->with('operators')
-            ->paginate(10));
+            ->paginate(10);
+            
+        return $this->sendResponse(
+            ZoneResource::collection($zones),
+            'Zones recuperades amb èxit'
+        );
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreZoneRequest $request)
-    {
-        $validated = $request->validated();
-
-        $zone = Zone::create($validated);
-
-        return $this->sendResponse(new ZoneResource($zone), 'Zona creada ambèxit', 201);
-    }
-
-    /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/zones/{id}",
+     *     summary="Get zone information",
+     *     tags={"Zones"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Zone information retrieved successfully"
+     *     )
+     * )
      */
     public function show(Zone $zone)
     {
-        $zone = Zone::withCount(['patients', 'operators'])
-            ->with('operators')
-            ->findOrFail($zone->id);
-
-        return $this->sendResponse(new ZoneResource($zone), 'Zona obtenida ambèxit', 200);
+        $zone->loadCount(['patients', 'operators'])
+            ->load(['operators']);
+            
+        return $this->sendResponse(
+            new ZoneResource($zone),
+            'Zona recuperada amb èxit'
+        );
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Get(
+     *     path="/api/zones/{id}/patients",
+     *     summary="List patients in a zone",
+     *     tags={"Zones"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of patients in the zone"
+     *     )
+     * )
      */
-    public function update(UpdateZoneRequest $request, Zone $zone)
+    public function getZonePatients(Zone $zone)
     {
-        $zone = Zone::findOrFail($zone->id);
-
-        $zone->update($validated);
-
-        return $this->sendResponse(new ZoneResource($zone), 'Zona actualizada ambèxit', 200);
+        $patients = $zone->patients()
+            ->with(['contacts', 'alerts'])
+            ->paginate(10);
+            
+        return $this->sendResponse(
+            PatientResource::collection($patients),
+            'Pacients de la zona recuperats amb èxit'
+        );
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Get(
+     *     path="/api/zones/{id}/operators",
+     *     summary="List operators assigned to a zone",
+     *     tags={"Zones"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of operators assigned to the zone"
+     *     )
+     * )
      */
-    public function destroy(Zone $zone)
+    public function getZoneOperators(Zone $zone)
     {
-        $zone = Zone::findOrFail($zone->id);
-
-        // Check if zone has patients
-        if ($zone->patients()->exists()) {
-            return $this->sendResponse(null, 'No se puede eliminar la zona con pacientes asociados', 422);
-        }
-
-        $zone->delete();
-
-        return $this->sendResponse(null, 'Zona eliminada ambèxit', 204);
-    }
-
-    /**
-     * Assign operators to a zone
-     */
-    public function assignOperators(Request $request, Zone $zone)
-    {
-        $zone = Zone::findOrFail($zone->id);
-
-        $validated = $request->validate([
-            'operators' => 'required|array',
-            'operators.*' => 'required|exists:users,id'
-        ]);
-
-        $zone->operators()->sync($validated['operators']);
-
-        return $this->sendResponse(new ZoneResource($zone->load('operators')), 'Operadores asignados a la zona ambèxit', 200);
-    }
-
-    /**
-     * Remove operators from a zone
-     */
-    public function removeOperators(Request $request, Zone $zone)
-    {
-        $zone = Zone::findOrFail($zone->id);
-
-        $validated = $request->validate([
-            'operators' => 'required|array',
-            'operators.*' => 'required|exists:users,id'
-        ]);
-
-        $zone->operators()->detach($validated['operators']);
-
-        return $this->sendResponse(new ZoneResource($zone->load('operators')), 'Operadores eliminados de la zona ambèxit', 200);
+        $operators = $zone->operators()
+            ->where('role', 'operator')
+            ->paginate(10);
+            
+        return $this->sendResponse(
+            UserResource::collection($operators),
+            'Operadors de la zona recuperats amb èxit'
+        );
     }
 }

@@ -118,33 +118,52 @@ class AuthController extends BaseController
      *     path="/api/logout",
      *     summary="User Logout",
      *     tags={"Authentication"},
-     *     security={
-     *         {"bearerAuth": {}}
-     *     },
+     *     security={{"sanctum":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="User logged out successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="message", type="string", example="User successfully signed out.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorised",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", example="Unauthenticated.")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="User logged out successfully")
      *         )
      *     )
      * )
      */
     public function logout(Request $request)
     {
-        $user = request()->user();
-        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
-        $success['name'] =  $user->name;
-        return $this->sendResponse($success, 'User successfully signed out.');
+        $request->user()->currentAccessToken()->delete();
+        return $this->sendResponse([], 'User logged out successfully');
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/user",
+     *     summary="Get authenticated user information",
+     *     tags={"Authentication"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User information retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="John Doe"),
+     *                 @OA\Property(property="email", type="string", example="john@example.com"),
+     *                 @OA\Property(property="role", type="string", example="operator")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     */
+    public function user(Request $request)
+    {
+        return $this->sendResponse($request->user(), 'User information retrieved successfully');
     }
 }

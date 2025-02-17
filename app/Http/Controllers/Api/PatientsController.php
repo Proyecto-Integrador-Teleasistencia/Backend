@@ -11,9 +11,16 @@ use Illuminate\Http\Request;
 
 class PatientsController extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
-        return PatientResource::collection(Patient::paginate(10));
+        $query = Patient::query();
+
+        if ($request->has('zone_id')) {
+            $query->where('zone_id', $request->zone_id);
+        }
+
+        $patients = $query->paginate(10);
+        return $this->sendResponse(PatientResource::collection($patients), 'Pacients recuperats amb èxit');
     }
 
     public function store(StorePatientRequest $request)
