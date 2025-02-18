@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('zone_management', function (Blueprint $table) {
+        Schema::create('zonas_gestion', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('zone_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('zona_id')->constrained('zonas')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
             
             // Índices para búsquedas frecuentes
-            $table->index(['zone_id', 'user_id']);
+            $table->index(['zona_id', 'user_id']);
             
             // Evitar duplicados
-            $table->unique(['zone_id', 'user_id']);
+            $table->unique(['zona_id', 'user_id']);
         });
     }
 
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('zone_management');
+        Schema::dropIfExists('zonas_gestion');
     }
 };

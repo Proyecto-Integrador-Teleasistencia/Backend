@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_zone', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('zone_id')->constrained()->onDelete('cascade');
+        Schema::create('zonas_usuario', function (Blueprint $table) {
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('zona_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             
-            $table->primary(['user_id', 'zone_id']);
+            $table->primary(['usuario_id', 'zona_id']);
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_zone');
+        Schema::dropIfExists('zonas_usuario');
     }
 };

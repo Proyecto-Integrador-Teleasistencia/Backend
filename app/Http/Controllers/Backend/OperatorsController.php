@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -23,7 +24,8 @@ class OperatorsController extends Controller
      */
     public function create()
     {
-        return view('backend.operators.create');
+        $zones = Zone::all();
+        return view('backend.operators.create', compact('zones'));
     }
 
     /**
@@ -36,6 +38,7 @@ class OperatorsController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
+            'zone_id' => 'nullable|exists:zones,id'
         ]);
 
         $operator = User::create([
@@ -43,6 +46,7 @@ class OperatorsController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
+            'zone_id' => $validated['zone_id'] ?? null,
             'role' => 'operator'
         ]);
 
@@ -51,11 +55,30 @@ class OperatorsController extends Controller
     }
 
     /**
+     * Display the specified operator.
+     */
+    public function show(User $operator)
+    {
+        if ($operator->role !== 'operator') {
+            return redirect()->route('backend.operators.index')
+                ->with('error', 'Usuario no encontrado');
+        }
+
+        return view('backend.operators.show', compact('operator'));
+    }
+
+    /**
      * Show the form for editing the specified operator.
      */
     public function edit(User $operator)
     {
-        return view('backend.operators.edit', compact('operator'));
+        if ($operator->role !== 'operator') {
+            return redirect()->route('backend.operators.index')
+                ->with('error', 'Usuario no encontrado');
+        }
+
+        $zones = Zone::all();
+        return view('backend.operators.edit', compact('operator', 'zones'));
     }
 
     /**
@@ -63,17 +86,26 @@ class OperatorsController extends Controller
      */
     public function update(Request $request, User $operator)
     {
+        if ($operator->role !== 'operator') {
+            return redirect()->route('backend.operators.index')
+                ->with('error', 'Usuario no encontrado');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $operator->id,
             'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
+            'zone_id' => 'nullable|exists:zones,id',
+            'is_active' => 'boolean'
         ]);
 
         $updateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
+            'zone_id' => $validated['zone_id'] ?? null,
+            'is_active' => $request->boolean('is_active')
         ];
 
         if (!empty($validated['password'])) {

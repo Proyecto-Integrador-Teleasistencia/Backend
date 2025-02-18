@@ -13,11 +13,12 @@ use App\Http\Controllers\Api\ReportsController;
 use App\Http\Controllers\Api\SubcategoriesController;
 use App\Http\Controllers\Api\ZonesController;
 
-Route::post('login', [AuthController::class, 'login'])->middleware('api');
-Route::post('register', [AuthController::class, 'register'])->middleware('api');
+Route::middleware('api')->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
 
-// Rutas protegidas que requieren autenticación
-Route::middleware(['auth:sanctum'])->group(function () {
+    // Rutas protegidas que requieren autenticación
+    Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('user', [AuthController::class, 'user']);
     
@@ -42,12 +43,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('reports/scheduled-calls', [ReportsController::class, 'scheduledCalls']);
     Route::get('reports/done-calls', [ReportsController::class, 'doneCalls']);
     Route::get('reports/patient-history/{patient}', [ReportsController::class, 'patientHistory']);
+
+    // Users
+    Route::get('users', [OperatorsController::class, 'index']);
+    Route::get('users/{user}', [OperatorsController::class, 'show']);
     
     Route::apiResource('alerts', AlertsController::class);
     Route::apiResource('calls', CallsController::class);
     Route::apiResource('categories', CategoriesController::class);
+    Route::apiResource('contacts', ContactsController::class);
     Route::apiResource('operators', OperatorsController::class);
     Route::apiResource('patients', PatientsController::class);
-    Route::apiResource('subcategories', SubcategoriesController::class);
-    Route::apiResource('zones', ZonesController::class);
+        Route::apiResource('subcategories', SubcategoriesController::class);
+        Route::apiResource('zones', ZonesController::class);
+    });
 });

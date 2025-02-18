@@ -12,19 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone', 20)->nullable();
+            $table->string('telefono', 20)->nullable();
             $table->enum('role', ['admin', 'operator'])->default('operator');
-            $table->date('hire_date')->nullable();
-            $table->date('termination_date')->nullable();
-            $table->enum('shift', ['morning', 'afternoon', 'night'])->nullable();
-            $table->enum('status', ['active', 'inactive', 'on_leave'])->default('active');
-            $table->foreignId('zone_id')->nullable()->constrained()->onDelete('set null');
+            $table->date('fecha_contratacion')->nullable();
+            $table->date('fecha_baja')->nullable();
+            $table->enum('turno', ['mañana', 'tarde', 'noche'])->nullable();
+            $table->enum('estado', ['active', 'inactive', 'on_leave'])->default('active');
+            $table->foreignId('zona_id')->nullable()->constrained('zonas')->onDelete('set null');
             
             // Índices para búsquedas frecuentes
-            $table->index('role');
-            $table->index('status');
-            $table->index('zone_id');
-            $table->index('shift');
+            $table->index('estado');
+            $table->index('turno');
         });
     }
 
@@ -34,19 +32,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['role']);
-            $table->dropIndex(['status']);
-            $table->dropIndex(['zone_id']);
-            $table->dropIndex(['shift']);
-            $table->dropForeign(['zone_id']);
+            $table->dropIndex(['estado']);
+            $table->dropIndex(['turno']);
             $table->dropColumn([
-                'phone',
-                'role',
-                'hire_date',
-                'termination_date',
-                'shift',
-                'status',
-                'zone_id'
+                'turno',
+                'estado'
             ]);
         });
     }

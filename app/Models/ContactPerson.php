@@ -9,15 +9,27 @@ class ContactPerson extends Model
 {
     use HasFactory;
 
+    protected $table = 'contactos';
+
     protected $fillable = [
-        'patient_id',
-        'name',
-        'phone',
-        'relationship'
+        'paciente_id',
+        'nombre',
+        'apellido',
+        'telefono',
+        'parentesco',
+        'direccion',
+        'disponibilidad',
+        'tiene_llaves',
+        'nivel_prioridad'
     ];
 
-    public function patient()
+    protected $casts = [
+        'tiene_llaves' => 'boolean',
+        'nivel_prioridad' => 'integer'
+    ];
+
+    public function paciente()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(Paciente::class);
     }
 }

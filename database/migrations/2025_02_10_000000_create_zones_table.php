@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('zones', function (Blueprint $table) {
+        Schema::create('zonas', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->unique();
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
+            $table->string('nombre', 100)->unique();
+            $table->string('codigo', 50)->unique();
+            $table->boolean('activa')->default(true);
             $table->timestamps();
             
             // Índices para búsquedas frecuentes
-            $table->index('name');
-            $table->index('active');
+            $table->index('nombre');
+            $table->index('codigo');
+            $table->index('activa');
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('zones');
+        Schema::dropIfExists('zonas');
     }
 };

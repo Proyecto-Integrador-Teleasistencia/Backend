@@ -47,29 +47,45 @@ class CallsController extends BaseController
      */
     public function index(Request $request)
     {
-        $query = Call::query()->with(['patient', 'operator', 'category', 'alert']);
+        try {
+            $query = Call::query()->with(['patient', 'operator', 'category', 'alert']);
 
-        // Filtro por fecha
-        if ($request->has('date')) {
-            $query->whereDate('created_at', $request->date);
+            // Filtro por fecha
+            if ($request->has('date')) {
+                $query->whereDate('created_at', $request->date);
+            }
+
+            // Filtro por tipo
+            if ($request->has('type')) {
+                $query->where('type', $request->type);
+            }
+
+            // Filtro por zona
+            if ($request->has('zone_id')) {
+                $query->whereHas('patient', function($q) use ($request) {
+                    $q->where('zone_id', $request->zone_id);
+                });
+            }
+
+            $calls = $query->paginate(10);
+            
+            if ($calls->isEmpty()) {
+                return $this->sendResponse(
+                    [],
+                    'No hi ha crides disponibles'
+                );
+            }
+
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Crides recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError(
+                'Error al recuperar les crides',
+                [], 500
+            );
         }
-
-        // Filtro por tipo
-        if ($request->has('type')) {
-            $query->where('type', $request->type);
-        }
-
-        // Filtro por zona
-        if ($request->has('zone_id')) {
-            $query->whereHas('patient', function($q) use ($request) {
-                $q->where('zone_id', $request->zone_id);
-            });
-        }
-
-        return $this->sendResponse(
-            CallResource::collection($query->paginate(10)),
-            'Cridades recuperades amb èxit'
-        );
     }
 
     /**
@@ -122,11 +138,14 @@ class CallsController extends BaseController
         // Verificar si es una llamada saliente y el usuario tiene permiso
         if ($validated['type'] === 'outgoing') {
             $patient = Patient::findOrFail($validated['patient_id']);
-            if (!auth()->user()->zones->contains($patient->zone_id)) {
-                return $this->sendError(
-                    'No tens permís per realitzar cridades sortints a pacients fora de la teva zona',
-                    [], 403
-                );
+            // Los administradores pueden hacer llamadas a cualquier zona
+            if (auth()->user()->role !== 'admin') {
+                if (!auth()->user()->zones->contains($patient->zone_id)) {
+                    return $this->sendError(
+                        'No tens permís per realitzar cridades sortints a pacients fora de la teva zona',
+                        [], 403
+                    );
+                }
             }
         }
 
@@ -160,15 +179,22 @@ class CallsController extends BaseController
      *     )
      * )
      */
-    public function show(Call $call)
+    public function show($id)
     {
-        $call = Call::with(['patient', 'operator', 'category', 'alert'])->findOrFail($call->id);
-        $this->authorize('view', $call);
-        
-        return $this->sendResponse(
-            new CallResource($call),
-            'Crida recuperada amb èxit'
-        );
+        try {
+            $call = Call::with(['patient', 'operator', 'category', 'alert'])->findOrFail($id);
+            $this->authorize('view', $call);
+            
+            return $this->sendResponse(
+                new CallResource($call),
+                'Crida recuperada amb èxit'
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->sendError(
+                'No s\'ha trobat la crida',
+                [], 404
+            );
+        }
     }
 
     /**
@@ -189,16 +215,24 @@ class CallsController extends BaseController
      *     )
      * )
      */
-    public function update(UpdateCallRequest $request, Call $call)
+    public function update(UpdateCallRequest $request, $id)
     {
-        $this->authorize('update', $call);
-        $validated = $request->validated();
-        $call->update($validated);
-        
-        return $this->sendResponse(
-            new CallResource($call),
-            'Crida actualitzada amb èxit'
-        );
+        try {
+            $call = Call::findOrFail($id);
+            $this->authorize('update', $call);
+            $validated = $request->validated();
+            $call->update($validated);
+            
+            return $this->sendResponse(
+                new CallResource($call),
+                'Crida actualitzada amb èxit'
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->sendError(
+                'No s\'ha trobat la crida',
+                [], 404
+            );
+        }
     }
 
     /**
@@ -219,14 +253,22 @@ class CallsController extends BaseController
      *     )
      * )
      */
-    public function destroy(Call $call)
+    public function destroy($id)
     {
-        $this->authorize('delete', $call);
-        $call->delete();
-        
-        return $this->sendResponse(
-            null,
-            'Crida eliminada amb èxit'
-        );
+        try {
+            $call = Call::findOrFail($id);
+            $this->authorize('delete', $call);
+            $call->delete();
+            
+            return $this->sendResponse(
+                null,
+                'Crida eliminada amb èxit'
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->sendError(
+                'No s\'ha trobat la crida',
+                [], 404
+            );
+        }
     }
 }

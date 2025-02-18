@@ -11,25 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contact_people', function (Blueprint $table) {
+        Schema::create('contactos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained()->onDelete('cascade');
-            $table->string('name', 100);
-            $table->string('surname', 100);
-            $table->string('phone', 20);
-            $table->string('relationship', 50);
-            $table->text('address');
-            $table->string('availability');
-            $table->boolean('has_keys')->default(false);
-            $table->integer('priority_level')->default(1);
+            $table->foreignId('paciente_id')->constrained()->onDelete('cascade');
+            $table->string('nombre', 100);
+            $table->string('apellido', 100);
+            $table->string('telefono', 20);
+            $table->string('parentesco', 50);
+            $table->text('direccion');
+            $table->string('disponibilidad');
+            $table->boolean('tiene_llaves')->default(false);
+            $table->integer('nivel_prioridad')->default(1);
             $table->timestamps();
             
             // Índices para búsquedas frecuentes
-            $table->index('name');
-            $table->index('phone');
-            $table->index('patient_id');
-            $table->index('priority_level');
-            $table->index('has_keys');
+            $table->index('nombre');
+            $table->index('telefono');
+            $table->index('paciente_id');
+            $table->index('nivel_prioridad');
+            $table->index('tiene_llaves');
         });
     }
 
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contact_people');
+        Schema::dropIfExists('contactos');
     }
 };

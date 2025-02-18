@@ -19,8 +19,8 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'subcategories' => CategoryResource::collection($this->whenLoaded('subcategories')),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

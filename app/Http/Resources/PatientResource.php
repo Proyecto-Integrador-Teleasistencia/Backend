@@ -17,7 +17,7 @@ class PatientResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'birth_date' => $this->birth_date->format('Y-m-d'),
+            'birth_date' => $this->birth_date ? $this->birth_date->format('Y-m-d') : null,
             'age' => $this->age,
             'address' => $this->address,
             'full_address' => $this->full_address,
@@ -35,8 +35,8 @@ class PatientResource extends JsonResource
             'recent_alerts_count' => $this->whenCounted('recent_alerts'),
             'alerts' => AlertResource::collection($this->whenLoaded('alerts')),
             'calls' => CallResource::collection($this->whenLoaded('calls')),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

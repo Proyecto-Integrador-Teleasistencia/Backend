@@ -24,8 +24,8 @@ class ZoneResource extends JsonResource
             'patients_count' => $this->whenCounted('patients'),
             'operators' => UserResource::collection($this->whenLoaded('operators')),
             'patients' => PatientResource::collection($this->whenLoaded('patients')),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

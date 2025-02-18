@@ -11,23 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('calls', function (Blueprint $table) {
+        Schema::create('llamadas', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('datetime');
-            $table->text('description')->nullable();
-            $table->enum('type', ['outgoing', 'incoming']);
-            $table->boolean('scheduled')->default(false);
-            $table->foreignId('operator_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('patient_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->foreignId('alert_id')->nullable()->constrained()->onDelete('set null');
+            $table->dateTime('fecha_hora');
+            $table->enum('tipo_llamada', ['entrante', 'saliente']);
+            $table->integer('duracion')->comment('Duración en segundos');
+            $table->enum('estado', ['completada', 'perdida', 'en_curso'])->default('en_curso');
+            $table->string('motivo');
+            $table->text('descripcion')->nullable();
+            $table->foreignId('operador_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->foreignId('subcategoria_id')->constrained('subcategorias')->onDelete('cascade');
             $table->timestamps();
             
-            $table->index('datetime');
-            $table->index('type');
-            $table->index('scheduled');
-            $table->index(['operator_id', 'patient_id']);
-            $table->index('category_id');
+            $table->index('fecha_hora');
+            $table->index('tipo_llamada');
+            $table->index('estado');
+            $table->index(['operador_id', 'paciente_id']);
+            $table->index('categoria_id');
+            $table->index('subcategoria_id');
         });
     }
 
@@ -36,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('calls');
+        Schema::dropIfExists('llamadas');
     }
 };

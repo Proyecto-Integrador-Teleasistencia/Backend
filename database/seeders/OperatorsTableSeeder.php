@@ -7,6 +7,7 @@ use App\Models\Zone;
 use App\Models\Operator;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class OperatorsTableSeeder extends Seeder
 {
@@ -16,17 +17,28 @@ class OperatorsTableSeeder extends Seeder
     public function run(): void
     {
         // Crear operadores
-        $operators = User::factory()
-            ->count(10)
-            ->state(['role' => 'operator'])
-            ->create();
+        $admin = User::create([
+            'nombre' => 'Samuel Carbonell',
+            'email' => 'samuel.carbonell@email.com',
+            'password' => Hash::make('password'),
+            'telefono' => '700123456',
+            'zona_id' => 1,
+            'fecha_contratacion' => '2023-01-10',
+            'fecha_baja' => null
+        ]);
 
-        // Asignar zonas aleatorias a cada operador
-        $zones = Zone::all();
-        $operators->each(function ($operator) use ($zones) {
-            $operator->zones()->attach(
-                $zones->random(rand(1, 3))->pluck('id')->toArray()
-            );
-        });
+        $operator = User::create([
+            'nombre' => 'Carlos Peres',
+            'email' => 'carlos.peres@email.com',
+            'password' => Hash::make('password'),
+            'telefono' => '710654321',
+            'zona_id' => 2,
+            'fecha_contratacion' => '2023-02-15',
+            'fecha_baja' => null
+        ]);
+
+        // Asignar zonas a los operadores
+        $admin->zonas()->attach([1]);
+        $operator->zonas()->attach([2]);
     }
 }

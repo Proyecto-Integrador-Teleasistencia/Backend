@@ -16,15 +16,11 @@ class AlertResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'type' => $this->type,
-            'description' => $this->description,
-            'priority' => $this->priority,
-            'status' => $this->status,
-            'completed_at' => $this->completed_at?->format('Y-m-d H:i:s'),
-            'patient' => new PatientResource($this->whenLoaded('patient')),
-            'calls' => CallResource::collection($this->whenLoaded('calls')),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'periocidad' => $this->periocidad,
+            'fecha_hora' => $this->fecha_hora?->format('Y-m-d H:i:s'),
+            'categoria' => new CategoryResource($this->whenLoaded('categoria')),
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

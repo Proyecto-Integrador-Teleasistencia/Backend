@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subcategories', function (Blueprint $table) {
+        Schema::create('subcategorias', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->unique();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->string('nombre', 100)->unique();
+            $table->foreignId('categoria_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             
             // Indexar campos de búsqueda frecuente
-            $table->index('name');
-            $table->index('category_id');
+            $table->index('nombre');
+            $table->index('categoria_id');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subcategories');
+        Schema::dropIfExists('subcategorias');
     }
 };

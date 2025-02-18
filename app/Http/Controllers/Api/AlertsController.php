@@ -48,23 +48,33 @@ class AlertsController extends BaseController
      */
     public function index(Request $request)
     {
-        $query = Alert::with(['category', 'patient', 'operator']);
+        try {
+            $query = Alert::with(['categoria']);
 
-        // Filtrar por tipo
-        if ($request->has('type')) {
-            $query->where('type', $request->type);
+            // Filtrar por periocidad
+            if ($request->has('periocidad')) {
+                $query->where('periocidad', $request->periocidad);
+            }
+
+            $alerts = $query->latest()->paginate(10);
+
+            if ($alerts->isEmpty()) {
+                return $this->sendResponse(
+                    [],
+                    'No hi ha avisos ni alarmes disponibles'
+                );
+            }
+
+            return $this->sendResponse(
+                AlertResource::collection($alerts),
+                'Avisos i alarmes recuperats amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError(
+                'Error al recuperar els avisos i alarmes',
+                [], 500
+            );
         }
-
-        // Filtrar por estado
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $alerts = $query->latest()->paginate(10);
-        return $this->sendResponse(
-            AlertResource::collection($alerts),
-            'Avisos i alarmes recuperats amb èxit'
-        );
     }
 
     /**
@@ -124,13 +134,20 @@ class AlertsController extends BaseController
      *     )
      * )
      */
-    public function show(Alert $alert)
+    public function show($id)
     {
-        $alert->load(['category', 'patient', 'operator']);
-        return $this->sendResponse(
-            new AlertResource($alert),
-            'Avís/alarma recuperat amb èxit'
-        );
+        try {
+            $alert = Alert::with(['categoria'])->findOrFail($id);
+            return $this->sendResponse(
+                new AlertResource($alert),
+                'Avís/alarma recuperat amb èxit'
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->sendError(
+                'No s\'ha trobat l\'avís/alarma',
+                [], 404
+            );
+        }
     }
 
     /**
@@ -151,21 +168,29 @@ class AlertsController extends BaseController
      *     )
      * )
      */
-    public function update(UpdateAlertRequest $request, Alert $alert)
+    public function update(UpdateAlertRequest $request, $id)
     {
-        $validated = $request->validated();
-        
-        // Si se está cambiando el estado a "resolved", registrar la fecha de resolución
-        if (isset($validated['status']) && $validated['status'] === 'resolved' && $alert->status !== 'resolved') {
-            $validated['resolved_at'] = now();
+        try {
+            $alert = Alert::findOrFail($id);
+            $validated = $request->validated();
+            
+            // Si se está cambiando el estado a "resolved", registrar la fecha de resolución
+            if (isset($validated['status']) && $validated['status'] === 'resolved' && $alert->status !== 'resolved') {
+                $validated['resolved_at'] = now();
+            }
+            
+            $alert->update($validated);
+            
+            return $this->sendResponse(
+                new AlertResource($alert),
+                'Avís/alarma actualitzat amb èxit'
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->sendError(
+                'No s\'ha trobat l\'avís/alarma',
+                [], 404
+            );
         }
-        
-        $alert->update($validated);
-        
-        return $this->sendResponse(
-            new AlertResource($alert),
-            'Avís/alarma actualitzat amb èxit'
-        );
     }
 
     /**
@@ -186,12 +211,20 @@ class AlertsController extends BaseController
      *     )
      * )
      */
-    public function destroy(Alert $alert)
+    public function destroy($id)
     {
-        $alert->delete();
-        return $this->sendResponse(
-            null,
-            'Avís/alarma eliminat amb èxit'
-        );
+        try {
+            $alert = Alert::findOrFail($id);
+            $alert->delete();
+            return $this->sendResponse(
+                null,
+                'Avís/alarma eliminat amb èxit'
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->sendError(
+                'No s\'ha trobat l\'avís/alarma',
+                [], 404
+            );
+        }
     }
 }

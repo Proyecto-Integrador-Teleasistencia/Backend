@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
+use App\Models\Categoria;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +13,16 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Category::factory()->count(5)->create();
+        $categories = [
+            ['nombre' => 'Avisos'],
+            ['nombre' => 'Seguimiento según protocolos'],
+            ['nombre' => 'Agendas de ausencia domiciliaria y retorno'],
+            ['nombre' => 'Atención de emergencias'],
+            ['nombre' => 'Comunicaciones no urgentes']
+        ];
+
+        foreach ($categories as $category) {
+            Categoria::create($category);
+        }
     }
 }

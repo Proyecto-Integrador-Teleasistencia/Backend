@@ -19,7 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Backend routes
     Route::prefix('backend')->name('backend.')->group(function () {
         // Zones routes
-        Route::resource('zones', \App\Http\Controllers\Backend\ZonesController::class);
+        Route::resource('zonas', \App\Http\Controllers\Backend\ZonasController::class);
         
         // Operators routes
         Route::resource('operators', \App\Http\Controllers\Backend\OperatorsController::class);

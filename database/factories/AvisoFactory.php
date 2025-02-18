@@ -2,12 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Categoria;
+use App\Models\Paciente;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Alert>
  */
-class AlertFactory extends Factory
+class AvisoFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,10 +19,10 @@ class AlertFactory extends Factory
     public function definition(): array
     {
         return [
-            'datetime' => fake()->dateTimeBetween('-1 month', '+1 month'),
-            'periodicity' => fake()->randomElement(['diaria', 'semanal', 'mensual', 'trimestral', 'semestral', 'anual']),
-            'category_id' => Category::factory(),
-            'patient_id' => Patient::factory(),
+            'fecha_hora' => fake()->dateTimeBetween('-1 month', '+1 month'),
+            'tipo' => fake()->randomElement(['puntual', 'periódico']),
+            'categoria_id' => Categoria::factory(),
+            'paciente_id' => Paciente::factory(),
         ];
     }
 }
