@@ -59,5 +59,6 @@ Route::middleware('api')->group(function () {
         Route::apiResource('pacientes', PatientsController::class);
         Route::apiResource('subcategorias', SubcategoriesController::class);
         Route::apiResource('zonas', ZonesController::class);
+        // Route::apiResource();
     });
 });

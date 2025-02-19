@@ -34,7 +34,7 @@ class PatientsController extends BaseController
 
     public function show($id)
     {
-        $patient = Paciente::findOrFail($id);
+        $patient = Paciente::with('zona')->findOrFail($id);
         return $this->sendResponse(new PatientResource($patient), 'Paciente recuperat ambèxit', 200);
     }
 

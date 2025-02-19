@@ -25,7 +25,7 @@ class PatientResource extends JsonResource
             'tarjeta_sanitaria' => $this->tarjeta_sanitaria,
             'telefono' => $this->telefono,
             'email' => $this->email,
-            'zona' => new ZoneResource($this->whenLoaded('zona')),
+            'zona_id' => $this->zona_id,
             'situacion_personal' => $this->situacion_personal,
             'estado_salud' => $this->estado_salud,
             'condicion_vivienda' => $this->condicion_vivienda,
