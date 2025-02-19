@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Models\User;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,9 +15,13 @@ class OperatorsController extends BaseController
      */
     public function index()
     {
-        return $this->sendResponse(User::where('role', 'operator')
-            ->with('zones')
-            ->paginate(10));
+        $users = User::where('role', 'operator')
+            ->with('zonas')
+            ->paginate(10);
+        return $this->sendResponse(
+            UserResource::collection($users),
+            'Llista d\'operadors recuperada amb èxit'
+        );
     }
 
     /**
@@ -36,15 +41,26 @@ class OperatorsController extends BaseController
             $operator->zones()->attach($validated['zones']);
         }
 
-        return $this->sendResponse($operator, 'Operador creat ambèxit', 201);
+        return $this->sendResponse(
+            new UserResource($operator),
+            'Operador creat amb èxit',
+            201
+        );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $operator)
+    public function show($id)
     {
-        return $this->sendResponse(new OperatorResource($operator));
+        $operator = User::where('role', 'operator')
+            ->with('zonas')
+            ->findOrFail($id);
+
+        return $this->sendResponse(
+            new UserResource($operator),
+            'Operador recuperat amb èxit'
+        );
     }
 
     /**
@@ -67,7 +83,7 @@ class OperatorsController extends BaseController
             $operator->zones()->sync($validated['zones']);
         }
 
-        return $this->sendResponse(new OperatorResource($operator), 'Operador actualitzat ambèxit', 200);
+        return $this->sendResponse(new UserResource($operator), 'Operador actualitzat amb èxit', 200);
     }
 
     /**
@@ -77,6 +93,6 @@ class OperatorsController extends BaseController
     {
         $operator->delete();
 
-        return $this->sendResponse(null, 'Operador eliminat ambèxit', 204);
+        return $this->sendResponse(null, 'Operador eliminat amb èxit', 204);
     }
 }

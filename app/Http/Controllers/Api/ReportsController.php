@@ -3,82 +3,228 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
-use App\Models\Alert;
-use App\Models\Call;
-use App\Models\Patient;
+use App\Models\Aviso;
+use App\Models\Llamada;
+use App\Models\Paciente;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\CallResource;
+use App\Http\Resources\PatientResource;
+use App\Http\Resources\AlertResource;
 
 class ReportsController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/reports/emergencies",
+     *     summary="Get emergency actions report",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         description="Start date (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         description="End date (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Emergency actions report"
+     *     )
+     * )
      */
-    public function index()
+    public function emergencies(Request $request)
     {
-        $startDate = request('start_date', Carbon::now()->startOfMonth());
-        $endDate = request('end_date', Carbon::now());
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth());
+        $endDate = $request->input('end_date', Carbon::now());
 
-        $stats = [
-            'total_patients' => Patient::count(),
-            'total_calls' => Call::whereBetween('call_time', [$startDate, $endDate])->count(),
-            'alerts_by_priority' => Alert::whereBetween('created_at', [$startDate, $endDate])
-                ->select('priority', DB::raw('count(*) as count'))
-                ->groupBy('priority')
-                ->get(),
-            'calls_by_type' => Call::whereBetween('call_time', [$startDate, $endDate])
-                ->select('type', DB::raw('count(*) as count'))
-                ->groupBy('type')
-                ->get(),
-            'patients_by_zone' => Patient::select('zones.name', DB::raw('count(*) as count'))
-                ->join('zones', 'patients.zone_id', '=', 'zones.id')
-                ->groupBy('zones.name')
-                ->get(),
-        ];
+        $emergencies = Aviso::with(['paciente', 'operador'])
+            ->where('type', 'alarm')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return $this->sendResponse($stats);
+        return $this->sendResponse(
+            AlertResource::collection($emergencies),
+            'Informe d\'emergències recuperat amb èxit'
+        );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Get(
+     *     path="/api/reports/patients",
+     *     summary="Get patients list ordered by surname",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of patients"
+     *     )
+     * )
      */
-    public function store(Request $request)
+    public function patients($id)
     {
-        $validated = $request->validate();
+        try {
+            $patient = Paciente::with(['zona', 'contactos'])
+                ->findOrFail($id);
 
-        // Here you would implement the logic to generate and store reports
-        // This is a placeholder that returns a success message
+            $pdf = \PDF::loadView('reports.patient', compact('patient'));
+            $pdf->setPaper('a4');
+
+            $filename = 'informe_pacientes_' . now()->format('Y-m-d_His') . '.pdf';
+            
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            return $this->sendError('Error al generar el informe de pacientes', $e->getMessage());
+        }
+    }
+
+    public function getAllInformes()
+    {
+        try {
+            $patients = Paciente::with(['zona', 'contactos'])->get();
+            $pdfs = [];
+
+            foreach ($patients as $patient) {
+                $pdf = \PDF::loadView('reports.patient', compact('patient'));
+                $pdf->setPaper('a4');
+
+                $filename = 'informe_pacientes_' . $patient->id . '_' . now()->format('Y-m-d_His') . '.pdf';
+                $pdfs[] = $pdf->stream($filename);
+            }
+
+            return $this->sendResponse($pdfs, 'Llista d\'informes de pacients generats amb èxit');
+        } catch (\Exception $e) {
+            return $this->sendError('Error al generar la llista d\'informes de pacients', $e->getMessage());
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/reports/scheduled-calls",
+     *     summary="Get scheduled calls for a day",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="date",
+     *         in="query",
+     *         description="Date to check (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of scheduled calls"
+     *     )
+     * )
+     */
+    public function scheduledCalls(Request $request)
+    {
+        $date = $request->input('date', Carbon::today());
+        
+        $calls = Llamada::with(['paciente', 'operador'])
+            ->where('status', 'scheduled')
+            ->whereDate('scheduled_for', $date)
+            ->orderBy('scheduled_for')
+            ->get();
+
+        return $this->sendResponse(
+            CallResource::collection($calls),
+            'Llistat de cridades previstes recuperat amb èxit'
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/reports/done-calls",
+     *     summary="Get completed calls for a day",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="date",
+     *         in="query",
+     *         description="Date to check (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of completed calls"
+     *     )
+     * )
+     */
+    public function doneCalls(Request $request)
+    {
+        $date = $request->input('date', Carbon::today());
+        
+        $calls = Llamada::with(['paciente', 'operador'])
+            ->where('status', 'completed')
+            ->whereDate('completed_at', $date)
+            ->orderBy('completed_at', 'desc')
+            ->get();
+
+        return $this->sendResponse(
+            CallResource::collection($calls),
+            'Llistat de cridades realitzades recuperat amb èxit'
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/reports/patient-history/{id}",
+     *     summary="Get patient's call history",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         description="Start date (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         description="End date (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Patient's call history"
+     *     )
+     * )
+     */
+    public function patientHistory(Request $request, $patientId)
+    {
+        $startDate = $request->input('start_date', Carbon::now()->subMonths(3));
+        $endDate = $request->input('end_date', Carbon::now());
+
+        $patient = Paciente::findOrFail($patientId);
+        
+        $calls = $patient->llamadas()
+            ->with(['operador', 'categoria'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return $this->sendResponse([
-            'message' => 'Report generation started',
-            'report_id' => uniqid('report_'),
-        ], 'Reporte generado', 202);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Report $report)
-    {
-        return $this->sendResponse(new ReportResource($report), 'Reporte recuperado', 200);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Report $report)
-    {
-        // Reports typically don't need to be updated
-        return $this->sendResponse(['message' => 'Method not allowed'], 'Metodo no permitido', 405);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Report $report)
-    {
-        $report->delete();
-
-        return $this->sendResponse(['message' => 'Reporte eliminado'], 'Reporte eliminado', 200);
+            'patient' => new PatientResource($patient),
+            'calls' => CallResource::collection($calls)
+        ], 'Històric de cridades del pacient recuperat amb èxit');
     }
 }

@@ -11,34 +11,34 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('patients', function (Blueprint $table) {
+        Schema::create('pacientes', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->date('birth_date');
-            $table->text('address');
-            $table->string('city')->nullable();
-            $table->string('postal_code', 10)->nullable();
+            $table->string('nombre', 100);
+            $table->date('fecha_nacimiento');
+            $table->text('direccion');
+            $table->string('ciudad')->nullable();
+            $table->string('codigo_postal', 10)->nullable();
             $table->string('dni', 20)->unique();
-            $table->string('health_card', 50)->unique();
-            $table->string('phone', 20);
+            $table->string('tarjeta_sanitaria', 50)->unique();
+            $table->string('telefono', 20);
             $table->string('email', 100)->nullable()->unique();
-            $table->foreignId('zone_id')->constrained()->onDelete('restrict');
+            $table->foreignId('zona_id')->constrained()->onDelete('restrict');
             
             // Campos de situación
-            $table->text('personal_situation')->nullable();
-            $table->text('health_condition')->nullable();
-            $table->text('home_condition')->nullable();
-            $table->text('autonomy_level')->nullable();
-            $table->text('economic_situation')->nullable();
-            
+            $table->text('situacion_personal')->nullable();
+            $table->text('estado_salud')->nullable();
+            $table->text('condicion_vivienda')->nullable();
+            $table->text('nivel_autonomia')->nullable();
+            $table->text('situacion_economica')->nullable();
+
             $table->timestamps();
             
             // Índices para búsquedas frecuentes
-            $table->index('name');
+            $table->index('nombre');
             $table->index('dni');
-            $table->index('health_card');
-            $table->index('phone');
-            $table->index('zone_id');
+            $table->index('tarjeta_sanitaria');
+            $table->index('telefono');
+            $table->index('zona_id');
         });
     }
 
@@ -47,6 +47,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patients');
+        Schema::dropIfExists('pacientes');
     }
 };

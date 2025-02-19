@@ -19,13 +19,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nombre',
         'email',
-        'role',
-        'phone',
-        'hired_at',
-        'fired_at',
-        'username',
+        'rol',
+        'telefono',
+        'fecha_contratacion',
+        'fecha_baja',
         'password'
     ];
 
@@ -39,7 +38,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $dates = ['hired_at', 'fired_at'];
+    protected $dates = ['fecha_contratacion', 'fecha_baja'];
 
     /**
      * Get the attributes that should be cast.
@@ -54,13 +53,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function zones()
+    public function zonas()
     {
-        return $this->belongsToMany(Zone::class);
+        return $this->belongsToMany(Zona::class, 'zonas_gestion');
     }
 
-    public function calls()
+    public function llamadas()
     {
-        return $this->hasMany(Call::class);
+        return $this->hasMany(Llamada::class);
     }
 }
