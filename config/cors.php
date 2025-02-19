@@ -16,35 +16,17 @@ return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:5173',    // Vite dev server
-        'http://localhost:5174',    // Vite dev server
-        'http://localhost:4173',    // Vite preview
-        'http://localhost:3000',    // Otro puerto común para desarrollo
-        'http://localhost',
-        env('FRONTEND_URL', 'http://localhost:5173')
-    ],
+    'allowed_origins' => ['http://localhost:5174'],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => [
-        'Accept',
-        'Authorization',
-        'Content-Type',
-        'X-Requested-With',
-        'X-XSRF-TOKEN',
-        'X-CSRF-TOKEN',
-        'Access-Control-Allow-Origin',
-        'Access-Control-Allow-Methods',
-        'Access-Control-Allow-Headers',
-        'Access-Control-Allow-Credentials'
-    ],
+    'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
-    'max_age' => 60 * 60 * 24,  // 24 horas
+    'max_age' => 0,
 
     'supports_credentials' => true,
 ];
