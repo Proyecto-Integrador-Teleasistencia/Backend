@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ContactPerson>
  */
-class ContactPersonFactory extends Factory
+class ContactoFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -22,7 +22,7 @@ class ContactPersonFactory extends Factory
             'nombre' => fake()->firstName(),
             'apellido' => fake()->lastName(),
             'telefono' => fake()->phoneNumber(),
-            'parentesco' => fake()->randomElement(['Hijo/a', 'Hermano/a', 'Sobrino/a', 'Vecino/a', 'Amigo/a']),
+            'relacion' => fake()->randomElement(['Hijo/a', 'Hermano/a', 'Sobrino/a', 'Vecino/a', 'Amigo/a']),
             'direccion' => fake()->address(),
             'disponibilidad' => fake()->randomElement(['Mañanas', 'Tardes', 'Noches', '24h', 'Fines de semana']),
             'tiene_llaves' => fake()->boolean(30), // 30% probabilidad de tener llaves

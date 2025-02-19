@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ContactPerson extends Model
+class Contacto extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class ContactPerson extends Model
         'nombre',
         'apellido',
         'telefono',
-        'parentesco',
+        'relacion',
         'direccion',
         'disponibilidad',
         'tiene_llaves',

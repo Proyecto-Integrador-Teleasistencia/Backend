@@ -17,6 +17,8 @@ class Paciente extends Model
         'nombre',
         'fecha_nacimiento',
         'direccion',
+        'ciudad',
+        'codigo_postal',
         'dni',
         'tarjeta_sanitaria',
         'telefono',
@@ -82,7 +84,7 @@ class Paciente extends Model
 
     public function contactos(): HasMany
     {
-        return $this->hasMany(PersonaDeContacto::class)->orderBy('prioridad');
+        return $this->hasMany(Contacto::class)->orderBy('prioridad');
     }
 
     public function llamadas(): HasMany

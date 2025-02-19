@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nombre', 100);
             $table->string('apellido', 100);
             $table->string('telefono', 20);
-            $table->string('parentesco', 50);
+            $table->string('relacion', 50)->default('Familiar');
             $table->text('direccion');
             $table->string('disponibilidad');
             $table->boolean('tiene_llaves')->default(false);

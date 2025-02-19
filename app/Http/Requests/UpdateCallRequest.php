@@ -14,33 +14,36 @@ class UpdateCallRequest extends FormRequest
     public function rules()
     {
         return [
-            'datetime' => 'sometimes|required|date',
-            'description' => 'nullable|string',
-            'type' => 'sometimes|required|string|in:outgoing,incoming',
-            'scheduled' => 'sometimes|required|boolean',
-            'operator_id' => 'sometimes|required|exists:users,id',
-            'patient_id' => 'sometimes|required|exists:patients,id',
-            'category_id' => 'sometimes|required|exists:categories,id',
-            'alert_id' => 'nullable|exists:alerts,id',
+            'fecha_hora' => 'required|date_format:Y-m-d H:i:s',
+            'tipo_llamada' => 'required|string|in:entrante,saliente',
+            'duracion' => 'nullable|integer',
+            'estado' => 'required|string',
+            'motivo' => 'required|string',
+            'descripcion' => 'nullable|string',
+            'operador_id' => 'required|exists:users,id',
+            'paciente_id' => 'required|exists:pacientes,id',
+            'categoria_id' => 'required|exists:categorias,id',
+            'subcategoria_id' => 'nullable|exists:subcategorias,id',
         ];
     }
 
     public function messages()
     {
         return [
-            'datetime.required' => 'La fecha y hora son obligatorias',
-            'datetime.date' => 'El formato de fecha y hora no es válido',
-            'type.required' => 'El tipo de llamada es obligatorio',
-            'type.in' => 'El tipo de llamada debe ser outgoing o incoming',
-            'scheduled.required' => 'Debe especificar si la llamada está programada',
-            'scheduled.boolean' => 'El campo programada debe ser verdadero o falso',
-            'operator_id.required' => 'El operador es obligatorio',
-            'operator_id.exists' => 'El operador seleccionado no existe',
-            'patient_id.required' => 'El paciente es obligatorio',
-            'patient_id.exists' => 'El paciente seleccionado no existe',
-            'category_id.required' => 'La categoría es obligatoria',
-            'category_id.exists' => 'La categoría seleccionada no existe',
-            'alert_id.exists' => 'La alerta seleccionada no existe',
+            'fecha_hora.required' => 'La fecha y hora son obligatorias',
+            'fecha_hora.date_format' => 'El formato de fecha y hora no es válido',
+            'tipo_llamada.required' => 'El tipo de llamada es obligatorio',
+            'tipo_llamada.in' => 'El tipo de llamada debe ser entrante o saliente',
+            'duracion.integer' => 'La duración debe ser un número entero',
+            'estado.required' => 'El estado es obligatorio',
+            'motivo.required' => 'El motivo es obligatorio',
+            'operador_id.required' => 'El operador es obligatorio',
+            'operador_id.exists' => 'El operador seleccionado no existe',
+            'paciente_id.required' => 'El paciente es obligatorio',
+            'paciente_id.exists' => 'El paciente seleccionado no existe',
+            'categoria_id.required' => 'La categoría es obligatoria',
+            'categoria_id.exists' => 'La categoría seleccionada no existe',
+            'subcategoria_id.exists' => 'La subcategoría seleccionada no existe',
         ];
     }
 }

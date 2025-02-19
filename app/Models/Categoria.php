@@ -9,4 +9,6 @@ class Categoria extends Model
 {
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory;
+
+    protected $table = 'categorias';
 }   

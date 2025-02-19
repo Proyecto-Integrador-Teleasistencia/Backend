@@ -10,17 +10,34 @@ class Aviso extends Model
     use HasFactory;
 
     protected $fillable = [
-        'periocidad',
+        'tipo',
         'fecha_hora',
-        'categoria_id'
+        'descripcion',
+        'completado',
+        'fecha_completado',
+        'categoria_id',
+        'paciente_id',
+        'operador_id'
     ];
 
     protected $casts = [
-        'fecha_hora' => 'datetime'
+        'fecha_hora' => 'datetime',
+        'completado' => 'boolean',
+        'fecha_completado' => 'datetime'
     ];
 
     public function categoria()
     {
-        return $this->belongsTo(Category::class, 'categoria_id');
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class, 'paciente_id');
+    }
+
+    public function operador()
+    {
+        return $this->belongsTo(User::class, 'operador_id');
     }
 }

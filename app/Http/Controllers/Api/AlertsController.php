@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreAlertRequest;
 use App\Http\Requests\UpdateAlertRequest;
-use App\Models\Alert;
+use App\Models\Aviso;
 use App\Http\Resources\AlertResource;
 use Illuminate\Http\Request;
 
@@ -49,7 +49,7 @@ class AlertsController extends BaseController
     public function index(Request $request)
     {
         try {
-            $query = Alert::with(['categoria']);
+            $query = Aviso::with(['categoria']);
 
             // Filtrar por periocidad
             if ($request->has('periocidad')) {
@@ -79,7 +79,7 @@ class AlertsController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/api/alerts",
+     *     path="/api/avisos",
      *     summary="Create a new alert or alarm",
      *     tags={"Alerts"},
      *     security={{"sanctum":{}}},
@@ -101,13 +101,12 @@ class AlertsController extends BaseController
     public function store(StoreAlertRequest $request)
     {
         $validated = $request->validated();
-        
         // Asignar el operador actual si no se especifica
-        if (!isset($validated['operator_id'])) {
-            $validated['operator_id'] = auth()->id();
+        if (!isset($validated['operador_id'])) {
+            $validated['operador_id'] = auth()->id();
         }
         
-        $alert = Alert::create($validated);
+        $alert = Aviso::create($validated);
         
         return $this->sendResponse(
             new AlertResource($alert),
@@ -137,10 +136,10 @@ class AlertsController extends BaseController
     public function show($id)
     {
         try {
-            $alert = Alert::with(['categoria'])->findOrFail($id);
+            $alert = Aviso::with(['categoria', 'paciente', 'operador'])->findOrFail($id);
             return $this->sendResponse(
                 new AlertResource($alert),
-                'Avís/alarma recuperat amb èxit'
+                'Avís/alarma recuperat ambèxit'
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return $this->sendError(
@@ -171,7 +170,7 @@ class AlertsController extends BaseController
     public function update(UpdateAlertRequest $request, $id)
     {
         try {
-            $alert = Alert::findOrFail($id);
+            $alert = Aviso::findOrFail($id);
             $validated = $request->validated();
             
             // Si se está cambiando el estado a "resolved", registrar la fecha de resolución
@@ -214,7 +213,7 @@ class AlertsController extends BaseController
     public function destroy($id)
     {
         try {
-            $alert = Alert::findOrFail($id);
+            $alert = Aviso::findOrFail($id);
             $alert->delete();
             return $this->sendResponse(
                 null,

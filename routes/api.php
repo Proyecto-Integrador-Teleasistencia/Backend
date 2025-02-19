@@ -19,42 +19,42 @@ Route::middleware('api')->group(function () {
 
     // Rutas protegidas que requieren autenticación
     Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('user', [AuthController::class, 'user']);
-    
-    // Patient Contacts
-    Route::get('patients/{patient}/contacts', [ContactsController::class, 'getPatientContacts']);
-    Route::post('patients/{patient}/contacts', [ContactsController::class, 'addPatientContact']);
-    Route::put('contacts/{contact}', [ContactsController::class, 'update']);
-    Route::delete('contacts/{contact}', [ContactsController::class, 'destroy']);
-    
-    // Patient Calls
-    Route::get('patients/{patient}/calls', [CallsController::class, 'getPatientCalls']);
-    
-    // Zones
-    Route::get('zones', [ZonesController::class, 'index']);
-    Route::get('zones/{zone}', [ZonesController::class, 'show']);
-    Route::get('zones/{zone}/patients', [ZonesController::class, 'getZonePatients']);
-    Route::get('zones/{zone}/operators', [ZonesController::class, 'getZoneOperators']);
-    
-    // Reports
-    Route::get('reports/emergencies', [ReportsController::class, 'emergencies']);
-    Route::get('reports/patients', [ReportsController::class, 'patients']);
-    Route::get('reports/scheduled-calls', [ReportsController::class, 'scheduledCalls']);
-    Route::get('reports/done-calls', [ReportsController::class, 'doneCalls']);
-    Route::get('reports/patient-history/{patient}', [ReportsController::class, 'patientHistory']);
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::get('user', [AuthController::class, 'user']);
+        
+        // Patient Contacts
+        Route::get('pacientes/{patient}/contactos', [ContactsController::class, 'getPatientContacts']);
+        Route::post('pacientes/{patient}/contactos', [ContactsController::class, 'addPatientContact']);
+        Route::put('contactos/{contact}', [ContactsController::class, 'update']);
+        Route::delete('contactos/{contact}', [ContactsController::class, 'destroy']);
+        
+        // Patient Calls
+        Route::get('pacientes/{patient}/llamadas', [CallsController::class, 'getPatientCalls']);
+        
+        // Zones
+        Route::get('zonas', [ZonesController::class, 'index']);
+        Route::get('zonas/{zona}', [ZonesController::class, 'show']);
+        Route::get('zonas/{zona}/pacientes', [ZonesController::class, 'getZonePatients']);
+        Route::get('zonas/{zona}/operadores', [ZonesController::class, 'getZoneOperators']);
+        
+        // Reports
+        Route::get('reports/emergencias', [ReportsController::class, 'emergencies']);
+        Route::get('reports/pacientes', [ReportsController::class, 'patients']);
+        Route::get('reports/llamadas-programadas', [ReportsController::class, 'scheduledCalls']);
+        Route::get('reports/llamadas-realizadas', [ReportsController::class, 'doneCalls']);
+        Route::get('reports/historial-paciente/{patient}', [ReportsController::class, 'patientHistory']);
 
-    // Users
-    Route::get('users', [OperatorsController::class, 'index']);
-    Route::get('users/{user}', [OperatorsController::class, 'show']);
-    
-    Route::apiResource('alerts', AlertsController::class);
-    Route::apiResource('calls', CallsController::class);
-    Route::apiResource('categories', CategoriesController::class);
-    Route::apiResource('contacts', ContactsController::class);
-    Route::apiResource('operators', OperatorsController::class);
-    Route::apiResource('patients', PatientsController::class);
-        Route::apiResource('subcategories', SubcategoriesController::class);
-        Route::apiResource('zones', ZonesController::class);
+        // Users
+        Route::get('usuarios', [OperatorsController::class, 'index']);
+        Route::get('usuarios/{user}', [OperatorsController::class, 'show']);
+        
+        Route::apiResource('avisos', AlertsController::class);
+        Route::apiResource('llamadas', CallsController::class);
+        Route::apiResource('categorias', CategoriesController::class);
+        Route::apiResource('contactos', ContactsController::class);
+        Route::apiResource('operadores', OperatorsController::class);
+        Route::apiResource('pacientes', PatientsController::class);
+        Route::apiResource('subcategorias', SubcategoriesController::class);
+        Route::apiResource('zonas', ZonesController::class);
     });
 });

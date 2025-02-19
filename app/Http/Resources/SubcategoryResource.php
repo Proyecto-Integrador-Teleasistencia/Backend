@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ContactResource extends JsonResource
+class SubcategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,14 +17,7 @@ class ContactResource extends JsonResource
         return [
             'id' => $this->id,
             'nombre' => $this->nombre,
-            'apellido' => $this->apellido,
-            'telefono' => $this->telefono,
-            'relacion' => $this->relacion,
-            'direccion' => $this->direccion,
-            'nivel_prioridad' => $this->nivel_prioridad,
-            'disponibilidad' => $this->disponibilidad,
-            'tiene_llaves' => $this->tiene_llaves,
-            'paciente' => new PatientResource($this->whenLoaded('paciente')),
+            'categoria_id' => new CategoryResource($this->whenLoaded('categoria')),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];

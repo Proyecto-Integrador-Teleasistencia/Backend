@@ -16,14 +16,14 @@ class ZoneResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'active' => $this->active,
-            'status_text' => $this->status_text,
-            'operator_count' => $this->operator_count,
-            'patients_count' => $this->whenCounted('patients'),
-            'operators' => UserResource::collection($this->whenLoaded('operators')),
-            'patients' => PatientResource::collection($this->whenLoaded('patients')),
+            'nombre' => $this->nombre,
+            'codigo' => $this->codigo,
+            'activa' => $this->activa,
+            'estado_texto' => $this->estado_texto,
+            'numero_operadores' => $this->numero_operadores,
+            'numero_pacientes' => $this->whenCounted('pacientes'),
+            'operadores' => UserResource::collection($this->whenLoaded('operator')),
+            'pacientes' => PatientResource::collection($this->whenLoaded('pacientes')),
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];

@@ -15,19 +15,23 @@ class UpdateZoneRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('zones')->ignore($this->zone)],
-            'description' => 'nullable|string',
-            'active' => 'sometimes|boolean',
+            'nombre' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('zonas')->ignore($this->zona)],
+            'codigo' => ['sometimes', 'required', 'string', 'max:50', Rule::unique('zonas')->ignore($this->zona)],
+            'activa' => 'sometimes|boolean',
+            'estado_texto' => 'nullable|string',
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => 'El nombre es obligatorio',
-            'name.max' => 'El nombre no puede tener más de 255 caracteres',
-            'name.unique' => 'Ya existe una zona con este nombre',
-            'active.boolean' => 'El campo activo debe ser verdadero o falso',
+            'nombre.required' => 'El nombre es obligatorio',
+            'nombre.max' => 'El nombre no puede tener más de 255 caracteres',
+            'nombre.unique' => 'Ya existe una zona con este nombre',
+            'codigo.required' => 'El código es obligatorio',
+            'codigo.max' => 'El código no puede tener más de 50 caracteres',
+            'codigo.unique' => 'Ya existe una zona con este código',
+            'activa.boolean' => 'El campo activo debe ser verdadero o falso',
         ];
     }
 }
