@@ -84,7 +84,7 @@ class Paciente extends Model
 
     public function contactos(): HasMany
     {
-        return $this->hasMany(Contacto::class)->orderBy('prioridad');
+        return $this->hasMany(Contacto::class)->orderBy('nivel_prioridad');
     }
 
     public function llamadas(): HasMany

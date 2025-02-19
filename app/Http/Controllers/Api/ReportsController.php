@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
-use App\Models\Alert;
-use App\Models\Call;
-use App\Models\Patient;
+use App\Models\Aviso;
+use App\Models\Llamada;
+use App\Models\Paciente;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +46,7 @@ class ReportsController extends BaseController
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth());
         $endDate = $request->input('end_date', Carbon::now());
 
-        $emergencies = Alert::with(['patient', 'operator'])
+        $emergencies = Aviso::with(['paciente', 'operador'])
             ->where('type', 'alarm')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
@@ -70,16 +70,41 @@ class ReportsController extends BaseController
      *     )
      * )
      */
-    public function patients()
+    public function patients($id)
     {
-        $patients = Patient::with(['zone', 'contacts'])
-            ->orderBy('surname')
-            ->paginate(50);
+        try {
+            $patient = Paciente::with(['zona', 'contactos'])
+                ->findOrFail($id);
 
-        return $this->sendResponse(
-            PatientResource::collection($patients),
-            'Llistat de pacients recuperat amb èxit'
-        );
+            $pdf = \PDF::loadView('reports.patient', compact('patient'));
+            $pdf->setPaper('a4');
+
+            $filename = 'informe_pacientes_' . now()->format('Y-m-d_His') . '.pdf';
+            
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            return $this->sendError('Error al generar el informe de pacientes', $e->getMessage());
+        }
+    }
+
+    public function getAllInformes()
+    {
+        try {
+            $patients = Paciente::with(['zona', 'contactos'])->get();
+            $pdfs = [];
+
+            foreach ($patients as $patient) {
+                $pdf = \PDF::loadView('reports.patient', compact('patient'));
+                $pdf->setPaper('a4');
+
+                $filename = 'informe_pacientes_' . $patient->id . '_' . now()->format('Y-m-d_His') . '.pdf';
+                $pdfs[] = $pdf->stream($filename);
+            }
+
+            return $this->sendResponse($pdfs, 'Llista d\'informes de pacients generats amb èxit');
+        } catch (\Exception $e) {
+            return $this->sendError('Error al generar la llista d\'informes de pacients', $e->getMessage());
+        }
     }
 
     /**
@@ -105,7 +130,7 @@ class ReportsController extends BaseController
     {
         $date = $request->input('date', Carbon::today());
         
-        $calls = Call::with(['patient', 'operator'])
+        $calls = Llamada::with(['paciente', 'operador'])
             ->where('status', 'scheduled')
             ->whereDate('scheduled_for', $date)
             ->orderBy('scheduled_for')
@@ -140,7 +165,7 @@ class ReportsController extends BaseController
     {
         $date = $request->input('date', Carbon::today());
         
-        $calls = Call::with(['patient', 'operator'])
+        $calls = Llamada::with(['paciente', 'operador'])
             ->where('status', 'completed')
             ->whereDate('completed_at', $date)
             ->orderBy('completed_at', 'desc')
@@ -189,10 +214,10 @@ class ReportsController extends BaseController
         $startDate = $request->input('start_date', Carbon::now()->subMonths(3));
         $endDate = $request->input('end_date', Carbon::now());
 
-        $patient = Patient::findOrFail($patientId);
+        $patient = Paciente::findOrFail($patientId);
         
-        $calls = $patient->calls()
-            ->with(['operator', 'category'])
+        $calls = $patient->llamadas()
+            ->with(['operador', 'categoria'])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
             ->get();

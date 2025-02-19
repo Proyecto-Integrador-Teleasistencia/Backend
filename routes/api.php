@@ -30,6 +30,9 @@ Route::middleware('api')->group(function () {
         
         // Patient Calls
         Route::get('pacientes/{patient}/llamadas', [CallsController::class, 'getPatientCalls']);
+
+        // Paciente por zonas
+        Route::get('pacientes/zonas/{zone}', [PatientsController::class, 'getPatientsByZones']);
         
         // Zones
         Route::get('zonas', [ZonesController::class, 'index']);
@@ -39,7 +42,7 @@ Route::middleware('api')->group(function () {
         
         // Reports
         Route::get('reports/emergencias', [ReportsController::class, 'emergencies']);
-        Route::get('reports/pacientes', [ReportsController::class, 'patients']);
+        Route::get('reports/pacientes/{patient}', [ReportsController::class, 'patients']);
         Route::get('reports/llamadas-programadas', [ReportsController::class, 'scheduledCalls']);
         Route::get('reports/llamadas-realizadas', [ReportsController::class, 'doneCalls']);
         Route::get('reports/historial-paciente/{patient}', [ReportsController::class, 'patientHistory']);
