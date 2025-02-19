@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\PatientsController;
 use App\Http\Controllers\Api\ReportsController;
 use App\Http\Controllers\Api\SubcategoriesController;
 use App\Http\Controllers\Api\ZonesController;
+use App\Http\Controllers\Api\IncidentsController;
 
 Route::middleware('api')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -59,6 +60,8 @@ Route::middleware('api')->group(function () {
         Route::apiResource('pacientes', PatientsController::class);
         Route::apiResource('subcategorias', SubcategoriesController::class);
         Route::apiResource('zonas', ZonesController::class);
+        Route::apiResource('incidencias', IncidentsController::class);
+        Route::get('pacientes/{patient}/incidencias', [IncidentsController::class, 'getPatientIncidents']);
         // Route::apiResource();
     });
 });

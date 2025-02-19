@@ -58,6 +58,6 @@ class PatientsController extends BaseController
     public function getPatientsByZones($zoneId)
     {
         $patients = Paciente::where('zona_id', $zoneId)->get();
-        return $this->sendResponse($patients, 'Pacients recuperats ambèxit');
+        return $this->sendResponse(PatientResource::collection($patients), 'Pacients recuperats ambèxit');
     }
 }
