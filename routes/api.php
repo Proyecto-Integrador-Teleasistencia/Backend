@@ -61,7 +61,7 @@ Route::middleware('api')->group(function () {
         Route::apiResource('subcategorias', SubcategoriesController::class);
         Route::apiResource('zonas', ZonesController::class);
         Route::apiResource('incidencias', IncidentsController::class);
-        Route::get('pacientes/{patient}/incidencias', [IncidentsController::class, 'getPatientIncidents']);
+        Route::get('incidencias/paciente/{patient}', [IncidentsController::class, 'getPatientIncidents']);
         // Route::apiResource();
     });
 });
