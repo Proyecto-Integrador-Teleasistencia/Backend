@@ -11,6 +11,7 @@ use Database\Seeders\CategoriesTableSeeder;
 use Database\Seeders\SubcategoriesTableSeeder;
 use Database\Seeders\AlertsTableSeeder;
 use Database\Seeders\CallsTableSeeder;
+use Database\Seeders\IncidenciasTableSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
             SubcategoriesTableSeeder::class,
             AlertsTableSeeder::class,
             CallsTableSeeder::class,
+            IncidenciasTableSeeder::class,
         ]);
 
         // Create default admin user
