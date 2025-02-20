@@ -13,16 +13,10 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = [
-            ['nombre' => 'Avisos'],
-            ['nombre' => 'Seguimiento según protocolos'],
-            ['nombre' => 'Agendas de ausencia domiciliaria y retorno'],
-            ['nombre' => 'Atención de emergencias'],
-            ['nombre' => 'Comunicaciones no urgentes']
-        ];
-
-        foreach ($categories as $category) {
-            Categoria::create($category);
-        }
+        Categoria::create(['nombre' => 'Avisos']);
+        Categoria::create(['nombre' => 'Seguimiento según protocolos']);
+        Categoria::create(['nombre' => 'Agendas de ausencia domiciliaria y retorno']);
+        Categoria::create(['nombre' => 'Atención de emergencias']);
+        Categoria::create(['nombre' => 'Comunicaciones no urgentes']);
     }
 }

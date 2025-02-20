@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incidencias', function (Blueprint $table) {
             $table->id();
             $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
-            $table->longText('descripcion');
+            $table->longText('descripcion')->nullable();
             $table->timestamps();
         });
     }

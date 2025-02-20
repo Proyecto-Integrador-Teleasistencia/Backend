@@ -25,11 +25,19 @@ class PatientsController extends BaseController
 
     public function store(StorePatientRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $patient = Paciente::create($validated);
+            if ($validated === null) {
+                return $this->sendError('Error al crear el paciente', 'No se ha podido crear el paciente', 422);
+            }
 
-        return $this->sendResponse(new PatientResource($patient), 'Paciente creat ambèxit', 201);
+            $patient = Paciente::create($validated);
+
+            return $this->sendResponse(new PatientResource($patient), 'Paciente creat ambèxit', 201);
+        } catch (\Exception $e) {
+            return $this->sendError('Error al crear el paciente', $e->getMessage(), 422);
+        }
     }
 
     public function show($id)

@@ -23,7 +23,7 @@ class StoreIncidentRequest extends FormRequest
     {
         return [
             'paciente_id' => 'required|exists:pacientes,id',
-            'descripcion' => 'required|string',
+            'descripcion' => 'nullable|string',
         ];
     }
 
@@ -37,7 +37,18 @@ class StoreIncidentRequest extends FormRequest
         return [
             'paciente_id.required' => 'El ID del paciente es obligatorio',
             'paciente_id.exists' => 'El paciente seleccionado no existe',
-            'descripcion.required' => 'La descripción es obligatoria',
+            'descripcion.string' => 'La descripci n debe ser una cadena',
         ];
+    }
+
+    /**
+     * Get the proper failed validation response for the request.
+     *
+     * @param  array<string, string>  $errors
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function response(array $errors): \Symfony\Component\HttpFoundation\Response
+    {
+        return response()->json(['success' => false, 'message' => 'Error creant la incid ncia'], 422);
     }
 }
