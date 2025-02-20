@@ -16,9 +16,9 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'subcategories' => CategoryResource::collection($this->whenLoaded('subcategories')),
+            'nombre' => $this->nombre,
+            'descripcion' => $this->descripcion,
+            'subcategorias' => SubcategoryResource::collection($this->whenLoaded('subcategorias')),
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
