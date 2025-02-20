@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Resources\PatientResource;
+use App\Http\Resources\ContactResource;
 use App\Models\Paciente;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
@@ -56,11 +57,24 @@ class PatientsController extends BaseController
         return $this->sendResponse(new PatientResource($patient), 'Paciente actualitzat ambèxit', 200);
     }
 
-    public function destroy(Paciente $patient)
+    public function destroy($id)
     {
-        $patient->delete();
-
-        return $this->sendResponse([], 'Paciente eliminado correctamente', 200);
+        try {
+            
+            $patient = Paciente::findOrFail($id);
+            
+            // Eliminar registros relacionados manualmente por si acaso
+            $patient->contactos()->delete();
+            $patient->llamadas()->delete();
+            
+            // Eliminar el paciente
+            $patient->delete();
+            
+            return $this->sendResponse([], 'Paciente eliminado correctamente', 200);
+            
+        } catch (\Exception $e) {
+            return $this->sendError('Error al eliminar el paciente', [$e->getMessage()], 500);
+        }
     }
 
     public function getPatientsByZones($zoneId)

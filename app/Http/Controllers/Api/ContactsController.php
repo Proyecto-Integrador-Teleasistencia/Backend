@@ -38,12 +38,17 @@ class ContactsController extends BaseController
      *     )
      * )
      */
-    public function getPatientContacts($patientId)
-    {
-        $patient = Paciente::findOrFail($patientId);
-        $contacts = $patient->contacts()->get();
-        return $this->sendResponse($contacts, 'Contactes del pacient recuperats ambèxit');
-    }
+
+     public function getPatientContacts($patientId)
+     {
+         try {
+             $patient = Paciente::findOrFail($patientId);
+             $contacts = $patient->contactos()->get();
+             return $this->sendResponse(ContactResource::collection($contacts), 'Contactes del pacient recuperats ambèxit');
+         } catch (\Exception $e) {
+             return $this->sendError('Error al recuperar els contactes del pacient', [], 500);
+         }
+     }
 
     /**
      * Store a newly created resource in storage.

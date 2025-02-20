@@ -73,5 +73,8 @@ Route::middleware('api')->group(function () {
         Route::get('llamadas/tipo/{type}/teleoperador/{operator}', [CallsController::class, 'getCallsByOperatorAndType']);
         Route::get('llamadas/tipo/{type}/teleoperador/{operator}/paciente/{patient}', [CallsController::class, 'getCallsByOperatorPatientAndType']);
 
+        // Contactos por id del paciente
+        Route::get('contactos/paciente/{patient}', [ContactsController::class, 'getPatientContacts']);
+
     });
 });
