@@ -155,7 +155,7 @@ class CallsController extends BaseController
         }
     }
 
-    public function getCallsByPatientAndType($patientId, $type)
+    public function getCallsByPatientAndType($type, $patientId)
     {
         try {
             $patient = Paciente::findOrFail($patientId);
@@ -172,7 +172,7 @@ class CallsController extends BaseController
         }
     }
 
-    public function getCallsByOperatorAndType($operatorId, $type)
+    public function getCallsByOperatorAndType($type, $operatorId)
     {
         try {
             $calls = Llamada::where('operador_id', $operatorId)
@@ -189,7 +189,7 @@ class CallsController extends BaseController
         }
     }
 
-    public function getCallsByOperatorPatientAndType($operatorId, $patientId, $type)
+    public function getCallsByOperatorPatientAndType($type, $operatorId, $patientId)
     {
         try {
             $calls = Llamada::where('operador_id', $operatorId)
@@ -211,7 +211,7 @@ class CallsController extends BaseController
         try {
             $calls = Llamada::where('operador_id', $operatorId)
                 ->where('paciente_id', $patientId)
-                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->with(['paciente', 'categoria', 'subcategoria', 'operador'])
                 ->get();
 
             return $this->sendResponse(
