@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AdminMiddleware
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (!$request->user() || !$request->user()->is_admin) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'No autorizado. Solo administradores.'], 403);
+            }
+            return redirect()->route('dashboard')->with('error', 'No tienes permisos de administrador.');
+        }
+
+        return $next($request);
+    }
+}

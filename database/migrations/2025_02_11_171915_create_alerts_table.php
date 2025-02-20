@@ -15,6 +15,16 @@ return new class extends Migration
             $table->id();
             $table->enum('tipo', ['puntual', 'periodico']);
             $table->dateTime('fecha_hora');
+            $table->integer('dia_semana')->nullable()->comment('1-7, donde 1 es lunes. Solo para avisos periódicos');
+            $table->enum('tipo_aviso', [
+                'medicacion',
+                'especial',
+                'seguimiento_emergencia',
+                'seguimiento_dol',
+                'seguimiento_alta',
+                'ausencia_temporal',
+                'retorno'
+            ]);
             $table->text('descripcion')->nullable();
             $table->boolean('completado')->default(false);
             $table->dateTime('fecha_completado')->nullable();
@@ -26,6 +36,8 @@ return new class extends Migration
             // Indexar campos de búsqueda frecuente
             $table->index('fecha_hora');
             $table->index('tipo');
+            $table->index('tipo_aviso');
+            $table->index('dia_semana');
             $table->index('completado');
             $table->index(['categoria_id', 'paciente_id']);
             $table->index('operador_id');

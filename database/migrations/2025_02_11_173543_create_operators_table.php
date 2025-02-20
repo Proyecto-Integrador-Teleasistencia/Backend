@@ -16,13 +16,10 @@ return new class extends Migration
             $table->enum('role', ['admin', 'operator'])->default('operator');
             $table->date('fecha_contratacion')->nullable();
             $table->date('fecha_baja')->nullable();
-            $table->enum('turno', ['mañana', 'tarde', 'noche'])->nullable();
-            $table->enum('estado', ['active', 'inactive', 'on_leave'])->default('active');
             $table->foreignId('zona_id')->nullable()->constrained('zonas')->onDelete('set null');
             
             // Índices para búsquedas frecuentes
-            $table->index('estado');
-            $table->index('turno');
+            $table->index('role');
         });
     }
 
@@ -32,11 +29,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['estado']);
-            $table->dropIndex(['turno']);
+            $table->dropIndex(['role']);
             $table->dropColumn([
-                'turno',
-                'estado'
+                'telefono',
+                'role',
+                'fecha_contratacion',
+                'fecha_baja',
+                'zona_id'
             ]);
         });
     }

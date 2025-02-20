@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\IncidentsController;
 Route::middleware('api')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.redirect');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
 
     // Rutas protegidas que requieren autenticación
     Route::middleware(['auth:sanctum'])->group(function () {

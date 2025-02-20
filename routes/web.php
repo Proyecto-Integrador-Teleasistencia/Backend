@@ -17,12 +17,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Backend routes
-    Route::prefix('backend')->name('backend.')->group(function () {
+    Route::prefix('backend')->name('backend.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
         // Zones routes
         Route::resource('zonas', \App\Http\Controllers\Backend\ZonasController::class);
         
         // Operators routes
         Route::resource('operators', \App\Http\Controllers\Backend\OperatorsController::class);
+
+        // Dashboard routes
+        Route::get('dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        // Llamadas routes
+        Route::get('calls', function () {
+            return view('admin.calls.index');
+        })->name('calls.index');
     });
 });
 

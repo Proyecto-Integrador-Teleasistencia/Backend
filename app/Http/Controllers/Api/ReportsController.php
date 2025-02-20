@@ -47,7 +47,7 @@ class ReportsController extends BaseController
         $endDate = $request->input('end_date', Carbon::now());
 
         $emergencies = Aviso::with(['paciente', 'operador'])
-            ->where('type', 'alarm')
+            ->where('tipo', 'periodico')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -129,17 +129,40 @@ class ReportsController extends BaseController
     public function scheduledCalls(Request $request)
     {
         $date = $request->input('date', Carbon::today());
+        $type = $request->input('type');
+        $zoneId = $request->input('zone_id');
         
         $calls = Llamada::with(['paciente', 'operador'])
-            ->where('status', 'scheduled')
-            ->whereDate('scheduled_for', $date)
-            ->orderBy('scheduled_for')
+            ->where('status', 'planificada')
+            ->whereDate('scheduled_for', $date);
+
+        if ($type) {
+            $calls->where('tipo_llamada', $type);
+        }
+
+        if ($zoneId) {
+            $calls->whereHas('paciente', function ($query) use ($zoneId) {
+                $query->where('zona_id', $zoneId);
+            });
+        }
+
+        $calls = $calls->orderBy('scheduled_for')
             ->get();
 
-        return $this->sendResponse(
-            CallResource::collection($calls),
-            'Llistat de cridades previstes recuperat amb èxit'
-        );
+        try {
+            $pdfs = [];
+            foreach ($calls as $call) {
+                $pdf = \PDF::loadView('reports.scheduled_call', compact('call'));
+                $pdf->setPaper('a4');
+
+                $filename = 'informe_crida_' . $call->id . '_' . now()->format('Y-m-d_His') . '.pdf';
+                $pdfs[] = $pdf->stream($filename);
+            }
+
+            return $this->sendResponse($pdfs, 'Llistat de cridades previstes recuperat amb èxit');
+        } catch (\Exception $e) {
+            return $this->sendError('Error al generar el llistat de cridades previstes', $e->getMessage());
+        }
     }
 
     /**

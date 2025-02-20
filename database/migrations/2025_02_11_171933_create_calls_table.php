@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->foreignId('subcategoria_id')->constrained('subcategorias')->onDelete('cascade');
+            $table->foreignId('aviso_id')->nullable()->constrained('avisos')->onDelete('set null')->comment('Si la llamada está relacionada con un aviso específico');
             $table->timestamps();
             
             $table->index('fecha_hora');

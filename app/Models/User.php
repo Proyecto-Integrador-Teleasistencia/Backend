@@ -25,7 +25,8 @@ class User extends Authenticatable
         'telefono',
         'fecha_contratacion',
         'fecha_baja',
-        'password'
+        'password',
+        'is_admin'
     ];
 
     /**
