@@ -4,24 +4,19 @@ namespace App\Policies;
 
 use App\Models\Patient;
 use App\Models\User;
+use App\Policies\Traits\ChecksUserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PatientPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, ChecksUserRole;
 
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        // Los administradores pueden ver todos los pacientes
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        // Los operadores solo pueden ver la lista de pacientes
-        return $user->role === 'operator';
+        return $this->hasRole($user, ['admin', 'operator']);
     }
 
     /**
@@ -29,17 +24,7 @@ class PatientPolicy
      */
     public function view(User $user, Patient $patient): bool
     {
-        // Los administradores pueden ver cualquier paciente
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        // Los operadores solo pueden ver pacientes de sus zonas asignadas
-        if ($user->role === 'operator') {
-            return $user->zones->contains($patient->zone_id);
-        }
-
-        return false;
+        return $this->canManageZone($user, $patient->zone_id);
     }
 
     /**
@@ -47,8 +32,39 @@ class PatientPolicy
      */
     public function create(User $user): bool
     {
-        // Solo los administradores pueden crear pacientes
-        return $user->role === 'admin';
+        return $this->isAdmin($user);
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Patient $patient): bool
+    {
+        return $this->canManageZone($user, $patient->zone_id);
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Patient $patient): bool
+    {
+        return $this->isAdmin($user);
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, Patient $patient): bool
+    {
+        return $this->isAdmin($user);
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, Patient $patient): bool
+    {
+        return $this->isAdmin($user);
     }
 
     /**

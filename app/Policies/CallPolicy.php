@@ -4,19 +4,20 @@ namespace App\Policies;
 
 use App\Models\Call;
 use App\Models\User;
+use App\Models\Patient;
+use App\Policies\Traits\ChecksUserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CallPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, ChecksUserRole;
 
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        // Los administradores y operadores pueden ver llamadas
-        return in_array($user->role, ['admin', 'operator']);
+        return $this->hasRole($user, ['admin', 'operator']);
     }
 
     /**
@@ -24,17 +25,7 @@ class CallPolicy
      */
     public function view(User $user, Call $call): bool
     {
-        // Los administradores pueden ver cualquier llamada
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        // Los operadores solo pueden ver llamadas de sus zonas asignadas
-        if ($user->role === 'operator') {
-            return $user->zones->contains($call->patient->zone_id);
-        }
-
-        return false;
+        return $this->canManageZone($user, $call->patient->zone_id);
     }
 
     /**
@@ -42,26 +33,39 @@ class CallPolicy
      */
     public function create(User $user): bool
     {
-        // Solo operadores y administradores pueden crear llamadas
-        return in_array($user->role, ['admin', 'operator']);
+        return $this->hasRole($user, ['admin', 'operator']);
     }
 
     /**
      * Determine whether the user can make outgoing calls.
      */
-    public function makeOutgoingCall(User $user, Call $call): bool
+    public function makeOutgoingCall(User $user, Patient|Call $target): bool
     {
-        // Los administradores pueden hacer llamadas salientes a cualquier zona
-        if ($user->role === 'admin') {
+        if ($this->isAdmin($user)) {
             return true;
         }
 
-        // Los operadores solo pueden hacer llamadas salientes a pacientes de sus zonas
-        if ($user->role === 'operator' && $call->type === 'outgoing') {
-            return $user->zones->contains($call->patient->zone_id);
+        if ($this->isOperator($user)) {
+            $zoneId = $target instanceof Patient ? $target->zone_id : $target->patient->zone_id;
+            
+            // Si es una llamada, verificar que sea saliente
+            if ($target instanceof Call && $target->type !== 'outgoing') {
+                return false;
+            }
+            
+            return $user->zones->contains($zoneId);
         }
 
         return false;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Call $call): bool
+    {
+        return $this->canManageZone($user, $call->patient->zone_id);
+    }
     }
 
     /**
