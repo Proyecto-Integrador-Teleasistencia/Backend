@@ -69,9 +69,9 @@ Route::middleware('api')->group(function () {
         Route::get('llamadas/paciente/{patient}', [CallsController::class, 'getPatientCalls']);
         Route::get('llamadas/tipo/{type}', [CallsController::class, 'getCallsByType']);
         Route::get('llamadas/teleoperador/{operator}/paciente/{patient}', [CallsController::class, 'getCallsByOperatorPatient']);
-        Route::get('llamadas/paciente/{patient}/tipo/{type}', [CallsController::class, 'getCallsByPatientAndType']);
-        Route::get('llamadas/teleoperador/{operator}/tipo/{type}', [CallsController::class, 'getCallsByOperatorAndType']);
-        Route::get('llamadas/teleoperador/{operator}/paciente/{patient}/tipo/{type}', [CallsController::class, 'getCallsByOperatorPatientAndType']);
+        Route::get('llamadas/tipo/{type}/paciente/{patient}', [CallsController::class, 'getCallsByPatientAndType']);
+        Route::get('llamadas/tipo/{type}/teleoperador/{operator}', [CallsController::class, 'getCallsByOperatorAndType']);
+        Route::get('llamadas/tipo/{type}/teleoperador/{operator}/paciente/{patient}', [CallsController::class, 'getCallsByOperatorPatientAndType']);
 
     });
 });
