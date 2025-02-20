@@ -108,15 +108,103 @@ class CallsController extends BaseController
      */
     public function getPatientCalls($patientId)
     {
-        $patient = Patient::findOrFail($patientId);
-        $calls = $patient->calls()
-            ->with(['operator', 'category', 'alert'])
-            ->get();
-            
-        return $this->sendResponse(
-            CallResource::collection($calls),
-            'Cridades del pacient recuperades amb èxit'
-        );
+        try {
+            $patient = Paciente::findOrFail($patientId);
+            $calls = $patient->llamadas()
+                ->with(['operador', 'categoria', 'subcategoria', 'paciente'])
+                ->get();
+                
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades del pacient recuperades ambèxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides del pacient', [], 500);
+        }
+    }
+
+    public function getOperatorCalls($operatorId)
+    {
+        try {
+            $calls = Llamada::where('operador_id', $operatorId)
+                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->get();
+
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades del teleoperador recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides del teleoperador', [], 500);
+        }
+    }
+
+    public function getCallsByType($type)
+    {
+        try {
+            $calls = Llamada::where('tipo_llamada', $type)
+                ->with(['paciente', 'operador', 'categoria', 'subcategoria'])
+                ->get();
+
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades del tipus ' . $type . ' recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides per tipus', [], 500);
+        }
+    }
+
+    public function getCallsByPatientAndType($patientId, $type)
+    {
+        try {
+            $patient = Paciente::findOrFail($patientId);
+            $calls = $patient->llamadas()
+                ->where('tipo_llamada', $type)
+                ->with(['operador', 'categoria', 'subcategoria', 'paciente'])
+                ->get();
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades del pacient per tipus recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides del pacient per tipus', [], 500);
+        }
+    }
+
+    public function getCallsByOperatorAndType($operatorId, $type)
+    {
+        try {
+            $calls = Llamada::where('operador_id', $operatorId)
+                ->where('tipo_llamada', $type)
+                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->get();
+
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades del teleoperador per tipus recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides del teleoperador per tipus', [], 500);
+        }
+    }
+
+    public function getCallsByOperatorPatientAndType($operatorId, $patientId, $type)
+    {
+        try {
+            $calls = Llamada::where('operador_id', $operatorId)
+                ->where('paciente_id', $patientId)
+                ->where('tipo_llamada', $type)
+                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->get();
+
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades filtrades per teleoperador, pacient i tipus recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides filtrades', [], 500);
+        }
     }
 
     /**

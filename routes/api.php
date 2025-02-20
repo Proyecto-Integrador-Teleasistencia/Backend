@@ -63,5 +63,14 @@ Route::middleware('api')->group(function () {
         Route::apiResource('incidencias', IncidentsController::class);
         Route::get('incidencias/paciente/{patient}', [IncidentsController::class, 'getPatientIncidents']);
         // Route::apiResource();
+
+        // Llamadas del filtro
+        Route::get('llamadas/teleoperador/{operator}', [CallsController::class, 'getOperatorCalls']);
+        Route::get('llamadas/paciente/{patient}', [CallsController::class, 'getPatientCalls']);
+        Route::get('llamadas/tipo/{type}', [CallsController::class, 'getCallsByType']);
+        Route::get('llamadas/paciente/{patient}/tipo/{type}', [CallsController::class, 'getCallsByPatientAndType']);
+        Route::get('llamadas/teleoperador/{operator}/tipo/{type}', [CallsController::class, 'getCallsByOperatorAndType']);
+        Route::get('llamadas/teleoperador/{operator}/paciente/{patient}/tipo/{type}', [CallsController::class, 'getCallsByOperatorPatientAndType']);
+
     });
 });
