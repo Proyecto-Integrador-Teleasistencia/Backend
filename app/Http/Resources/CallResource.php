@@ -26,6 +26,7 @@ class CallResource extends JsonResource
             'estado' => $this->estado,
             'motivo' => $this->motivo,
             'descripcion' => $this->descripcion,
+            'planificada' => $this->planificada,     
             'operador_id' => new UserResource($this->whenLoaded('operador')),
             'paciente_id' => new PatientResource($this->whenLoaded('paciente')),
             'categoria_id' => new CategoryResource($this->whenLoaded('categoria')),
