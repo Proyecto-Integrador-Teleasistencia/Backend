@@ -195,7 +195,7 @@ class CallsController extends BaseController
             $calls = Llamada::where('operador_id', $operatorId)
                 ->where('paciente_id', $patientId)
                 ->where('tipo_llamada', $type)
-                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->with(['paciente', 'categoria', 'subcategoria', 'operador'])
                 ->get();
 
             return $this->sendResponse(
