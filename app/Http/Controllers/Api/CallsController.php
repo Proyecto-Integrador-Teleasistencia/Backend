@@ -127,7 +127,7 @@ class CallsController extends BaseController
     {
         try {
             $calls = Llamada::where('operador_id', $operatorId)
-                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->with(['paciente', 'categoria', 'subcategoria', 'operador'])
                 ->get();
 
             return $this->sendResponse(
