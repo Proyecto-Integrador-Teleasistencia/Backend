@@ -207,6 +207,22 @@ class CallsController extends BaseController
         }
     }
 
+    public function getCallsByOperatorPatient($operatorId, $patientId) {
+        try {
+            $calls = Llamada::where('operador_id', $operatorId)
+                ->where('paciente_id', $patientId)
+                ->with(['paciente', 'categoria', 'subcategoria'])
+                ->get();
+
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades filtrades per teleoperador i pacient recuperades ambèxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides filtrades', [], 500);
+        }
+    }
+
     /**
      * @OA\Post(
      *     path="/api/calls",
