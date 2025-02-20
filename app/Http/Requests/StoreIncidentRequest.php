@@ -49,6 +49,6 @@ class StoreIncidentRequest extends FormRequest
      */
     public function response(array $errors): \Symfony\Component\HttpFoundation\Response
     {
-        return response()->json(['success' => false, 'message' => 'Error creant la incid ncia'], 422);
+        return response()->json(['success' => false, 'message' => 'Error creant la incidència'], 422);
     }
 }

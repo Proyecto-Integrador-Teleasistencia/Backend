@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('estado', ['completada', 'perdida', 'en_curso'])->default('en_curso');
             $table->string('motivo');
             $table->text('descripcion')->nullable();
+            $table->boolean('planificada')->default(true);
             $table->foreignId('operador_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
