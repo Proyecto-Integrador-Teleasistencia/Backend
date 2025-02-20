@@ -67,8 +67,8 @@ class CallsController extends BaseController
                 });
             }
 
-            $calls = $query->paginate(10);
-            
+            $calls = $query->get();
+
             if ($calls->isEmpty()) {
                 return $this->sendResponse(
                     [],
@@ -111,7 +111,7 @@ class CallsController extends BaseController
         $patient = Patient::findOrFail($patientId);
         $calls = $patient->calls()
             ->with(['operator', 'category', 'alert'])
-            ->paginate(10);
+            ->get();
             
         return $this->sendResponse(
             CallResource::collection($calls),

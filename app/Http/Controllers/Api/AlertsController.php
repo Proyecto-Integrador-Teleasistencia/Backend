@@ -56,7 +56,7 @@ class AlertsController extends BaseController
                 $query->where('periocidad', $request->periocidad);
             }
 
-            $alerts = $query->latest()->paginate(10);
+            $alerts = $query->latest()->get();
 
             if ($alerts->isEmpty()) {
                 return $this->sendResponse(

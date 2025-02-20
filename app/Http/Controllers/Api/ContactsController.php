@@ -17,7 +17,7 @@ class ContactsController extends BaseController
      */
     public function index()
     {
-        return $this->sendResponse(Contacto::with('paciente')->paginate(10), 'Contacts recuperats ambèxit', 200);
+        return $this->sendResponse(Contacto::with('paciente')->get(), 'Contacts recuperats ambèxit', 200);
     }
 
     /**
@@ -41,7 +41,7 @@ class ContactsController extends BaseController
     public function getPatientContacts($patientId)
     {
         $patient = Paciente::findOrFail($patientId);
-        $contacts = $patient->contacts()->paginate(10);
+        $contacts = $patient->contacts()->get();
         return $this->sendResponse($contacts, 'Contactes del pacient recuperats ambèxit');
     }
 

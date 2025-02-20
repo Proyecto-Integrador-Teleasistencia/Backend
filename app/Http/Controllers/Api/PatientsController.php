@@ -19,7 +19,7 @@ class PatientsController extends BaseController
             $query->where('zona_id', $request->zona_id);
         }
 
-        $patients = $query->paginate(10);
+        $patients = $query->get();
         return $this->sendResponse(PatientResource::collection($patients), 'Pacients recuperats ambèxit');
     }
 

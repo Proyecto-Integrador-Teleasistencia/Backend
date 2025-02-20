@@ -17,7 +17,7 @@ class OperatorsController extends BaseController
     {
         $users = User::where('role', 'operator')
             ->with('zonas')
-            ->paginate(10);
+            ->get();
         return $this->sendResponse(
             UserResource::collection($users),
             'Llista d\'operadors recuperada amb èxit'
