@@ -20,35 +20,20 @@ class ContactPersonsTableSeeder extends Seeder
             [
                 'paciente_id' => 1,
                 'nombre' => 'María Pastor',
-                'apellido' => 'Fernández',
                 'telefono' => '612345678',
                 'relacion' => 'Hermana',
-                'direccion' => 'Calle Principal 123',
-                'disponibilidad' => 'Mañanas y tardes',
-                'tiene_llaves' => true,
-                'nivel_prioridad' => 1
             ],
             [
                 'paciente_id' => 1,
                 'nombre' => 'Pedro Pastor',
-                'apellido' => 'Gómez',
                 'telefono' => '622345678',
                 'relacion' => 'Padre',
-                'direccion' => 'Avenida Central 45',
-                'disponibilidad' => 'Tardes',
-                'tiene_llaves' => false,
-                'nivel_prioridad' => 2
             ],
             [
                 'paciente_id' => 2,
                 'nombre' => 'Laura Cortés',
-                'apellido' => 'Martínez',
                 'telefono' => '632345678',
                 'relacion' => 'Esposa',
-                'direccion' => 'Plaza Mayor 78',
-                'disponibilidad' => '24h',
-                'tiene_llaves' => true,
-                'nivel_prioridad' => 1
             ]
         ]);
 
