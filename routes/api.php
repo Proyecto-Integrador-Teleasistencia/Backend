@@ -47,11 +47,14 @@ Route::middleware('api')->group(function () {
         Route::get('zonas/{zona}/operadores', [ZonesController::class, 'getZoneOperators']);
         
         // Reports
-        Route::get('reports/emergencias', [ReportsController::class, 'emergencies']);
-        Route::get('reports/pacientes/{patient}', [ReportsController::class, 'patients']);
-        Route::get('reports/llamadas-programadas', [ReportsController::class, 'scheduledCalls']);
-        Route::get('reports/llamadas-realizadas', [ReportsController::class, 'doneCalls']);
-        Route::get('reports/historial-paciente/{patient}', [ReportsController::class, 'patientHistory']);
+        Route::prefix('reports')->group(function () {
+            Route::get('emergencies', [ReportsController::class, 'emergencies']);
+            Route::get('patients/{id}', [ReportsController::class, 'patients']);
+            Route::get('all-patients', [ReportsController::class, 'getAllInformes']);
+            Route::get('scheduled-calls', [ReportsController::class, 'scheduledCalls']);
+            Route::get('done-calls', [ReportsController::class, 'doneCalls']);
+            Route::get('patient-history/{id}', [ReportsController::class, 'patientHistory']);
+        });
 
         // Users
         Route::get('usuarios', [OperatorsController::class, 'index']);

@@ -81,7 +81,7 @@ class ReportsController extends BaseController
 
             $filename = 'informe_pacientes_' . now()->format('Y-m-d_His') . '.pdf';
             
-            return $pdf->download($filename);
+            return $this->sendResponse($pdf, 'Informe de paciente recuperat ambèxit', 200);
         } catch (\Exception $e) {
             return $this->sendError('Error al generar el informe de pacientes', $e->getMessage());
         }
@@ -131,10 +131,11 @@ class ReportsController extends BaseController
         $date = $request->input('date', Carbon::today());
         $type = $request->input('type');
         $zoneId = $request->input('zone_id');
+        $format = $request->input('format', 'json'); // 'json', 'pdf', o 'csv'
         
         $calls = Llamada::with(['paciente', 'operador'])
-            ->where('status', 'planificada')
-            ->whereDate('scheduled_for', $date);
+            ->where('estado', 'planificada')
+            ->whereDate('fecha_hora', $date);
 
         if ($type) {
             $calls->where('tipo_llamada', $type);
@@ -159,6 +160,33 @@ class ReportsController extends BaseController
                 $pdfs[] = $pdf->stream($filename);
             }
 
+            if ($format === 'csv') {
+                $headers = [
+                    'Content-Type' => 'text/csv',
+                    'Content-Disposition' => 'attachment; filename=cridades_previstes_' . $date . '.csv',
+                ];
+                
+                $callback = function() use ($calls) {
+                    $file = fopen('php://output', 'w');
+                    fputcsv($file, ['ID', 'Pacient', 'Data Programada', 'Tipus', 'Estat', 'Operador']);
+                    
+                    foreach ($calls as $call) {
+                        fputcsv($file, [
+                            $call->id,
+                            $call->paciente->nombre . ' ' . $call->paciente->apellidos,
+                            $call->fecha_hora,
+                            $call->tipo_llamada,
+                            $call->estado,
+                            $call->operador ? $call->operador->name : 'No assignat'
+                        ]);
+                    }
+                    
+                    fclose($file);
+                };
+                
+                return $this->sendResponse($pdfs, 'Llistat de cridades previstes recuperat amb èxit');
+            }
+            
             return $this->sendResponse($pdfs, 'Llistat de cridades previstes recuperat amb èxit');
         } catch (\Exception $e) {
             return $this->sendError('Error al generar el llistat de cridades previstes', $e->getMessage());
@@ -187,17 +215,66 @@ class ReportsController extends BaseController
     public function doneCalls(Request $request)
     {
         $date = $request->input('date', Carbon::today());
+        $type = $request->input('type');
+        $zoneId = $request->input('zone_id');
+        $format = $request->input('format', 'json'); // 'json', 'pdf', o 'csv'
         
         $calls = Llamada::with(['paciente', 'operador'])
-            ->where('status', 'completed')
-            ->whereDate('completed_at', $date)
-            ->orderBy('completed_at', 'desc')
+            ->where('estado', 'completada')
+            ->whereDate('fecha_hora', $date);
+
+        if ($type) {
+            $calls->where('tipo_llamada', $type);
+        }
+
+        if ($zoneId) {
+            $calls->whereHas('paciente', function ($query) use ($zoneId) {
+                $query->where('zona_id', $zoneId);
+            });
+        }
+
+        $calls = $calls->orderBy('completed_at', 'desc')
             ->get();
 
-        return $this->sendResponse(
-            CallResource::collection($calls),
-            'Llistat de cridades realitzades recuperat amb èxit'
-        );
+        switch($format) {
+            case 'pdf':
+                $pdf = \PDF::loadView('reports.done_calls', compact('calls'));
+                return $this->sendResponse($pdf, 'Cridades realitzades recuperat ambèxit');
+            case 'csv':
+                $headers = [
+                    'Content-Type' => 'text/csv',
+                    'Content-Disposition' => 'attachment; filename=cridades_realitzades_' . $date . '.csv',
+                ];
+                
+                $callback = function() use ($calls) {
+                    $file = fopen('php://output', 'w');
+                    fputcsv($file, ['ID', 'Pacient', 'Data', 'Tipus', 'Estat', 'Operador']);
+                    
+                    foreach ($calls as $call) {
+                        fputcsv($file, [
+                            $call->id,
+                            $call->paciente->nombre . ' ' . $call->paciente->apellidos,
+                            $call->fecha_hora,
+                            $call->tipo_llamada,
+                            $call->estado,
+                            $call->operador->name
+                        ]);
+                    }
+                    
+                    fclose($file);
+                };
+                
+                return $this->sendResponse(
+                    $calls,
+                    'Llistat de cridades realitzades recuperat amb èxit'
+                );
+            
+            default:
+                return $this->sendResponse(
+                    CallResource::collection($calls),
+                    'Llistat de cridades realitzades recuperat amb èxit'
+                );
+        }
     }
 
     /**
