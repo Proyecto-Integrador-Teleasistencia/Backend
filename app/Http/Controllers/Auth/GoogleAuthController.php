@@ -20,7 +20,13 @@ class GoogleAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            if (!$request->token) {
+                return response()->json(['error' => 'Token no proporcionado'], 400);
+            }
+
+            $googleUser = Socialite::driver('google')
+                ->stateless()
+                ->userFromToken($request->token);
 
             // Buscar si existe el usuario con ese email
             $user = User::where('email', $googleUser->getEmail())->first();
