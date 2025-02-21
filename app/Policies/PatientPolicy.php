@@ -12,22 +12,6 @@ class PatientPolicy
     use HandlesAuthorization, ChecksUserRole;
 
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return $this->hasRole($user, ['admin', 'operator']);
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Patient $patient): bool
-    {
-        return $this->canManageZone($user, $patient->zone_id);
-    }
-
-    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool

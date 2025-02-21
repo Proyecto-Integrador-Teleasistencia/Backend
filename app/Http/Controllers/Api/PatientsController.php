@@ -14,7 +14,6 @@ class PatientsController extends BaseController
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Paciente::class);
         $query = Paciente::query();
 
         if ($request->has('zona_id')) {
@@ -46,7 +45,6 @@ class PatientsController extends BaseController
     public function show($id)
     {
         $patient = Paciente::with('zona')->findOrFail($id);
-        $this->authorize('view', $patient);
         return $this->sendResponse(new PatientResource($patient), 'Paciente recuperat ambèxit', 200);
     }
 

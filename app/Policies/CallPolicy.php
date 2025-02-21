@@ -12,21 +12,6 @@ class CallPolicy
 {
     use HandlesAuthorization, ChecksUserRole;
 
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return $user->role === 'admin' || $user->role === 'operator';
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Llamada $call): bool
-    {
-        return $user->role === 'admin' || $user->role === 'operator' && $call->paciente->zona_id === $user->zona_id;
-    }
 
     /**
      * Determine whether the user can create models.

@@ -47,7 +47,6 @@ class CallsController extends BaseController
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Llamada::class);
         try {
             $query = Llamada::query()->with(['paciente', 'operador', 'categoria', 'subcategoria']);
 
@@ -264,7 +263,6 @@ class CallsController extends BaseController
     {
         try {
             $call = Llamada::with(['paciente', 'operador', 'categoria', 'subcategoria'])->findOrFail($id);
-            $this->authorize('view', $call);
             
             return $this->sendResponse(
                 new CallResource($call),
