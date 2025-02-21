@@ -41,7 +41,6 @@ services:
           MYSQL_ROOT_HOST: '%'
       volumes:
           - 'sail-mysql:/var/lib/mysql'
-          - './basededatos.sql:/docker-entrypoint-initdb.d/basededatos.sql'
       networks:
           - sail
       healthcheck:
