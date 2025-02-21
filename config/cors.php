@@ -14,11 +14,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'auth/*', 'login/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5174'],
+    'allowed_origins' => ['http://localhost:5174', 'https://accounts.google.com'],
 
     'allowed_origins_patterns' => [],
 
@@ -29,4 +29,14 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => true,
+
+    'supports_credentials' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cross-Origin-Opener-Policy Configuration
+    |--------------------------------------------------------------------------
+    */
+    'access_control_allow_origin' => '*',
+    'cross_origin_opener_policy' => 'same-origin-allow-popups',
 ];
