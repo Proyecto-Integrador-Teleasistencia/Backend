@@ -20,13 +20,36 @@ class GoogleAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
+            \Log::info('Google callback received', ['token_length' => strlen($request->token ?? '')]);
             if (!$request->token) {
                 return response()->json(['error' => 'Token no proporcionado'], 400);
             }
 
-            $googleUser = Socialite::driver('google')
-                ->stateless()
-                ->userFromToken($request->token);
+            // Decodificar el token JWT de Google
+            $client = new \Google_Client(['client_id' => config('services.google.client_id')]);
+            try {
+                $payload = $client->verifyIdToken($request->token);
+                \Log::info('Token verificado correctamente', ['payload' => $payload]);
+            } catch (\Exception $e) {
+                \Log::error('Error verificando token', [
+                    'error' => $e->getMessage(),
+                    'token_length' => strlen($request->token ?? '')
+                ]);
+                return response()->json([
+                    'error' => 'Error verificando credenciales de Google: ' . $e->getMessage()
+                ], 401);
+            }
+
+            if (!$payload) {
+                return response()->json(['error' => 'Token inválido'], 401);
+            }
+
+            // Crear objeto de usuario con la información del payload
+            $googleUser = new \Laravel\Socialite\Two\User();
+            $googleUser->id = $payload['sub'];
+            $googleUser->email = $payload['email'];
+            $googleUser->name = $payload['name'];
+            $googleUser->avatar = $payload['picture'] ?? null;
 
             // Buscar si existe el usuario con ese email
             $user = User::where('email', $googleUser->getEmail())->first();
@@ -56,8 +79,14 @@ class GoogleAuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error en autenticación de Google', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
-                'error' => 'Authentication failed: ' . $e->getMessage()
+                'error' => 'Error en la autenticación: ' . $e->getMessage(),
+                'details' => app()->environment('local') ? $e->getTraceAsString() : null
             ], 500);
         }
     }
