@@ -47,25 +47,9 @@ class CallsController extends BaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Llamada::class);
         try {
             $query = Llamada::query()->with(['paciente', 'operador', 'categoria', 'subcategoria']);
-
-            // Filtro por fecha
-            if ($request->has('fecha_hora')) {
-                $query->whereDate('fecha_hora', $request->fecha_hora);
-            }
-
-            // Filtro por tipo
-            if ($request->has('tipo_llamada')) {
-                $query->where('tipo_llamada', $request->tipo_llamada);
-            }
-
-            // Filtro por zona
-            if ($request->has('zona_id')) {
-                $query->whereHas('paciente', function($q) use ($request) {
-                    $q->where('zona_id', $request->zona_id);
-                });
-            }
 
             $calls = $query->get();
 
@@ -110,6 +94,7 @@ class CallsController extends BaseController
     {
         try {
             $patient = Paciente::findOrFail($patientId);
+            $this->authorize('view', $patient);
             $calls = $patient->llamadas()
                 ->with(['operador', 'categoria', 'subcategoria', 'paciente'])
                 ->get();
@@ -242,15 +227,7 @@ class CallsController extends BaseController
         // Verificar si es una llamada saliente y el usuario tiene permiso
         if ($validated['tipo_llamada'] === 'saliente') {
             $patient = Paciente::findOrFail($validated['paciente_id']);
-            // Los administradores pueden hacer llamadas a cualquier zona
-            if (auth()->user()->role !== 'admin') {
-                if (!auth()->user()->zonas->contains($patient->zona_id)) {
-                    return $this->sendError(
-                        'No tens permís per realitzar cridades sortints a pacients fora de la teva zona',
-                        [], 403
-                    );
-                }
-            }
+            $this->authorize('makeOutgoingCall', $patient);
         }
 
         // Asignar el operador actual
@@ -287,7 +264,7 @@ class CallsController extends BaseController
     {
         try {
             $call = Llamada::with(['paciente', 'operador', 'categoria', 'subcategoria'])->findOrFail($id);
-            // $this->authorize('view', $call);
+            $this->authorize('view', $call);
             
             return $this->sendResponse(
                 new CallResource($call),
@@ -323,7 +300,7 @@ class CallsController extends BaseController
     {
         try {
             $call = Llamada::findOrFail($id);
-            // $this->authorize('update', $call);
+            $this->authorize('update', $call);
             $validated = $request->validated();
             $call->update($validated);
             
@@ -361,7 +338,7 @@ class CallsController extends BaseController
     {
         try {
             $call = Llamada::findOrFail($id);
-            // $this->authorize('delete', $call);
+            $this->authorize('delete', $call);
             $call->delete();
             
             return $this->sendResponse(

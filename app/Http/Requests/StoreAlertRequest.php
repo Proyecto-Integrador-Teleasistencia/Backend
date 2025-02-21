@@ -2,13 +2,22 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Aviso;
+use App\Models\Paciente;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAlertRequest extends FormRequest
 {
     public function authorize()
     {
-        return true;
+        // Verificar si el usuario puede crear alertas
+        if (!$this->user()->can('create', Aviso::class)) {
+            return false;
+        }
+
+        // Verificar si el usuario tiene acceso al paciente
+        $patient = Paciente::findOrFail($this->input('paciente_id'));
+        return $this->user()->can('view', $patient);
     }
 
     public function rules()

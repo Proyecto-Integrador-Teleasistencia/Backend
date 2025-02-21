@@ -14,6 +14,7 @@ class PatientsController extends BaseController
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Paciente::class);
         $query = Paciente::query();
 
         if ($request->has('zona_id')) {
@@ -26,6 +27,7 @@ class PatientsController extends BaseController
 
     public function store(StorePatientRequest $request)
     {
+        $this->authorize('create', Paciente::class);
         try {
             $validated = $request->validated();
 
@@ -44,12 +46,14 @@ class PatientsController extends BaseController
     public function show($id)
     {
         $patient = Paciente::with('zona')->findOrFail($id);
+        $this->authorize('view', $patient);
         return $this->sendResponse(new PatientResource($patient), 'Paciente recuperat ambèxit', 200);
     }
 
     public function update(UpdatePatientRequest $request, $id)
     {
-        $patient = Paciente::findOrFail($id);   
+        $patient = Paciente::findOrFail($id);
+        $this->authorize('update', $patient);   
         $validated = $request->validated();
 
         $patient->update($validated);
@@ -60,6 +64,8 @@ class PatientsController extends BaseController
     public function destroy($id)
     {
         try {
+            $patient = Paciente::findOrFail($id);
+            $this->authorize('delete', $patient);
             
             $patient = Paciente::findOrFail($id);
             

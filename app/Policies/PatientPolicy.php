@@ -36,22 +36,6 @@ class PatientPolicy
     }
 
     /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Patient $patient): bool
-    {
-        return $this->canManageZone($user, $patient->zone_id);
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Patient $patient): bool
-    {
-        return $this->isAdmin($user);
-    }
-
-    /**
      * Determine whether the user can restore the model.
      */
     public function restore(User $user, Patient $patient): bool

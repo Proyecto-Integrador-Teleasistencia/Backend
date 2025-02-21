@@ -2,12 +2,25 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Llamada;
+use App\Models\Paciente;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCallRequest extends FormRequest
 {
     public function authorize()
     {
+        // Verificar si el usuario puede crear llamadas
+        if (!$this->user()->can('create', Llamada::class)) {
+            return false;
+        }
+
+        // Si es una llamada saliente, verificar permisos adicionales
+        if ($this->input('tipo_llamada') === 'saliente') {
+            $patient = Paciente::findOrFail($this->input('paciente_id'));
+            return $this->user()->can('makeOutgoingCall', $patient);
+        }
+
         return true;
     }
 

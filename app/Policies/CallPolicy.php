@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Call;
+use App\Models\Llamada;
 use App\Models\User;
-use App\Models\Patient;
+use App\Models\Paciente;
 use App\Policies\Traits\ChecksUserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -17,23 +17,23 @@ class CallPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $this->hasRole($user, ['admin', 'operator']);
+        return $user->role === 'admin' || $user->role === 'operator';
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Call $call): bool
+    public function view(User $user, Llamada $call): bool
     {
-        return $this->canManageZone($user, $call->patient->zone_id);
+        return $user->role === 'admin' || $user->role === 'operator' && $call->paciente->zona_id === $user->zona_id;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, Llamada $target): bool
     {
-        return $this->hasRole($user, ['admin', 'operator']);
+        return $user->role === 'admin' || $user->role === 'operator';
     }
 
     /**
@@ -64,26 +64,7 @@ class CallPolicy
      */
     public function update(User $user, Call $call): bool
     {
-        return $this->canManageZone($user, $call->patient->zone_id);
-    }
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Call $call): bool
-    {
-        // Los administradores pueden actualizar cualquier llamada
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        // Los operadores solo pueden actualizar llamadas que ellos hayan creado
-        if ($user->role === 'operator') {
-            return $call->operator_id === $user->id;
-        }
-
-        return false;
+        return $user->role === 'admin' || $user->role === 'operator' && $call->paciente->zona_id === $user->zona_id;
     }
 
     /**
@@ -91,7 +72,16 @@ class CallPolicy
      */
     public function delete(User $user, Call $call): bool
     {
-        // Solo los administradores pueden eliminar llamadas
-        return $user->role === 'admin';
+        // Los administradores pueden eliminar cualquier llamada
+        if ($this->isAdmin($user)) {
+            return true;
+        }
+
+        // Los operadores solo pueden eliminar llamadas que ellos hayan creado
+        if ($this->isOperator($user)) {
+            return $call->operator_id === $user->id && $this->canManageZone($user, $call->patient->zone_id);
+        }
+
+        return false;
     }
 }
