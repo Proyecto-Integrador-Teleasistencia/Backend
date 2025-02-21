@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Api\AlertsController;
 use App\Http\Controllers\Api\CallsController;
 use App\Http\Controllers\Api\CategoriesController;
@@ -17,8 +18,10 @@ use App\Http\Controllers\Api\IncidentsController;
 Route::middleware('api')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
-    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.redirect');
-    Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+    Route::prefix('auth/google')->group(function () {
+        Route::get('redirect', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.redirect');
+        Route::get('callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+    });
 
     // Rutas protegidas que requieren autenticación
     Route::middleware(['auth:sanctum'])->group(function () {
