@@ -15,7 +15,6 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    @if(Auth::user()->is_admin)
                     <x-nav-link :href="route('backend.calls.index')" 
                         :active="request()->routeIs('backend.calls.*')">
                         {{ __('Panel de Llamadas') }}
@@ -28,6 +27,7 @@
                         :active="request()->routeIs('backend.zonas.*')">
                         {{ __('Zonas') }}
                     </x-nav-link>
+                    @if(Auth::user()->is_admin)
                     @endif
                 </div>
             </div>
