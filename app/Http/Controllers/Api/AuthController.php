@@ -47,6 +47,7 @@ class AuthController extends BaseController
             $authUser = Auth::user();
             $result['token'] =  $authUser->createToken('MyAuthApp')->plainTextToken;
             $result['name'] =  $authUser->nombre;
+            $result['zona_id'] = $authUser->zona_id;
 
             return $this->sendResponse($result, 'User signed in');
         }

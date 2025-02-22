@@ -57,7 +57,7 @@
                     <td>{{ $call->paciente->nombre }} {{ $call->paciente->apellidos }}</td>
                     <td>{{ \Carbon\Carbon::parse($call->completed_at)->format('d/m/Y H:i') }}</td>
                     <td>{{ $call->tipo_llamada }}</td>
-                    <td>{{ $call->operador->name }}</td>
+                    <td>{{ $call->operador->nombre }}</td>
                 </tr>
             @endforeach
         </tbody>

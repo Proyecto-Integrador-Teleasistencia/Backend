@@ -20,7 +20,10 @@ class AlertsTableSeeder extends Seeder
                 'tipo' => 'puntual',
                 'fecha_hora' => '2025-02-03 15:45:00',
                 'categoria_id' => 2,
-                'paciente_id' => 1
+                'paciente_id' => 1,
+                'operador_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
 

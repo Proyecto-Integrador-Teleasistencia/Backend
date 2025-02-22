@@ -27,6 +27,10 @@ class LlamadaFactory extends Factory
             'fecha_hora' => fake()->dateTimeBetween('-1 month', 'now'),
             'categoria_id' => Categoria::factory(),
             'subcategoria_id' => Subcategoria::factory(),
+            'fecha_completada' => function (array $attributes) {
+                $fecha_hora = $attributes['fecha_hora'];
+                return fake()->dateTimeBetween($fecha_hora, 'now');
+            },
         ];
     }
 }

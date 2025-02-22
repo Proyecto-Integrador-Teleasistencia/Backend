@@ -29,6 +29,7 @@ class CallsTableSeeder extends Seeder
                 'fecha_hora' => '2025-02-18 09:30:00',
                 'categoria_id' => 4, // Emergencias
                 'subcategoria_id' => 8, // Emergencias sanitarias
+                'fecha_completada' => '2025-02-18 09:35:00',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -43,6 +44,7 @@ class CallsTableSeeder extends Seeder
                 'fecha_hora' => '2025-02-18 10:15:00',
                 'categoria_id' => 1, // Seguimiento
                 'subcategoria_id' => 1, // Seguimiento rutinario
+                'fecha_completada' => '2025-02-18 10:20:00',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -57,6 +59,7 @@ class CallsTableSeeder extends Seeder
                 'fecha_hora' => '2025-02-18 11:00:00',
                 'categoria_id' => 5, // Comunicaciones no urgentes
                 'subcategoria_id' => 12, // Petición de información
+                'fecha_completada' => '2025-02-18 11:05:00',
                 'created_at' => now(),
                 'updated_at' => now()
             ]
@@ -68,7 +71,7 @@ class CallsTableSeeder extends Seeder
 
         foreach ($pacientes as $paciente) {
             // Generar entre 2 y 5 llamadas por paciente
-            $numLlamadas = rand(1, 3);
+            $numLlamadas = rand(1, 2);
             
             for ($i = 0; $i < $numLlamadas; $i++) {
                 Llamada::factory()->create([

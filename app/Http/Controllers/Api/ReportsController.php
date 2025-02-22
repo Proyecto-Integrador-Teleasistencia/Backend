@@ -9,6 +9,7 @@ use App\Models\Paciente;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Http\Resources\CallResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\AlertResource;
@@ -17,10 +18,75 @@ class ReportsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/reports/emergencies",
-     *     summary="Get emergency actions report",
+     *     path="/api/reports/check-emergencies",
+     *     summary="Check if there are any emergencies in a zone",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="zone_id",
+     *         in="query",
+     *         description="Zone ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Emergency check response"
+     *     )
+     * )
+     */
+    public function checkEmergencies(Request $request)
+    {
+        $zoneId = $request->input('zone_id');
+        $startDate = $request->input('start_date') 
+            ? Carbon::parse($request->input('start_date'))->startOfDay()
+            : Carbon::now()->startOfMonth()->startOfDay();
+        
+        $endDate = $request->input('end_date')
+            ? Carbon::parse($request->input('end_date'))->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        if (!$zoneId) {
+            return $this->sendError('Es necesario especificar una zona');
+        }
+
+        $zone = \App\Models\Zona::findOrFail($zoneId);
+        
+        $hasEmergencies = Aviso::where('tipo', 'puntual')
+            ->whereHas('paciente', function ($query) use ($zoneId, $startDate, $endDate) {
+                $query->where('zona_id', $zoneId)->whereBetween('created_at', [$startDate, $endDate]);
+            })
+            ->exists();
+
+        return $this->sendResponse([
+            'zone' => $zone->nombre,
+            'has_emergencias' => $hasEmergencies,
+            'total_emergencias' => Aviso::where('tipo', 'puntual')
+                ->whereHas('paciente', function ($query) use ($zoneId, $startDate, $endDate) {
+                    $query->where('zona_id', $zoneId)->whereBetween('created_at', [$startDate, $endDate]);
+                })
+                ->count(),
+            'emergencias' => Aviso::where('tipo', 'puntual')->with('paciente', 'operador')
+                ->whereHas('paciente', function ($query) use ($zoneId, $startDate, $endDate) {
+                    $query->where('zona_id', $zoneId)->whereBetween('created_at', [$startDate, $endDate]);
+                })
+                ->get()
+        ], 'Comprobación de emergencias completada');
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/reports/emergency-report",
+     *     summary="Generate emergency report for a zone",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="zone_id",
+     *         in="query",
+     *         description="Zone ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Parameter(
      *         name="start_date",
      *         in="query",
@@ -37,25 +103,50 @@ class ReportsController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Emergency actions report"
+     *         description="Emergency report PDF"
      *     )
      * )
      */
-    public function emergencies(Request $request)
+    public function emergencyReport(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth());
-        $endDate = $request->input('end_date', Carbon::now());
+        $startDate = $request->input('start_date') 
+            ? Carbon::parse($request->input('start_date'))->startOfDay()
+            : Carbon::now()->startOfMonth()->startOfDay();
+        
+        $endDate = $request->input('end_date')
+            ? Carbon::parse($request->input('end_date'))->endOfDay()
+            : Carbon::now()->endOfDay();
 
-        $emergencies = Aviso::with(['paciente', 'operador'])
-            ->where('tipo', 'periodico')
+        $zoneId = $request->input('zone_id');
+
+        if (!$zoneId) {
+            return $this->sendError('Es necesario especificar una zona');
+        }
+
+        $query = Aviso::with(['paciente', 'operador', 'categoria'])
+            ->where('tipo', 'puntual')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->whereHas('paciente', function ($query) use ($zoneId) {
+                $query->where('zona_id', $zoneId);
+            })
+            ->orderBy('created_at', 'desc');
 
-        return $this->sendResponse(
-            AlertResource::collection($emergencies),
-            'Informe d\'emergències recuperat amb èxit'
-        );
+        $emergencies = $query->get();
+        $zone = \App\Models\Zona::findOrFail($zoneId);
+
+        if ($emergencies->isEmpty()) {
+            return $this->sendError('No hay emergencias en esta zona para el período especificado');
+        }
+
+        $pdf = \PDF::loadView('reports.emergencies', compact('emergencies', 'zone', 'startDate', 'endDate'));
+        $pdf->setPaper('a4');
+
+        $filename = 'informe_emergencies_zona_' . Str::slug($zone->nombre) . '_' . now()->format('Y-m-d_His') . '.pdf';
+        return $pdf->download($filename);
+        // return $this->sendResponse(
+        //     AlertResource::collection($emergencies),
+        //     'Informe d\'emergències recuperat amb èxit'
+        // );
     }
 
     /**
@@ -81,7 +172,7 @@ class ReportsController extends BaseController
 
             $filename = 'informe_pacientes_' . now()->format('Y-m-d_His') . '.pdf';
             
-            return $this->sendResponse($pdf, 'Informe de paciente recuperat ambèxit', 200);
+            return $pdf->download($filename);
         } catch (\Exception $e) {
             return $this->sendError('Error al generar el informe de pacientes', $e->getMessage());
         }
@@ -101,7 +192,7 @@ class ReportsController extends BaseController
                 $pdfs[] = $pdf->stream($filename);
             }
 
-            return $this->sendResponse($pdfs, 'Llista d\'informes de pacients generats amb èxit');
+            return $pdfs->download($filename);
         } catch (\Exception $e) {
             return $this->sendError('Error al generar la llista d\'informes de pacients', $e->getMessage());
         }
@@ -109,8 +200,8 @@ class ReportsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/reports/scheduled-calls",
-     *     summary="Get scheduled calls for a day",
+     *     path="/api/reports/pacientes",
+     *     summary="Get all patient reports",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -128,48 +219,41 @@ class ReportsController extends BaseController
      */
     public function scheduledCalls(Request $request)
     {
-        $date = $request->input('date', Carbon::today());
-        $type = $request->input('type');
-        $zoneId = $request->input('zone_id');
-        $format = $request->input('format', 'json'); // 'json', 'pdf', o 'csv'
-        
-        $calls = Llamada::with(['paciente', 'operador'])
-            ->where('estado', 'planificada')
+        // Recuperar filtros; se usa toDateString() para asegurarse de trabajar con el formato correcto
+        $date   = $request->input('date') ? Carbon::parse($request->input('date'))->toDateString() : Carbon::today()->toDateString();
+        $type   = $request->input('type');
+        $zoneId = $request->input('zona_id');
+        $format = $request->input('format', 'pdf'); // opciones: 'pdf' o 'csv'
+
+        // Construir la consulta de llamadas planificadas
+        $query = Llamada::with(['paciente', 'operador'])
+            ->where('planificada', true)
             ->whereDate('fecha_hora', $date);
 
         if ($type) {
-            $calls->where('tipo_llamada', $type);
+            $query->where('tipo_llamada', $type);
         }
 
         if ($zoneId) {
-            $calls->whereHas('paciente', function ($query) use ($zoneId) {
-                $query->where('zona_id', $zoneId);
+            $query->whereHas('paciente', function($q) use ($zoneId) {
+                $q->where('zona_id', $zoneId);
             });
         }
 
-        $calls = $calls->orderBy('scheduled_for')
-            ->get();
+        $calls = $query->orderBy('fecha_hora', 'desc')->get();
 
         try {
-            $pdfs = [];
-            foreach ($calls as $call) {
-                $pdf = \PDF::loadView('reports.scheduled_call', compact('call'));
-                $pdf->setPaper('a4');
-
-                $filename = 'informe_crida_' . $call->id . '_' . now()->format('Y-m-d_His') . '.pdf';
-                $pdfs[] = $pdf->stream($filename);
-            }
-
             if ($format === 'csv') {
+                // Configurar cabeceras para CSV
                 $headers = [
                     'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename=cridades_previstes_' . $date . '.csv',
+                    'Content-Disposition' => 'attachment; filename="llamadas_programadas_' . $date . '.csv"',
                 ];
-                
+
                 $callback = function() use ($calls) {
                     $file = fopen('php://output', 'w');
-                    fputcsv($file, ['ID', 'Pacient', 'Data Programada', 'Tipus', 'Estat', 'Operador']);
-                    
+                    // Escribir encabezado del CSV
+                    fputcsv($file, ['ID', 'Paciente', 'Fecha Programada', 'Tipo', 'Estado', 'Operador']);
                     foreach ($calls as $call) {
                         fputcsv($file, [
                             $call->id,
@@ -177,19 +261,22 @@ class ReportsController extends BaseController
                             $call->fecha_hora,
                             $call->tipo_llamada,
                             $call->estado,
-                            $call->operador ? $call->operador->name : 'No assignat'
+                            $call->operador ? $call->operador->nombre : 'No asignado'
                         ]);
                     }
-                    
                     fclose($file);
                 };
-                
-                return $this->sendResponse($pdfs, 'Llistat de cridades previstes recuperat amb èxit');
+
+                return response()->streamDownload($callback, 'llamadas_programadas_' . $date . '.csv', $headers);
             }
-            
-            return $this->sendResponse($pdfs, 'Llistat de cridades previstes recuperat amb èxit');
+
+            // Generar PDF con todas las llamadas; se asume que la vista 'reports.scheduled_calls' recorre $calls
+            $pdf = \PDF::loadView('reports.scheduled_calls', compact('calls', 'date'));
+            $pdf->setPaper('a4');
+            $filename = 'llamadas_programadas_' . (is_string($date) ? $date : $date->format('d-m-Y')) . '.pdf';
+            return $pdf->download($filename);
         } catch (\Exception $e) {
-            return $this->sendError('Error al generar el llistat de cridades previstes', $e->getMessage());
+            return $this->sendError('Error al generar el listado de llamadas programadas', $e->getMessage());
         }
     }
 
@@ -216,13 +303,13 @@ class ReportsController extends BaseController
     {
         $date = $request->input('date', Carbon::today());
         $type = $request->input('type');
-        $zoneId = $request->input('zone_id');
+        $zoneId = $request->input('zona_id');
         $format = $request->input('format', 'json'); // 'json', 'pdf', o 'csv'
         
         $calls = Llamada::with(['paciente', 'operador'])
             ->where('estado', 'completada')
             ->whereDate('fecha_hora', $date);
-
+            
         if ($type) {
             $calls->where('tipo_llamada', $type);
         }
@@ -233,22 +320,24 @@ class ReportsController extends BaseController
             });
         }
 
-        $calls = $calls->orderBy('completed_at', 'desc')
+        $calls = $calls->orderBy('fecha_completada', 'desc')
             ->get();
 
         switch($format) {
             case 'pdf':
-                $pdf = \PDF::loadView('reports.done_calls', compact('calls'));
-                return $this->sendResponse($pdf, 'Cridades realitzades recuperat ambèxit');
+                $pdf = \PDF::loadView('reports.done_calls', compact('calls', 'date'));
+                $pdf->setPaper('a4');
+                $filename = 'llamadas_realizadas_' . (is_string($date) ? $date : $date->format('d-m-Y')) . '.pdf';
+                return $pdf->download($filename);
             case 'csv':
                 $headers = [
                     'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename=cridades_realitzades_' . $date . '.csv',
+                    'Content-Disposition' => 'attachment; filename=llamadas_realizadas_' . $date . '.csv',
                 ];
                 
                 $callback = function() use ($calls) {
                     $file = fopen('php://output', 'w');
-                    fputcsv($file, ['ID', 'Pacient', 'Data', 'Tipus', 'Estat', 'Operador']);
+                    fputcsv($file, ['ID', 'Paciente', 'Fecha', 'Tipo', 'Estado', 'Operador']);
                     
                     foreach ($calls as $call) {
                         fputcsv($file, [
@@ -313,18 +402,30 @@ class ReportsController extends BaseController
     {
         $startDate = $request->input('start_date', Carbon::now()->subMonths(3));
         $endDate = $request->input('end_date', Carbon::now());
+        $type = $request->input('type');
 
         $patient = Paciente::findOrFail($patientId);
         
-        $calls = $patient->llamadas()
+        $query = $patient->llamadas()
             ->with(['operador', 'categoria'])
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc');
 
-        return $this->sendResponse([
-            'patient' => new PatientResource($patient),
-            'calls' => CallResource::collection($calls)
-        ], 'Històric de cridades del pacient recuperat amb èxit');
+        if ($type) {
+            $query->where('tipo_llamada', $type);
+        }
+
+        $calls = $query->get();
+
+        $pdf = \PDF::loadView('reports.patient_history', compact('patient', 'calls', 'startDate', 'endDate'));
+        $pdf->setPaper('a4');
+        $startDateObj = Carbon::parse($startDate);
+        $endDateObj = Carbon::parse($endDate);
+        $filename = 'històric_de_cridades_' . $patient->nombre . '_' . $startDateObj->format('Y-m-d') . '.pdf';
+        return $pdf->download($filename);
+        // return $this->sendResponse([
+        //     'patient' => new PatientResource($patient),
+        //     'calls' => CallResource::collection($calls)
+        // ], 'Històric de cridades del pacient recuperat amb èxit');
     }
 }

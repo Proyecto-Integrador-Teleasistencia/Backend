@@ -19,7 +19,7 @@ class CallFactory extends Factory
         return [
             'datetime' => fake()->dateTimeBetween('-6 months', 'now'),
             'description' => fake()->optional()->sentence(),
-            'type' => fake()->randomElement(['outgoing', 'incoming']),
+            'type' => fake()->randomElement(['entrante', 'saliente']),
             'scheduled' => fake()->boolean(20), // 20% probabilidad de ser programada
             'operator_id' => User::factory()->state(['role' => 'operator']),
             'patient_id' => Patient::factory(),

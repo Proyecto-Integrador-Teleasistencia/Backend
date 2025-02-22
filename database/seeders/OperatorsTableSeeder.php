@@ -20,7 +20,7 @@ class OperatorsTableSeeder extends Seeder
         $admin = User::create([
             'nombre' => 'Samuel Carbonell',
             'email' => 'samuel.carbonell@email.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('1234'),
             'telefono' => '700123456',
             'zona_id' => 1,
             'fecha_contratacion' => '2023-01-10',
@@ -28,9 +28,9 @@ class OperatorsTableSeeder extends Seeder
         ]);
 
         $operator = User::create([
-            'nombre' => 'Carlos Peres',
-            'email' => 'carlos.peres@email.com',
-            'password' => Hash::make('password'),
+            'nombre' => 'Carlos Perez',
+            'email' => 'carlosperezalzina@gmail.com',
+            'password' => Hash::make('1234'),
             'telefono' => '710654321',
             'zona_id' => 2,
             'fecha_contratacion' => '2023-02-15',

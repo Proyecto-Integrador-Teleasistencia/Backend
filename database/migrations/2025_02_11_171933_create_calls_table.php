@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('motivo');
             $table->text('descripcion')->nullable();
             $table->boolean('planificada')->default(true);
+            $table->dateTime('fecha_completada')->nullable();
             $table->foreignId('operador_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
@@ -33,6 +34,8 @@ return new class extends Migration
             $table->index(['operador_id', 'paciente_id']);
             $table->index('categoria_id');
             $table->index('subcategoria_id');
+            $table->index('aviso_id');
+            $table->index('fecha_completada');
         });
     }
 

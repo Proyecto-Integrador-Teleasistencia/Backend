@@ -48,12 +48,13 @@ Route::middleware('api')->group(function () {
         
         // Reports
         Route::prefix('reports')->group(function () {
-            Route::get('emergencies', [ReportsController::class, 'emergencies']);
-            Route::get('patients/{id}', [ReportsController::class, 'patients']);
-            Route::get('all-patients', [ReportsController::class, 'getAllInformes']);
-            Route::get('scheduled-calls', [ReportsController::class, 'scheduledCalls']);
-            Route::get('done-calls', [ReportsController::class, 'doneCalls']);
-            Route::get('patient-history/{id}', [ReportsController::class, 'patientHistory']);
+            Route::get('check-emergencias', [ReportsController::class, 'checkEmergencies']);
+            Route::get('informe-emergencias', [ReportsController::class, 'emergencyReport']);
+            Route::get('pacientes/{id}', [ReportsController::class, 'patients']);
+            Route::get('pacientes', [ReportsController::class, 'getAllInformes']);
+            Route::get('llamadas-programadas', [ReportsController::class, 'scheduledCalls']);
+            Route::get('llamadas-realizadas', [ReportsController::class, 'doneCalls']);
+            Route::get('historial-paciente/{id}', [ReportsController::class, 'patientHistory']);
         });
 
         // Users

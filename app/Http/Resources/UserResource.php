@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'is_active' => $this->is_active,
-            'zones' => ZoneResource::collection($this->whenLoaded('zones')),
+            'zona_id' => $this->zona_id,
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
