@@ -18,7 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Backend routes
-    Route::prefix('backend')->name('backend.')->middleware(['auth', 'admin'])->group(function () {
+    Route::prefix('backend')->name('backend.')->middleware(['auth', AdminMiddleware::class])->group(function () {
         // Zones routes
         Route::resource('zonas', \App\Http\Controllers\Backend\ZonasController::class);
         
