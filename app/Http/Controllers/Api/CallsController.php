@@ -48,7 +48,27 @@ class CallsController extends BaseController
     public function index(Request $request)
     {
         try {
-            $query = Llamada::query()->with(['paciente', 'operador', 'categoria', 'subcategoria']);
+            $query = Llamada::query()
+                ->with(['paciente', 'operador', 'categoria', 'subcategoria'])
+                ->orderBy('fecha_hora', 'desc');
+
+            if ($request->has('date')) {
+                $query->whereDate('fecha_hora', $request->input('date'));
+            }
+
+            if ($request->has('type')) {
+                $query->where('tipo_llamada', $request->input('type'));
+            }
+
+            if ($request->has('zone_id')) {
+                $query->whereHas('paciente', function ($q) use ($request) {
+                    $q->where('zona_id', $request->input('zone_id'));
+                });
+            }
+
+            if ($request->has('estado')) {
+                $query->where('estado', $request->input('estado'));
+            }
 
             $calls = $query->get();
 
@@ -259,10 +279,28 @@ class CallsController extends BaseController
      *     )
      * )
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         try {
             $call = Llamada::with(['paciente', 'operador', 'categoria', 'subcategoria'])->findOrFail($id);
+
+            if ($request->has('date')) {
+                $call->whereDate('fecha_hora', $request->input('date'));
+            }
+
+            if ($request->has('type')) {
+                $call->where('tipo_llamada', $request->input('type'));
+            }
+
+            if ($request->has('zone_id')) {
+                $call->whereHas('paciente', function ($q) use ($request) {
+                    $q->where('zona_id', $request->input('zone_id'));
+                });
+            }
+
+            if ($request->has('estado')) {
+                $call->where('estado', $request->input('estado'));
+            }
             
             return $this->sendResponse(
                 new CallResource($call),

@@ -304,7 +304,7 @@ class ReportsController extends BaseController
         $date = $request->input('date', Carbon::today());
         $type = $request->input('type');
         $zoneId = $request->input('zona_id');
-        $format = $request->input('format', 'json'); // 'json', 'pdf', o 'csv'
+        $format = $request->input('format', 'pdf'); // 'json', 'pdf', o 'csv'
         
         $calls = Llamada::with(['paciente', 'operador'])
             ->where('estado', 'completada')
