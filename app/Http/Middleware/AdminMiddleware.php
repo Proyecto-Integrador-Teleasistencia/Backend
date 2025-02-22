@@ -12,9 +12,9 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         Log::info('AdminMiddleware ejecutado', ['user' => $request->user()]);
-        var_dump($request->user());
+        dd($request->user());
     
-        if (!$request->user() || !$request->user()->is_admin) {
+        if (!$request->user() || !$request->user()->role === 'admin') {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'No autorizado. Solo administradores.'], 403);
             }
