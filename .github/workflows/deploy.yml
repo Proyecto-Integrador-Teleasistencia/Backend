@@ -42,7 +42,6 @@ jobs:
             '
             sudo docker compose up -d
             sudo docker compose exec laravel.test php artisan migrate:fresh --seed
-            sudo docker compose exec laravel.test php artisan queue:work
 
             sudo chown -R $USER:$USER $DEPLOY_DIR
             sudo chmod -R 777 /var/www/back/
