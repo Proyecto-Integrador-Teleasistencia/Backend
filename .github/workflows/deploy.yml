@@ -34,11 +34,15 @@ jobs:
               git pull origin main
             fi
 
-            composer install
-            npm install
-            npm run build
+            sudo docker exec laravel-app bash -c '
+              composer install && 
+              npm install && 
+              npm run build && 
+              sed -i "s#^APP_URL=.*#APP_URL=https://back.projecte2.ddaw.es#" .env
+            '
             docker compose up -d
             docker compose exec laravel.test php artisan migrate:fresh --seed
             docker compose exec laravel.test php artisan queue:work
 
             sudo chown -R $USER:$USER $DEPLOY_DIR
+            sudo chmod -R 777 /var/www/back/
