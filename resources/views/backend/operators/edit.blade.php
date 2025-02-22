@@ -14,7 +14,7 @@
                         @method('PUT')
 
                         <div>
-                            <x-form.input name="name" label="Nombre" :value="old('name', $operator->name)" required />
+                            <x-form.input name="nombre" label="Nombre" :value="old('nombre', $operator->nombre)" required />
                         </div>
 
                         <div>
@@ -22,7 +22,7 @@
                         </div>
 
                         <div>
-                            <x-form.input name="phone" label="Teléfono" :value="old('phone', $operator->phone)" />
+                            <x-form.input name="telefono" label="Teléfono" :value="old('telefono', $operator->telefono)" />
                         </div>
 
                         <div>
@@ -36,12 +36,12 @@
 
                         <div>
                             <label for="zone_id" class="block text-sm font-medium text-gray-700">Zona</label>
-                            <select id="zone_id" name="zone_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <select id="zona_id" name="zona_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 <option value="">{{ __('Seleccionar zona') }}</option>
-                                @foreach($zones as $zone)
-                                    <option value="{{ $zone->id }}" {{ old('zone_id', $operator->zone_id) == $zone->id ? 'selected' : '' }}>
-                                        {{ $zone->name }}
-                                    </option>
+                                @foreach($zonas as $zona)
+                                <option value="{{ $zona->id }}" {{ old('zona_id', $operator->zona_id) == $zona->id ? 'selected' : '' }}>
+                                    {{ $zona->nombre }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('zone_id')

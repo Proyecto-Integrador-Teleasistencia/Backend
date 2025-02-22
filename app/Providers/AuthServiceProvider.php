@@ -8,12 +8,13 @@ use App\Models\Zone;
 use App\Models\Alert;
 use App\Models\Contact;
 use App\Models\Operator;
+use App\Models\User;
 use App\Policies\CallPolicy;
 use App\Policies\PatientPolicy;
 use App\Policies\ZonePolicy;
 use App\Policies\AlertPolicy;
 use App\Policies\ContactPolicy;
-use App\Policies\OperatorPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,12 +26,13 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
+        \App\Models\Zona::class => \App\Policies\ZonaPolicy::class,
         Patient::class => PatientPolicy::class,
         Call::class => CallPolicy::class,
         Zone::class => ZonePolicy::class,
         Alert::class => AlertPolicy::class,
         Contact::class => ContactPolicy::class,
-        Operator::class => OperatorPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -39,6 +41,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        Gate::define('update', [\App\Policies\OperatorPolicy::class, 'update']);
 
         // Gate para gestionar zonas
         Gate::define('manage-zone', function ($user, $zone) {

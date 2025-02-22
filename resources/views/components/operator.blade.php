@@ -18,7 +18,7 @@
         <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
             <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">{{ __('Nombre') }}</dt>
-                <dd class="mt-1 text-sm text-gray-900">{{ $operator->name }}</dd>
+                <dd class="mt-1 text-sm text-gray-900">{{ $operator->nombre }}</dd>
             </div>
 
             <div class="sm:col-span-1">
@@ -29,12 +29,18 @@
             @if($showFullDetails)
             <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">{{ __('Teléfono') }}</dt>
-                <dd class="mt-1 text-sm text-gray-900">{{ $operator->phone ?? '-' }}</dd>
+                <dd class="mt-1 text-sm text-gray-900">{{ $operator->telefono ?? '-' }}</dd>
             </div>
 
             <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">{{ __('Zona') }}</dt>
-                <dd class="mt-1 text-sm text-gray-900">{{ $operator->zone?->name ?? '-' }}</dd>
+                <dd class="mt-1 text-sm text-gray-900">
+                    @if($operator->zonas?->count() > 0)
+                        {{ $operator->zonas->first()->nombre }}
+                    @else
+                        -
+                    @endif
+                </dd>
             </div>
             @endif
 

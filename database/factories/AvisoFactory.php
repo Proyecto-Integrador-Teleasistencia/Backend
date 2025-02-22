@@ -22,9 +22,9 @@ class AvisoFactory extends Factory
         return [
             'fecha_hora' => fake()->dateTimeBetween('-1 month', '+1 month'),
             'tipo' => fake()->randomElement(['puntual', 'periódico']),
-            'categoria_id' => Categoria::factory(),
-            'paciente_id' => Paciente::factory(),
-            'operador_id' => User::factory()->state(['role' => 'operator']),
+            'categoria_id' => Categoria::inRandomOrder()->first()->id,
+            'paciente_id' => Paciente::inRandomOrder()->first()->id,
+            'operador_id' => User::where('role', 'operator')->inRandomOrder()->first()->id,
         ];
     }
 }

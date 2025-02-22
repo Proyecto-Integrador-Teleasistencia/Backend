@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,7 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Backend routes
-    Route::prefix('backend')->name('backend.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::prefix('backend')->name('backend.')->middleware(['auth', AdminMiddleware::class])->group(function () {
         // Zones routes
         Route::resource('zonas', \App\Http\Controllers\Backend\ZonasController::class);
         

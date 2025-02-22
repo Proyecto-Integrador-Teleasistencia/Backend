@@ -4,18 +4,25 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Zone;
-use Illuminate\Http\Request;
+use App\Models\Zona;
+use App\Http\Requests\Backend\StoreOperatorRequest;
+use App\Http\Requests\Backend\UpdateOperatorRequest;
+use App\Http\Resources\Backend\OperatorResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Gate;
 
 class OperatorsController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the operators.
      */
     public function index()
     {
-        $operators = User::where('role', 'operator')->paginate(10);
+        $operators = User::where('role', 'operator')->with('zonas')->paginate(10);
         return view('backend.operators.index', compact('operators'));
     }
 
@@ -24,31 +31,30 @@ class OperatorsController extends Controller
      */
     public function create()
     {
-        $zones = Zone::all();
-        return view('backend.operators.create', compact('zones'));
+        $this->authorize('create', User::class);
+        $zonas = Zona::all();
+        return view('backend.operators.create', compact('zonas'));
     }
 
     /**
      * Store a newly created operator in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOperatorRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
-            'zone_id' => 'nullable|exists:zones,id'
-        ]);
+        $this->authorize('create', User::class);
+        $validated = $request->validated();
 
-        $operator = User::create([
-            'name' => $validated['name'],
+        // Preparar los datos para crear el operador
+        $operatorData = [
+            'nombre' => $validated['nombre'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'phone' => $validated['phone'] ?? null,
-            'zone_id' => $validated['zone_id'] ?? null,
+            'telefono' => $validated['telefono'] ?? null,
+            'zona_id' => $validated['zona_id'] ?? null,
             'role' => 'operator'
-        ]);
+        ];
+
+        $operator = User::create($operatorData);
 
         return redirect()->route('backend.operators.index')
             ->with('success', 'Operador creado correctamente');
@@ -60,8 +66,7 @@ class OperatorsController extends Controller
     public function show(User $operator)
     {
         if ($operator->role !== 'operator') {
-            return redirect()->route('backend.operators.index')
-                ->with('error', 'Usuario no encontrado');
+            abort(404, 'Usuario no encontrado');
         }
 
         return view('backend.operators.show', compact('operator'));
@@ -72,47 +77,44 @@ class OperatorsController extends Controller
      */
     public function edit(User $operator)
     {
+        $this->authorize('update', $operator);
+
         if ($operator->role !== 'operator') {
-            return redirect()->route('backend.operators.index')
-                ->with('error', 'Usuario no encontrado');
+            abort(404, 'Usuario no encontrado');
         }
 
-        $zones = Zone::all();
-        return view('backend.operators.edit', compact('operator', 'zones'));
+        $zonas = Zona::all();
+
+        return view('backend.operators.edit', compact('operator', 'zonas'));
     }
 
     /**
      * Update the specified operator in storage.
      */
-    public function update(Request $request, User $operator)
+    public function update(UpdateOperatorRequest $request, User $operator)
     {
+        $this->authorize('update', $operator);
         if ($operator->role !== 'operator') {
-            return redirect()->route('backend.operators.index')
-                ->with('error', 'Usuario no encontrado');
+            abort(404, 'Usuario no encontrado');
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $operator->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
-            'zone_id' => 'nullable|exists:zones,id',
-            'is_active' => 'boolean'
-        ]);
+        $validated = $request->validated();
 
+        // Preparar los datos de actualización
         $updateData = [
-            'name' => $validated['name'],
+            'nombre' => $validated['nombre'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
-            'zone_id' => $validated['zone_id'] ?? null,
-            'is_active' => $request->boolean('is_active')
+            'telefono' => $validated['telefono'] ?? null,
+            'zona_id' => $validated['zona_id'] ?? null,
+            'role' => 'operator'
         ];
 
         if (!empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);
         }
 
-        $operator->update($updateData);
+        $operator->fill($updateData);
+        $operator->save();
 
         return redirect()->route('backend.operators.index')
             ->with('success', 'Operador actualizado correctamente');
@@ -123,9 +125,9 @@ class OperatorsController extends Controller
      */
     public function destroy(User $operator)
     {
+        $this->authorize('delete', $operator);
         if ($operator->role !== 'operator') {
-            return redirect()->route('backend.operators.index')
-                ->with('error', 'Solo se pueden eliminar operadores');
+            abort(404, 'Usuario no encontrado');
         }
 
         $operator->delete();
