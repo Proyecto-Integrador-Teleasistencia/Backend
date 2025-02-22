@@ -11,12 +11,8 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        Log::info('AdminMiddleware ejecutado', [
-            'user' => $request->user(),
-            'is_admin' => $request->user() ? $request->user()->is_admin : false,
-            'path' => $request->path(),
-            'method' => $request->method()
-        ]);
+        Log::info('AdminMiddleware ejecutado', ['user' => $request->user()]);
+        var_dump($request->user());
     
         if (!$request->user() || !$request->user()->is_admin) {
             if ($request->expectsJson()) {
