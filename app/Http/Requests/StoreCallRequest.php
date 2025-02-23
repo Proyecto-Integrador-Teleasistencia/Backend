@@ -16,10 +16,10 @@ class StoreCallRequest extends FormRequest
         }
 
         // Si es una llamada saliente, verificar permisos adicionales
-        if ($this->input('tipo_llamada') === 'saliente') {
-            $patient = Paciente::findOrFail($this->input('paciente_id'));
-            return $this->user()->can('makeOutgoingCall', $patient);
-        }
+        // if ($this->input('tipo_llamada') === 'saliente') {
+        //     $patient = Paciente::findOrFail($this->input('paciente_id'));
+        //     return $this->user()->can('makeOutgoingCall', $patient);
+        // }
 
         return true;
     }
