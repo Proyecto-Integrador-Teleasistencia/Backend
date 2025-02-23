@@ -113,7 +113,6 @@ class CallsController extends BaseController
     {
         try {
             $patient = Paciente::findOrFail($patientId);
-            $this->authorize('view', $patient);
             $calls = $patient->llamadas()
                 ->with(['operador', 'categoria', 'subcategoria', 'paciente'])
                 ->get();
