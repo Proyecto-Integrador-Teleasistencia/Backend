@@ -7,6 +7,8 @@ use App\Models\Llamada;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Zona;
+use App\Models\Categoria;
+use App\Models\Subcategoria;
 
 class CallsTest extends TestCase
 {
@@ -26,6 +28,8 @@ class CallsTest extends TestCase
         $subcategoria = Subcategoria::factory()->create([
             'categoria_id' => $categoria->id,
         ]);
+
+        $
 
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
