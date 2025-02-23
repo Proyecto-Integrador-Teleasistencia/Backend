@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Resources\CallResource;
 use App\Http\Resources\PatientResource;
-use App\Http\Resources\AlertResource;
+use App\Http\Resources\AvisoResource;
 
 class ReportsController extends BaseController
 {
@@ -144,7 +144,7 @@ class ReportsController extends BaseController
         $filename = 'informe_emergencies_zona_' . Str::slug($zone->nombre) . '_' . now()->format('Y-m-d_His') . '.pdf';
         return $pdf->download($filename);
         // return $this->sendResponse(
-        //     AlertResource::collection($emergencies),
+        //     AvisoResource::collection($emergencies),
         //     'Informe d\'emergències recuperat amb èxit'
         // );
     }
@@ -219,61 +219,45 @@ class ReportsController extends BaseController
      */
     public function scheduledCalls(Request $request)
     {
-        // Recuperar filtros; se usa toDateString() para asegurarse de trabajar con el formato correcto
-        $date   = $request->input('date') ? Carbon::parse($request->input('date'))->toDateString() : Carbon::today()->toDateString();
-        $type   = $request->input('type');
-        $zoneId = $request->input('zona_id');
-        $format = $request->input('format', 'pdf'); // opciones: 'pdf' o 'csv'
+        $format = $request->input('format', 'pdf');
+        $id = $request->input('id');
 
-        // Construir la consulta de llamadas planificadas
-        $query = Llamada::with(['paciente', 'operador'])
+        $llamada = Llamada::with(['paciente', 'operador'])
             ->where('planificada', true)
-            ->whereDate('fecha_hora', $date);
-
-        if ($type) {
-            $query->where('tipo_llamada', $type);
-        }
-
-        if ($zoneId) {
-            $query->whereHas('paciente', function($q) use ($zoneId) {
-                $q->where('zona_id', $zoneId);
-            });
-        }
-
-        $calls = $query->orderBy('fecha_hora', 'desc')->get();
+            ->findOrFail($id);
 
         try {
             if ($format === 'csv') {
                 // Configurar cabeceras para CSV
                 $headers = [
                     'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename="llamadas_programadas_' . $date . '.csv"',
+                    'Content-Disposition' => 'attachment; filename="llamadas_programadas_' . $llamada->id . '.csv"',
                 ];
 
-                $callback = function() use ($calls) {
-                    $file = fopen('php://output', 'w');
+                $callback = function() use ($llamada) {
+                    $file = fopen('php://output', 'w'); 
                     // Escribir encabezado del CSV
                     fputcsv($file, ['ID', 'Paciente', 'Fecha Programada', 'Tipo', 'Estado', 'Operador']);
-                    foreach ($calls as $call) {
+                    foreach ($llamada as $call) {
                         fputcsv($file, [
-                            $call->id,
-                            $call->paciente->nombre . ' ' . $call->paciente->apellidos,
-                            $call->fecha_hora,
-                            $call->tipo_llamada,
-                            $call->estado,
-                            $call->operador ? $call->operador->nombre : 'No asignado'
+                            $llamada->id,
+                            $llamada->paciente->nombre . ' ' . $llamada->paciente->apellidos,
+                            $llamada->fecha_hora,
+                            $llamada->tipo_llamada,
+                            $llamada->estado,
+                            $llamada->operador ? $llamada->operador->nombre : 'No asignado'
                         ]);
                     }
                     fclose($file);
                 };
 
-                return response()->streamDownload($callback, 'llamadas_programadas_' . $date . '.csv', $headers);
+                return response()->streamDownload($callback, 'llamadas_programadas_' . $llamada->id . '.csv', $headers);
             }
 
             // Generar PDF con todas las llamadas; se asume que la vista 'reports.scheduled_calls' recorre $calls
-            $pdf = \PDF::loadView('reports.scheduled_calls', compact('calls', 'date'));
+            $pdf = \PDF::loadView('reports.scheduled_calls', compact('llamada'));
             $pdf->setPaper('a4');
-            $filename = 'llamadas_programadas_' . (is_string($date) ? $date : $date->format('d-m-Y')) . '.pdf';
+            $filename = 'llamadas_programadas_' . (is_string($llamada->fecha_hora) ? $llamada->fecha_hora : $llamada->fecha_hora->format('d-m-Y')) . '.pdf';
             return $pdf->download($filename);
         } catch (\Exception $e) {
             return $this->sendError('Error al generar el listado de llamadas programadas', $e->getMessage());

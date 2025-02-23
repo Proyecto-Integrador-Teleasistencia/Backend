@@ -42,7 +42,10 @@ class SubcategoriesTableSeeder extends Seeder
             ['nombre' => 'Formulación de sugerencias, quejas o reclamaciones', 'categoria_id' => 5],
             ['nombre' => 'Llamadas sociales (para saludar o hablar con el personal)', 'categoria_id' => 5],
             ['nombre' => 'Registrar citas médicas tras una llamada', 'categoria_id' => 5],
-            ['nombre' => 'Otros tipos de llamadas', 'categoria_id' => 5]
+            ['nombre' => 'Otros tipos de llamadas', 'categoria_id' => 5],
+
+            // Categoría 6: Actuación previa
+            ['nombre' => 'Actuación previa', 'categoria_id' => 6]
         ];
 
         foreach ($subcategories as $subcategory) {

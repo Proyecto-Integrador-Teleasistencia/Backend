@@ -3,15 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Aviso;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Zona;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class AlertsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // Insertar datos base
@@ -22,12 +19,14 @@ class AlertsTableSeeder extends Seeder
                 'categoria_id' => 2,
                 'paciente_id' => 1,
                 'operador_id' => 1,
+                'tipo_aviso' => 'medicacion',
+                'descripcion' => 'Recordatorio de medicación',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
         ]);
 
-        // Crear alertas aleatorias adicionales
+        // Crear avisos aleatorios adicionales
         Aviso::factory()
             ->count(10)
             ->create();

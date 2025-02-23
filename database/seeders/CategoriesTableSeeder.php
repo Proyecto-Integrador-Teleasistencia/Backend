@@ -18,5 +18,6 @@ class CategoriesTableSeeder extends Seeder
         Categoria::create(['nombre' => 'Agendas de ausencia domiciliaria y retorno']);
         Categoria::create(['nombre' => 'Atención de emergencias']);
         Categoria::create(['nombre' => 'Comunicaciones no urgentes']);
+        Categoria::create(['nombre' => 'Actuación previa']);
     }
 }

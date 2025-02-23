@@ -2,34 +2,37 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Informe de Cridades Programades</title>
+    <title>Informe de Llamada Programada</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 40px;
         }
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
+        .section {
+            margin-bottom: 20px;
+        }
+        h2 {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-top: 10px;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
-        }
-        .no-data {
-            text-align: center;
-            margin: 40px 0;
-            font-size: 18px;
-            color: #888;
-            font-weight: bold;
         }
         .footer {
             position: fixed;
@@ -43,41 +46,50 @@
 </head>
 <body>
     <div class="header">
-        <h1>Informe de Cridades Programades</h1>
-        <p>Data: {{ (new DateTime($date))->format('d/m/Y') ?? now()->format('d/m/Y') }}</p>
+        <h1>Informe Detallado de Llamada</h1>
+        <p>Fecha de Generación: {{ now()->format('d/m/Y H:i:s') }}</p>
     </div>
 
-    @if($calls->isEmpty())
-        <div class="no-data">
-            <p>No hay llamadas programadas para esta fecha.</p>
-        </div>
-    @else
+    <div class="section">
+        <h2>Detalles Generales</h2>
         <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pacient</th>
-                    <th>Data Programada</th>
-                    <th>Tipus</th>
-                    <th>Operador</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($calls as $call)
-                    <tr>
-                        <td>{{ $call->id }}</td>
-                        <td>{{ $call->paciente->nombre }} {{ $call->paciente->apellidos }}</td>
-                        <td>{{ \Carbon\Carbon::parse($call->fecha_hora)->format('d/m/Y H:i') }}</td>
-                        <td>{{ $call->tipo_llamada }}</td>
-                        <td>{{ $call->operador ? $call->operador->nombre : 'No asignado' }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
+            <tr><th>ID de Llamada</th><td>{{ $llamada['id'] }}</td></tr>
+            <tr><th>Fecha y Hora</th><td>{{ \Carbon\Carbon::parse($llamada['fecha_hora'])->format('d/m/Y H:i') }}</td></tr>
+            <tr><th>Tipo de Llamada</th><td>{{ ucfirst($llamada['tipo_llamada']) }}</td></tr>
+            <tr><th>Duración</th><td>{{ gmdate('i:s', $llamada['duracion']) }} minutos</td></tr>
+            <tr><th>Estado</th><td>{{ ucfirst($llamada['estado']) }}</td></tr>
         </table>
-    @endif
+    </div>
+
+    <div class="section">
+        <h2>Motivo y Descripción</h2>
+        <table>
+            <tr><th>Motivo</th><td>{{ $llamada['motivo'] }}</td></tr>
+            <tr><th>Descripción</th><td>{{ $llamada['descripcion'] }}</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Detalles de Programación</h2>
+        <table>
+            <tr><th>Planificada</th><td>{{ $llamada['planificada'] ? 'Sí' : 'No' }}</td></tr>
+            <tr><th>Fecha Completada</th><td>{{ $llamada['fecha_completada'] ? \Carbon\Carbon::parse($llamada['fecha_completada'])->format('d/m/Y H:i') : 'No completada' }}</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Identificación Relacionada</h2>
+        <table>
+            <tr><th>ID del Operador</th><td>{{ $llamada['operador_id'] }}</td></tr>
+            <tr><th>ID del Paciente</th><td>{{ $llamada['paciente_id'] }}</td></tr>
+            <tr><th>ID de Categoría</th><td>{{ $llamada['categoria_id'] }}</td></tr>
+            <tr><th>ID de Subcategoría</th><td>{{ $llamada['subcategoria_id'] }}</td></tr>
+            <tr><th>ID de Aviso</th><td>{{ $llamada['aviso_id'] ?? 'No asignado' }}</td></tr>
+        </table>
+    </div>
 
     <div class="footer">
-        <p>Generat per Teleasistencia - {{ now()->format('d/m/Y H:i:s') }}</p>
+        <p>Generado por Teleasistencia - {{ now()->format('d/m/Y H:i:s') }}</p>
     </div>
 </body>
 </html>

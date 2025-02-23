@@ -44,7 +44,7 @@ class ContactsController extends BaseController
          try {
              $patient = Paciente::findOrFail($patientId);
              $contacts = $patient->contactos()->get();
-             return $this->sendResponse(ContactResource::collection($contacts), 'Contactes del pacient recuperats ambèxit');
+             return $this->sendResponse(ContactResource::collection($contacts), 'Contactes del pacient recuperats ambèxit', 200);
          } catch (\Exception $e) {
              return $this->sendError('Error al recuperar els contactes del pacient', [], 500);
          }

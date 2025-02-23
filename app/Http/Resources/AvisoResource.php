@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AlertResource extends JsonResource
+class AvisoResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,7 +21,7 @@ class AlertResource extends JsonResource
             'descripcion' => $this->descripcion,
             'completado' => $this->completado,
             'fecha_completado' => $this->fecha_completado?->format('Y-m-d H:i:s'),
-            'categoria' => new CategoryResource($this->whenLoaded('categoria')),
+            'categoria' => new CategoriaResource($this->whenLoaded('categoria')),
             'paciente' => new PatientResource($this->whenLoaded('paciente')),
             'operador' => new UserResource($this->whenLoaded('operador')),
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,

@@ -6,32 +6,35 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+            margin: 40px;
         }
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
         .zone-info {
-            margin-bottom: 20px;
+            border: 1px solid #ddd;
             padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .date-range {
             margin-bottom: 20px;
+        }
+        .section-title {
+            color: #2c3e50;
+            margin-top: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
         }
         .stats {
-            margin: 20px 0;
             display: flex;
             justify-content: space-between;
+            margin-top: 20px;
         }
         .stat-box {
-            background-color: #f8f9fa;
-            padding: 10px;
+            background-color: #f5f5f5;
+            padding: 15px;
             border-radius: 5px;
             text-align: center;
+            flex: 1;
+            margin: 0 10px;
         }
         table {
             width: 100%;
@@ -40,51 +43,51 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
         .footer {
-            margin-top: 30px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
             text-align: center;
             font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>Informe d'Emergències per Zona</h1>
+        <p>Informe generat el {{ now()->format('d/m/Y H:i:s') }}</p>
     </div>
 
     <div class="zone-info">
         <h2>Zona: {{ $zone->nombre }}</h2>
         <p><strong>Codi:</strong> {{ $zone->codigo }}</p>
+        <p><strong>Període:</strong> {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}</p>
     </div>
 
-    <div class="date-range">
-        <strong>Període:</strong> {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
-    </div>
-
+    <h3 class="section-title">Estadístiques</h3>
     <div class="stats">
         <div class="stat-box">
-            <strong>Total d'Emergències:</strong>
+            <strong>Total d'Emergències</strong>
             <div>{{ $emergencies->count() }}</div>
         </div>
         <div class="stat-box">
-            <strong>Pacients Afectats:</strong>
+            <strong>Pacients Afectats</strong>
             <div>{{ $emergencies->unique('paciente_id')->count() }}</div>
         </div>
         <div class="stat-box">
-            <strong>Operadors Involucrats:</strong>
+            <strong>Operadors Involucrats</strong>
             <div>{{ $emergencies->unique('operador_id')->count() }}</div>
         </div>
     </div>
 
+    <h3 class="section-title">Detall d'Emergències</h3>
     <table>
         <thead>
             <tr>
@@ -111,8 +114,7 @@
     </table>
 
     <div class="footer">
-        <p>Informe generat el {{ now()->format('d/m/Y H:i') }}</p>
-        <p>Total d'emergències: {{ $emergencies->count() }}</p>
+        <p>Generat per Teleasistencia - {{ now()->format('d/m/Y H:i:s') }}</p>
     </div>
 </body>
 </html>
