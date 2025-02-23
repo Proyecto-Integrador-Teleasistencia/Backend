@@ -32,12 +32,7 @@ Para ejecutar el proyecto localmente, sigue estos pasos:
    ```bash
    git clone https://github.com/Proyecto-Integrador-Teleasistencia/Backend.git
    ```
-2. Instalar dependencias del backend:
-   ```bash
-   cd backend
-   npm install
-   ```
-3. Iniciar el servidor backend:
+2. Iniciar el servidor backend:
    ```bash
    sudo docker exec laravel-app bash -c '
        composer install && 
