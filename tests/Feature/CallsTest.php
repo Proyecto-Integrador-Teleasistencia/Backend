@@ -11,8 +11,6 @@ use App\Models\Categoria;
 use App\Models\Subcategoria;
 use App\Models\Paciente;
 use Illuminate\Testing\Fluent\AssertableJson;
-use App\Models\Paciente;
-use Illuminate\Testing\Fluent\AssertableJson;
 
 class CallsTest extends TestCase
 {
@@ -24,16 +22,13 @@ class CallsTest extends TestCase
     private $categoria;
     private $subcategoria;
     private $paciente;
-    private $zone;
-    private $categoria;
-    private $subcategoria;
-    private $paciente;
 
     protected function setUp(): void
     {
         parent::setUp();
     
-        $zone = Zona::factory()->create(['id' => 1]);
+        $this->user = User::factory()->create();
+        $this->token = $this->user->createToken('test-token')->plainTextToken;
 
         // Create required test data
         $this->zone = Zona::factory()->create(['id' => 1]);
@@ -64,34 +59,19 @@ class CallsTest extends TestCase
         foreach ($calls as $call) {
             $this->assertContains($call->id, $responseIds);
         }
-            ->assertJsonCount(3, 'data');
-    
-        $responseIds = collect($response->json('data'))->pluck('id')->toArray();
-    
-        foreach ($calls as $call) {
-            $this->assertContains($call->id, $responseIds);
-        }
     }
 
     public function test_can_create_call()
     {
         $callData = [
+            'categoria_id' => $this->categoria->id,
+            'subcategoria_id' => $this->subcategoria->id,
             'fecha_hora' => now()->format('Y-m-d H:i:s'),
             'tipo_llamada' => 'entrante',
             'duracion' => 300,
             'descripcion' => 'Test emergency call',
             'operador_id' => $this->user->id,
             'paciente_id' => $this->paciente->id,
-            'categoria_id' => $this->categoria->id,
-            'subcategoria_id' => $this->subcategoria->id
-            'fecha_hora' => now()->format('Y-m-d H:i:s'),
-            'tipo_llamada' => 'entrante',
-            'duracion' => 300,
-            'descripcion' => 'Test emergency call',
-            'operador_id' => $this->user->id,
-            'paciente_id' => $this->paciente->id,
-            'categoria_id' => $this->categoria->id,
-            'subcategoria_id' => $this->subcategoria->id
         ];
 
         $response = $this->withHeaders([
@@ -122,7 +102,6 @@ class CallsTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
-        ])->getJson("/api/llamadas/{$call->id}");
         ])->getJson("/api/llamadas/{$call->id}");
 
         $response->assertStatus(200)
