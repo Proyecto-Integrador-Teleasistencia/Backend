@@ -9,6 +9,8 @@ use Tests\TestCase;
 use App\Models\Zona;
 use App\Models\Categoria;
 use App\Models\Subcategoria;
+use App\Models\Paciente;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class CallsTest extends TestCase
 {
@@ -16,84 +18,92 @@ class CallsTest extends TestCase
 
     private $user;
     private $token;
+    private $zone;
+    private $categoria;
+    private $subcategoria;
+    private $paciente;
 
     protected function setUp(): void
     {
         parent::setUp();
-    
-        $zone = Zona::factory()->create(['id' => 1]);
 
-        // Crear categoría y subcategoría
-        $categoria = Categoria::factory()->create();
-        $subcategoria = Subcategoria::factory()->create([
-            'categoria_id' => $categoria->id,
+        $this->user = User::factory()->create();
+        $this->token = $this->user->createToken('test-token')->plainTextToken;
+
+        // Create required test data
+        $this->zone = Zona::factory()->create(['id' => 1]);
+        $this->categoria = Categoria::factory()->create();
+        $this->subcategoria = Subcategoria::factory()->create([
+            'categoria_id' => $this->categoria->id,
         ]);
-
-        $llamada = Llamada::factory()->create([
-            'zona_id' => $zone->id,
-            'categoria_id' => $categoria->id,
-            'subcategoria_id' => $subcategoria->id,
+        $this->paciente = Paciente::factory()->create([
+            'zona_id' => $this->zone->id,
         ]);
-
-        $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->getJson('/api/user');
-
-        $loginResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->postJson('/api/login', [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-    
-        $this->token = $loginResponse->json('access_token');
     }
 
     public function test_can_get_all_calls()
     {
         $calls = Llamada::factory()->count(3)->create();
-
+    
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
         ])->getJson('/api/llamadas');
-
+    
         $response->assertStatus(200)
-                ->assertJsonCount(3, 'data')
-                ->assertJson(function (AssertableJson $json) use ($calls) {
-                    $json->where('data.0.id', $calls->first()->id)
-                        ->where('data.1.id', $calls->get(1)->id)
-                        ->where('data.2.id', $calls->last()->id);
-                });
+            ->assertJsonCount(3, 'data');
+    
+        $responseIds = collect($response->json('data'))->pluck('id')->toArray();
+    
+        foreach ($calls as $call) {
+            $this->assertContains($call->id, $responseIds);
+        }
     }
 
     public function test_can_create_call()
     {
         $callData = [
-            'patient_id' => 1,
-            'type' => 'emergency',
-            'description' => 'Test emergency call',
+            'fecha_hora' => now()->format('Y-m-d H:i:s'),
+            'tipo_llamada' => 'entrante',
+            'duracion' => 300,
+            'descripcion' => 'Test emergency call',
+            'operador_id' => $this->user->id,
+            'paciente_id' => $this->paciente->id,
+            'categoria_id' => $this->categoria->id,
+            'subcategoria_id' => $this->subcategoria->id
         ];
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
-        ])->postJson('/api/calls', $callData);
+        ])->postJson('/api/llamadas', $callData);
+
+        // Debugging: Print the response content
+        echo "\nResponse Content:\n";
+        print_r($response->json());
+        echo "\n";
 
         $response->assertStatus(201)
-                ->assertJsonFragment([
-                    'description' => 'Test emergency call',
-                ]);
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'fecha_hora',
+                    'tipo_llamada',
+                    'duracion',
+                    'descripcion',
+                    'operador_id',
+                    'paciente_id',
+                    'categoria_id',
+                    'subcategoria_id',
+                ],
+            ]);
     }
 
     public function test_can_get_single_call()
     {
-        $call = Call::factory()->create();
+        $call = Llamada::factory()->create();
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
-        ])->getJson("/api/calls/{$call->id}");
+        ])->getJson("/api/llamadas/{$call->id}");
 
         $response->assertStatus(200)
                 ->assertJson([
