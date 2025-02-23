@@ -11,6 +11,8 @@ use App\Models\Categoria;
 use App\Models\Subcategoria;
 use App\Models\Paciente;
 use Illuminate\Testing\Fluent\AssertableJson;
+use App\Models\Paciente;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class CallsTest extends TestCase
 {
@@ -22,13 +24,16 @@ class CallsTest extends TestCase
     private $categoria;
     private $subcategoria;
     private $paciente;
+    private $zone;
+    private $categoria;
+    private $subcategoria;
+    private $paciente;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->user = User::factory()->create();
-        $this->token = $this->user->createToken('test-token')->plainTextToken;
+    
+        $zone = Zona::factory()->create(['id' => 1]);
 
         // Create required test data
         $this->zone = Zona::factory()->create(['id' => 1]);
@@ -45,11 +50,20 @@ class CallsTest extends TestCase
     {
         $calls = Llamada::factory()->count(3)->create();
     
+    
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
         ])->getJson('/api/llamadas');
     
+    
         $response->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+    
+        $responseIds = collect($response->json('data'))->pluck('id')->toArray();
+    
+        foreach ($calls as $call) {
+            $this->assertContains($call->id, $responseIds);
+        }
             ->assertJsonCount(3, 'data');
     
         $responseIds = collect($response->json('data'))->pluck('id')->toArray();
@@ -62,6 +76,14 @@ class CallsTest extends TestCase
     public function test_can_create_call()
     {
         $callData = [
+            'fecha_hora' => now()->format('Y-m-d H:i:s'),
+            'tipo_llamada' => 'entrante',
+            'duracion' => 300,
+            'descripcion' => 'Test emergency call',
+            'operador_id' => $this->user->id,
+            'paciente_id' => $this->paciente->id,
+            'categoria_id' => $this->categoria->id,
+            'subcategoria_id' => $this->subcategoria->id
             'fecha_hora' => now()->format('Y-m-d H:i:s'),
             'tipo_llamada' => 'entrante',
             'duracion' => 300,
@@ -96,9 +118,11 @@ class CallsTest extends TestCase
     public function test_can_get_single_call()
     {
         $call = Llamada::factory()->create();
+        $call = Llamada::factory()->create();
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
+        ])->getJson("/api/llamadas/{$call->id}");
         ])->getJson("/api/llamadas/{$call->id}");
 
         $response->assertStatus(200)
