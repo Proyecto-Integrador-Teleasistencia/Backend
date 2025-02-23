@@ -29,7 +29,11 @@ class CallsTest extends TestCase
             'categoria_id' => $categoria->id,
         ]);
 
-        $
+        $llamada = Llamada::factory()->create([
+            'zona_id' => $zone->id,
+            'categoria_id' => $categoria->id,
+            'subcategoria_id' => $subcategoria->id,
+        ]);
 
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;

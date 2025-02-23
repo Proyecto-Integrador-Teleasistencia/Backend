@@ -24,17 +24,17 @@ class LlamadaPolicy
     /**
      * Determine whether the user can make outgoing calls.
      */
-    public function makeOutgoingCall(User $user, Patient|Call $target): bool
+    public function makeOutgoingCall(User $user, Paciente|Llamada $target): bool
     {
         if ($this->isAdmin($user)) {
             return true;
         }
 
         if ($this->isOperator($user)) {
-            $zoneId = $target instanceof Patient ? $target->zone_id : $target->patient->zone_id;
+            $zoneId = $target instanceof Paciente ? $target->zona_id : $target->paciente->zona_id;
             
             // Si es una llamada, verificar que sea saliente
-            if ($target instanceof Call && $target->type !== 'outgoing') {
+            if ($target instanceof Llamada && $target->tipo_llamada !== 'saliente') {
                 return false;
             }
             
