@@ -24,6 +24,7 @@ class AvisoResource extends JsonResource
             'categoria' => new CategoriaResource($this->whenLoaded('categoria')),
             'paciente' => new PatientResource($this->whenLoaded('paciente')),
             'operador' => new UserResource($this->whenLoaded('operador')),
+            'zona' => new ZonaResource($this->whenLoaded('zona')),
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];

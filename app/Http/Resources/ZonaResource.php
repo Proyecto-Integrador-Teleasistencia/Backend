@@ -16,9 +16,11 @@ class ZonaResource extends JsonResource
             'activa' => $this->activa,
             'estado_texto' => $this->estado_texto,
             'numero_operadores' => $this->numero_operadores,
-            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
-            'operadores' => OperatorResource::collection($this->whenLoaded('operator')),
+            'numero_pacientes' => $this->whenCounted('pacientes'),
+            'operadores' => UserResource::collection($this->whenLoaded('operator')),
+            'pacientes' => PatientResource::collection($this->whenLoaded('pacientes')),
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

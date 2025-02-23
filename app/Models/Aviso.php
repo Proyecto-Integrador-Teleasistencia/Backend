@@ -17,6 +17,7 @@ class Aviso extends Model
         'fecha_completado',
         'categoria_id',
         'paciente_id',
+        'zona_id',
         'operador_id'
     ];
 
@@ -39,5 +40,10 @@ class Aviso extends Model
     public function operador()
     {
         return $this->belongsTo(User::class, 'operador_id');
+    }
+
+    public function zona()
+    {
+        return $this->belongsTo(Zona::class, 'zona_id');
     }
 }

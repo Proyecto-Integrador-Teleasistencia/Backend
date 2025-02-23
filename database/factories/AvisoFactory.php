@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Categoria;
 use App\Models\Paciente;
 use App\Models\User;
+use App\Models\Zona;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AvisoFactory extends Factory
@@ -18,6 +19,7 @@ class AvisoFactory extends Factory
             'categoria_id' => Categoria::inRandomOrder()->first()->id,
             'paciente_id' => Paciente::inRandomOrder()->first()->id,
             'operador_id' => User::where('role', 'operator')->inRandomOrder()->first()->id,
+            'zona_id' => Zona::inRandomOrder()->first()->id,
             'descripcion' => fake()->sentence(),
         ];
     }

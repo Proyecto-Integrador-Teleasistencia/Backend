@@ -37,40 +37,44 @@ class ReportsController extends BaseController
      */
     public function checkEmergencies(Request $request)
     {
-        $zoneId = $request->input('zone_id');
+        $zoneId = $request->input('zona_id');
         $startDate = $request->input('start_date') 
             ? Carbon::parse($request->input('start_date'))->startOfDay()
-            : Carbon::now()->startOfMonth()->startOfDay();
+            : null;
         
         $endDate = $request->input('end_date')
             ? Carbon::parse($request->input('end_date'))->endOfDay()
-            : Carbon::now()->endOfDay();
+            : null;
 
         if (!$zoneId) {
             return $this->sendError('Es necesario especificar una zona');
         }
 
         $zone = \App\Models\Zona::findOrFail($zoneId);
-        
-        $hasEmergencies = Aviso::where('tipo', 'puntual')
-            ->whereHas('paciente', function ($query) use ($zoneId, $startDate, $endDate) {
-                $query->where('zona_id', $zoneId)->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->exists();
+        $avisos = Aviso::where('tipo', 'puntual')->with('paciente', 'operador', 'zona')->get();
+        $emergencias = $avisos->filter(function ($aviso) use ($zoneId, $startDate, $endDate) {
+            $filter = $aviso->paciente->zona_id == $zoneId;
+
+            if ($startDate) {
+                $filter = $filter && $aviso->fecha_hora >= $startDate;
+            }
+
+            if ($endDate) {
+                $filter = $filter && $aviso->fecha_hora <= $endDate;
+            }
+
+            return $filter;
+        });
 
         return $this->sendResponse([
             'zone' => $zone->nombre,
-            'has_emergencias' => $hasEmergencies,
+            'has_emergencias' => $emergencias->count(),
             'total_emergencias' => Aviso::where('tipo', 'puntual')
                 ->whereHas('paciente', function ($query) use ($zoneId, $startDate, $endDate) {
-                    $query->where('zona_id', $zoneId)->whereBetween('created_at', [$startDate, $endDate]);
+                    $query->where('zona_id', $zoneId)->whereBetween('fecha_hora', [$startDate, $endDate]);
                 })
                 ->count(),
-            'emergencias' => Aviso::where('tipo', 'puntual')->with('paciente', 'operador')
-                ->whereHas('paciente', function ($query) use ($zoneId, $startDate, $endDate) {
-                    $query->where('zona_id', $zoneId)->whereBetween('created_at', [$startDate, $endDate]);
-                })
-                ->get()
+            'emergencias' => $emergencias
         ], 'Comprobación de emergencias completada');
     }
 
@@ -221,10 +225,8 @@ class ReportsController extends BaseController
     {
         $format = $request->input('format', 'pdf');
         $id = $request->input('id');
-
-        $llamada = Llamada::with(['paciente', 'operador'])
-            ->where('planificada', true)
-            ->findOrFail($id);
+        $llamada = Llamada::with(['paciente', 'operador'])->get();
+        dd($llamada->find($id));
 
         try {
             if ($format === 'csv') {

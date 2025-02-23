@@ -136,7 +136,7 @@ class AlertsController extends BaseController
     public function show($id)
     {
         try {
-            $alert = Aviso::with(['categoria', 'paciente', 'operador'])->findOrFail($id);
+            $alert = Aviso::with(['categoria', 'paciente', 'operador', 'zona'])->findOrFail($id);
             return $this->sendResponse(
                 new AvisoResource($alert),
                 'Avís/alarma recuperat ambèxit'

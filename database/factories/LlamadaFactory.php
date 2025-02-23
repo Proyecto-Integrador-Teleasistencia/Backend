@@ -42,6 +42,7 @@ class LlamadaFactory extends Factory
                 'categoria_id' => $categoria->id,
                 'paciente_id' => $paciente->id,
                 'operador_id' => $operador->id,
+                'zona_id' => $paciente->zona_id,
                 'descripcion' => fake()->sentence(),
             ]);
             $aviso_id = $aviso->id;
