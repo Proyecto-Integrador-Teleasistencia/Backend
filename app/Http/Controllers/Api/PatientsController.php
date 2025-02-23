@@ -105,26 +105,10 @@ class PatientsController extends BaseController
         return $this->sendResponse(new PatientResource($patient), 'Paciente actualitzat ambèxit', 200);
     }
 
-    public function destroy($id)
+    public function destroy(Paciente $paciente)
     {
-        try {
-            $patient = Paciente::findOrFail($id);
-            $this->authorize('delete', $patient);
-            
-            $patient = Paciente::findOrFail($id);
-            
-            // Eliminar registros relacionados manualmente por si acaso
-            $patient->contactos()->delete();
-            $patient->llamadas()->delete();
-            
-            // Eliminar el paciente
-            $patient->delete();
-            
-            return $this->sendResponse([], 'Paciente eliminado correctamente', 200);
-            
-        } catch (\Exception $e) {
-            return $this->sendError('Error al eliminar el paciente', [$e->getMessage()], 500);
-        }
+        $paciente->delete();
+        return response()->noContent();
     }
 
     public function getPatientsByZones($zoneId)

@@ -47,26 +47,16 @@ class LlamadaPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Llamada $call): bool
+    public function update(User $user, Llamada $llamada): bool
     {
-        return $user->role === 'admin' || $user->role === 'operator' && $call->paciente->zona_id === $user->zona_id;
+        return $user->role === 'admin' || $user->role === 'operator' && $llamada->paciente->zona_id === $user->zona_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Llamada $call): bool
+    public function delete(User $user, Llamada $llamada): bool
     {
-        // Los administradores pueden eliminar cualquier llamada
-        if ($this->isAdmin($user)) {
-            return true;
-        }
-
-        // Los operadores solo pueden eliminar llamadas que ellos hayan creado
-        if ($this->isOperator($user)) {
-            return $call->operator_id === $user->id && $this->canManageZone($user, $call->patient->zone_id);
-        }
-
-        return false;
+        return $user->role === 'admin' || $llamada->operador_id === $user->id || $this->canManageZone($user, $llamada->paciente->zona_id);
     }
 }
