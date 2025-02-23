@@ -16,7 +16,7 @@ return new class extends Migration
             $table->dateTime('fecha_hora');
             $table->enum('tipo_llamada', ['entrante', 'saliente']);
             $table->string('tipo_llamada_detalle')->nullable()->comment('Subcategoría de la llamada (ej. emergencia social, notificación, etc.)');
-            $table->integer('duracion')->comment('Duración en segundos');
+            $table->integer('duracion')->comment('Duración en segundos')->default(350);
             $table->enum('estado', ['completada', 'perdida', 'en_curso'])->default('en_curso');
             $table->string('motivo');
             $table->text('descripcion')->nullable();
