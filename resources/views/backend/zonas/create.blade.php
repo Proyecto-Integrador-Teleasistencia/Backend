@@ -18,6 +18,11 @@
                     <x-form.input name="codigo" label="Código" required />
                 </div>
 
+                <div class="flex items-center">
+                    <input type="checkbox" name="activa" id="activa" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="activa" class="ml-2 block text-sm text-gray-900">{{ __('Zona activa') }}</label>
+                </div>
+
                 <div class="flex items-center justify-end mt-4">
                     <x-button href="{{ route('backend.zonas.index') }}" class="bg-gray-600 hover:bg-gray-700 mr-2">
                         {{ __('Cancelar') }}

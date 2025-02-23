@@ -54,7 +54,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                {{ $operator->zonas->first()->nombre ?? '-' }}
+                                {{ $operator->zona->nombre ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('backend.operators.show', $operator) }}" class="text-blue-600 hover:text-blue-900">

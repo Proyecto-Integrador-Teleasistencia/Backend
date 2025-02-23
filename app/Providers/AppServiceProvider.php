@@ -23,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
             \URL::forceRootUrl(config('app.url'));
             \URL::forceScheme('https');
         }
-        \URL::forceScheme('https');
+        // \URL::forceScheme('https');
     }
 }

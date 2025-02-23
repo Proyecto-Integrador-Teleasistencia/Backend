@@ -3,35 +3,35 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Zona;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\Zone;
+use Illuminate\Auth\Access\Response;
 
 class ZonaPolicy
 {
-    use HandlesAuthorization;
-
-    public function viewAny(User $user): bool
-    {
-        return $user->is_admin;
-    }
-
-    public function view(User $user, Zona $zona): bool
-    {
-        return $user->is_admin;
-    }
-
+    /**
+     * Determine whether the user can create models.
+     */
     public function create(User $user): bool
     {
-        return $user->is_admin;
+        // Solo los administradores pueden crear zonas
+        return $user->role === 'admin';
     }
 
-    public function update(User $user, Zona $zona): bool
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Zone $zone): bool
     {
-        return $user->is_admin;
+        // Solo los administradores pueden actualizar zonas
+        return $user->role === 'admin';
     }
 
-    public function delete(User $user, Zona $zona): bool
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Zone $zone): bool
     {
-        return $user->is_admin && $zona->operator()->count() === 0;
+        // Solo los administradores pueden eliminar zonas
+        return $user->role === 'admin';
     }
 }

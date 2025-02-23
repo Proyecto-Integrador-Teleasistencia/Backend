@@ -6,7 +6,7 @@ use App\Models\Alert;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class AlertPolicy
+class AvisoPolicy
 {
     /**
      * Determine whether the user can view any models.

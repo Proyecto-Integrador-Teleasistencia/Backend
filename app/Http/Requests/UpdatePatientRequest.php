@@ -40,7 +40,15 @@ class UpdatePatientRequest extends FormRequest
                 'max:100',
                 Rule::unique('pacientes')->ignore($this->route('paciente'))
             ],
-            'zona_id' => 'required|exists:zonas,id',
+            'zona_id' => [
+                'required',
+                'exists:zonas,id',
+                function ($attribute, $value, $fail) {
+                    if ($value != auth()->user()->zona_id) {
+                        $fail('La zona del paciente debe ser la misma que la del usuario que lo crea.');
+                    }
+                },
+            ],
             'situacion_personal' => 'nullable|string',
             'estado_salud' => 'nullable|string',
             'condicion_vivienda' => 'nullable|string',
@@ -67,6 +75,12 @@ class UpdatePatientRequest extends FormRequest
             'email.max' => 'El correo electrónico no puede tener más de 100 caracteres',
             'zona_id.required' => 'La zona es obligatoria',
             'zona_id.exists' => 'La zona seleccionada no existe',
+            'zona_id.same' => 'La zona del paciente no puede ser la misma que la del usuario que lo crea.',
+            'situacion_personal' => 'nullable|string',
+            'estado_salud' => 'nullable|string',
+            'condicion_vivienda' => 'nullable|string',
+            'nivel_autonomia' => 'nullable|string',
+            'situacion_economica' => 'nullable|string',
         ];
     }
 }

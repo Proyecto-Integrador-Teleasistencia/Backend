@@ -38,7 +38,7 @@ class OperatorsTableSeeder extends Seeder
         ]);
 
         // Asignar zonas a los operadores
-        $admin->zonas()->attach([1]);
-        $operator->zonas()->attach([2]);
+        $admin->update(['zona_id' => 1]);
+        $operator->update(['zona_id' => 2]);
     }
 }

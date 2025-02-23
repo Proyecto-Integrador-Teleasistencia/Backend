@@ -9,6 +9,7 @@ use App\Models\Paciente;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientsController extends BaseController
 {
@@ -96,7 +97,7 @@ class PatientsController extends BaseController
     public function update(UpdatePatientRequest $request, $id)
     {
         $patient = Paciente::findOrFail($id);
-        $this->authorize('update', $patient);   
+        $this->authorize('update', $patient);
         $validated = $request->validated();
 
         $patient->update($validated);

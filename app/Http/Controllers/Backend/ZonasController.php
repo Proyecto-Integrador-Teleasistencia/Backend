@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Zona;
 use Illuminate\Http\Request;
+use App\Http\Requests\Backend\StoreZonaRequest;
+use App\Http\Requests\Backend\UpdateZonaRequest;
 
 class ZonasController extends Controller
 {
@@ -29,12 +31,10 @@ class ZonasController extends Controller
     /**
      * Almacena una nueva zona en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreZonaRequest $request)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'codigo' => 'required|string|max:50|unique:zonas',
-        ]);
+        $validated = $request->validated();
+        $validated['activa'] = $request->has('activa');
 
         Zona::create($validated);
 
@@ -62,12 +62,10 @@ class ZonasController extends Controller
     /**
      * Actualiza una zona específica en la base de datos.
      */
-    public function update(Request $request, Zona $zona)
+    public function update(UpdateZonaRequest $request, Zona $zona)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'codigo' => 'required|string|max:50|unique:zonas,codigo,' . $zona->id,
-        ]);
+        $validated = $request->validated();
+        $validated['activa'] = $request->has('activa');
 
         $zona->update($validated);
 

@@ -22,7 +22,7 @@ class OperatorsController extends Controller
      */
     public function index()
     {
-        $operators = User::where('role', 'operator')->with('zonas')->paginate(10);
+        $operators = User::where('role', 'operator')->with('zona')->paginate(10);
         return view('backend.operators.index', compact('operators'));
     }
 

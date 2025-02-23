@@ -22,9 +22,9 @@ class StoreOperatorRequest extends FormRequest
             'status' => 'required|string|in:active,inactive,on_leave',
             'hire_date' => 'required|date',
             'termination_date' => 'nullable|date|after:hire_date',
-            'zone_id' => 'nullable|exists:zones,id',
-            'zones' => 'required|array',
-            'zones.*' => 'required|exists:zones,id',
+            'zona_id' => 'nullable|exists:zonas,id',
+            'zonas' => 'required|array',
+            'zonas.*' => 'required|exists:zonas,id',
         ];
     }
 
@@ -48,9 +48,9 @@ class StoreOperatorRequest extends FormRequest
             'hire_date.date' => 'La fecha de contratación debe ser una fecha válida',
             'termination_date.date' => 'La fecha de terminación debe ser una fecha válida',
             'termination_date.after' => 'La fecha de terminación debe ser posterior a la fecha de contratación',
-            'zones.required' => 'Debe asignar al menos una zona',
-            'zones.array' => 'Las zonas deben ser un array',
-            'zones.*.exists' => 'Una o más zonas seleccionadas no existen',
+            'zonas.required' => 'Debe asignar al menos una zona',
+            'zonas.array' => 'Las zonas deben ser un array',
+            'zonas.*.exists' => 'Una o más zonas seleccionadas no existen',
         ];
     }
 }

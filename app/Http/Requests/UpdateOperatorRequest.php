@@ -49,9 +49,9 @@ class UpdateOperatorRequest extends FormRequest
             'hire_date.date' => 'La fecha de contratación debe ser una fecha válida',
             'termination_date.date' => 'La fecha de terminación debe ser una fecha válida',
             'termination_date.after' => 'La fecha de terminación debe ser posterior a la fecha de contratación',
-            'zones.required' => 'Debe asignar al menos una zona',
-            'zones.array' => 'Las zonas deben ser un array',
-            'zones.*.exists' => 'Una o más zonas seleccionadas no existen',
+            'zonas.required' => 'Debe asignar al menos una zona',
+            'zonas.array' => 'Las zonas deben ser un array',
+            'zonas.*.exists' => 'Una o más zonas seleccionadas no existen',
         ];
     }
 }

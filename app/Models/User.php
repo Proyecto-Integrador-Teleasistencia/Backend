@@ -26,7 +26,8 @@ class User extends Authenticatable
         'fecha_contratacion',
         'fecha_baja',
         'password',
-        'is_admin'
+        'is_admin',
+        'zona_id'
     ];
 
     /**
@@ -54,9 +55,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function zonas()
+    public function zona()
     {
-        return $this->belongsToMany(Zona::class, 'zonas_gestion');
+        return $this->belongsTo(Zona::class);
     }
 
     public function llamadas()

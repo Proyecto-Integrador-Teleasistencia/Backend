@@ -16,7 +16,7 @@ class OperatorsController extends BaseController
     public function index()
     {
         $users = User::where('role', 'operator')
-            ->with('zonas')
+            ->with('zona')
             ->get();
         return $this->sendResponse(
             UserResource::collection($users),
@@ -37,13 +37,14 @@ class OperatorsController extends BaseController
         $operator = User::create($validated);
         
         // Asignar zonas al operador
-        if (isset($validated['zones'])) {
-            $operator->zones()->attach($validated['zones']);
+        if (isset($validated['zona'])) {
+            $operator->zona()->associate($validated['zona']);
+            $operator->save();
         }
 
         return $this->sendResponse(
             new UserResource($operator),
-            'Operador creat amb èxit',
+            'Operador creat ambèxit',
             201
         );
     }
@@ -54,7 +55,7 @@ class OperatorsController extends BaseController
     public function show($id)
     {
         $operator = User::where('role', 'operator')
-            ->with('zonas')
+            ->with('zona')
             ->findOrFail($id);
 
         return $this->sendResponse(

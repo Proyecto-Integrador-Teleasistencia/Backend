@@ -139,8 +139,8 @@ class ZonesController extends BaseController
     public function index()
     {
         try {
-            $zones = Zona::withCount(['pacientes', 'operator'])
-                ->with('operator')
+            $zones = Zona::withCount(['pacientes', 'operators'])
+                ->with('operators')
                 ->paginate(10);
                 
             return $this->sendResponse(
@@ -173,12 +173,12 @@ class ZonesController extends BaseController
     public function show(Zona $zona)
     {
         try {
-            $zona->loadCount(['pacientes', 'operator'])
-                ->load(['operator']);
+            $zona->loadCount(['pacientes', 'operators'])
+                ->load(['operators']);
                 
             return $this->sendResponse(
                 new ZoneResource($zona),
-                'Zona recuperada amb èxit'
+                'Zona recuperada ambèxit'
             );
         } catch (\Exception $e) {
             return $this->sendError('Error al recuperar la zona', $e->getMessage());
@@ -237,9 +237,9 @@ class ZonesController extends BaseController
      *     )
      * )
      */
-    public function getZoneOperators(Zone $zone)
+    public function getZoneOperators(Zona $zona)
     {
-        $operators = $zone->operators()
+        $operators = $zona->operators()
             ->where('role', 'operator')
             ->paginate(10);
             

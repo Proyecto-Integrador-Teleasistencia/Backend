@@ -2,12 +2,12 @@
 
 namespace App\Policies;
 
-use App\Models\Patient;
+use App\Models\Paciente;
 use App\Models\User;
 use App\Policies\Traits\ChecksUserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PatientPolicy
+class PacientePolicy
 {
     use HandlesAuthorization, ChecksUserRole;
 
@@ -16,29 +16,13 @@ class PatientPolicy
      */
     public function create(User $user): bool
     {
-        return $this->isAdmin($user);
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Patient $patient): bool
-    {
-        return $this->isAdmin($user);
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Patient $patient): bool
-    {
-        return $this->isAdmin($user);
+        return $user->role === 'admin' || $user->role === 'operator';
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Patient $patient): bool
+    public function update(User $user, Paciente $patient): bool
     {
         // Los administradores pueden actualizar cualquier paciente
         if ($user->role === 'admin') {
@@ -47,7 +31,7 @@ class PatientPolicy
 
         // Los operadores solo pueden actualizar pacientes de sus zonas asignadas
         if ($user->role === 'operator') {
-            return $user->zones->contains($patient->zone_id);
+            return $user->zona_id === $patient->zona_id;
         }
 
         return false;
@@ -56,9 +40,18 @@ class PatientPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Patient $patient): bool
+    public function delete(User $user, Paciente $patient): bool
     {
         // Solo los administradores pueden eliminar pacientes
-        return $user->role === 'admin';
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        // Los operadores solo pueden eliminar pacientes de sus zonas asignadas
+        if ($user->role === 'operator') {
+            return $user->zona_id === $patient->zona_id;
+        }
+
+        return false;
     }
 }

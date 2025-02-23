@@ -35,8 +35,8 @@
             <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">{{ __('Zona') }}</dt>
                 <dd class="mt-1 text-sm text-gray-900">
-                    @if($operator->zonas?->count() > 0)
-                        {{ $operator->zonas->first()->nombre }}
+                    @if($operator->zona)
+                        {{ $operator->zona->nombre }}
                     @else
                         -
                     @endif

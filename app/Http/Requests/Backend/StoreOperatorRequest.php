@@ -19,7 +19,6 @@ class StoreOperatorRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'telefono' => 'nullable|string|max:20',
             'zona_id' => 'nullable|exists:zonas,id',
-
             'password' => 'required|string|min:8|confirmed',
 
         ];

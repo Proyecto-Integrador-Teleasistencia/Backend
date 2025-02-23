@@ -36,12 +36,13 @@ jobs:
 
             sudo docker exec laravel-app bash -c '
               composer install && 
+              composer dump-autoload &&
               npm install && 
               npm run build && 
               sed -i "s#^APP_URL=.*#APP_URL=https://back.projecte2.ddaw.es#" .env
             '
             sudo docker compose up -d
-            sudo docker compose exec laravel.test php artisan migrate:fresh --seed
+            sudo docker compose exec laravel.test php artisan migrate:fresh --seed --force
 
             sudo chown -R $USER:$USER $DEPLOY_DIR
             sudo chmod -R 777 /var/www/back/

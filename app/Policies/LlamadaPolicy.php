@@ -8,7 +8,7 @@ use App\Models\Paciente;
 use App\Policies\Traits\ChecksUserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CallPolicy
+class LlamadaPolicy
 {
     use HandlesAuthorization, ChecksUserRole;
 

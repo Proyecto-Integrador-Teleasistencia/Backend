@@ -34,7 +34,7 @@ class Zona extends Model
 
     public function getNumeroOperadoresAttribute(): int
     {
-        return $this->operator()->count();
+        return $this->operators()->count();
     }
 
     // Mutators
@@ -56,12 +56,12 @@ class Zona extends Model
 
     public function scopeConOperadores(Builder $query): Builder
     {
-        return $query->whereHas('operator');
+        return $query->whereHas('operators');
     }
 
     public function scopeSinOperadores(Builder $query): Builder
     {
-        return $query->whereDoesntHave('operator');
+        return $query->whereDoesntHave('operators');
     }
 
     public function pacientes(): HasMany
@@ -69,10 +69,8 @@ class Zona extends Model
         return $this->hasMany(Paciente::class);
     }
 
-    public function operator(): BelongsToMany
+    public function operators(): HasMany
     {
-        return $this->belongsToMany(User::class, 'zonas_gestion')
-                    ->where('role', 'operator')
-                    ->withTimestamps();
+        return $this->hasMany(User::class)->where('role', 'operator');
     }
 }

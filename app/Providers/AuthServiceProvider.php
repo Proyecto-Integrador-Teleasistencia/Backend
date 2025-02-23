@@ -3,17 +3,16 @@
 namespace App\Providers;
 
 use App\Models\Call;
-use App\Models\Patient;
-use App\Models\Zone;
-use App\Models\Alert;
-use App\Models\Contact;
-use App\Models\Operator;
+use App\Models\Paciente;
+use App\Models\Zona;
+use App\Models\Aviso;
+use App\Models\Contacto;
 use App\Models\User;
-use App\Policies\CallPolicy;
-use App\Policies\PatientPolicy;
-use App\Policies\ZonePolicy;
-use App\Policies\AlertPolicy;
-use App\Policies\ContactPolicy;
+use App\Policies\LlamadaPolicy;
+use App\Policies\PacientePolicy;
+use App\Policies\ZonaPolicy;
+use App\Policies\AvisoPolicy;
+use App\Policies\ContactoPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -27,11 +26,11 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         \App\Models\Zona::class => \App\Policies\ZonaPolicy::class,
-        Patient::class => PatientPolicy::class,
-        Call::class => CallPolicy::class,
-        Zone::class => ZonePolicy::class,
-        Alert::class => AlertPolicy::class,
-        Contact::class => ContactPolicy::class,
+        Paciente::class => PacientePolicy::class,
+        Call::class => LlamadaPolicy::class,
+        Zona::class => ZonaPolicy::class,
+        Aviso::class => AvisoPolicy::class,
+        Contacto::class => ContactoPolicy::class,
         User::class => UserPolicy::class,
     ];
 
@@ -46,7 +45,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Gate para gestionar zonas
         Gate::define('manage-zone', function ($user, $zone) {
-            return $user->role === 'admin' || $user->zones->contains($zone->id);
+            return $user->role === 'admin' || $user->zona_id === $zone->id;
         });
 
         // Gate para llamadas salientes

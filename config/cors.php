@@ -16,27 +16,19 @@ return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'auth/*', 'login/*'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
-    'allowed_origins' => ['http://localhost:5174', 'https://accounts.google.com'],
+    'allowed_origins' => ['http://localhost:5174', 'https://accounts.google.com', 'https://front.projecte2.ddaw.es'],
 
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => ['*'],
 
-    'max_age' => 0,
-
-    'supports_credentials' => true,
+    'max_age' => 7200,
 
     'supports_credentials' => true,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cross-Origin-Opener-Policy Configuration
-    |--------------------------------------------------------------------------
-    */
-    'access_control_allow_origin' => '*',
     'cross_origin_opener_policy' => 'same-origin-allow-popups',
 ];
