@@ -16,7 +16,13 @@ class CallsTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => bcrypt('password123'), // Asegúrate de usar bcrypt para hash
+            'role' => 'operator',
+            'zona_id' => 1,
+            
+        ]);
         $this->user = User::factory()->create();
         $this->token = $this->user->createToken('test-token')->plainTextToken;
     }

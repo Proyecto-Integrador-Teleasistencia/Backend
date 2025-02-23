@@ -23,8 +23,6 @@ class CallResource extends JsonResource
             'fecha_hora' => $this->fecha_hora ? $this->fecha_hora->format('Y-m-d H:i:s') : null,
             'tipo_llamada' => $this->tipo_llamada,
             'duracion' => $this->duracion,
-            'estado' => $this->estado,
-            'motivo' => $this->motivo,
             'descripcion' => $this->descripcion,
             'planificada' => $this->planificada,     
             'operador_id' => new UserResource($this->whenLoaded('operador')),
