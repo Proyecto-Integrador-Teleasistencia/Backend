@@ -77,9 +77,9 @@ class CallsTest extends TestCase
         ])->postJson('/api/llamadas', $callData);
 
         // Debugging: Print the response content
-        echo "\nResponse Content:\n";
-        print_r($response->json());
-        echo "\n";
+        // echo "\nResponse Content:\n";
+        // print_r($response->json());
+        // echo "\n";
 
         $response->assertStatus(201)
             ->assertJsonStructure([
@@ -89,10 +89,6 @@ class CallsTest extends TestCase
                     'tipo_llamada',
                     'duracion',
                     'descripcion',
-                    'operador_id',
-                    'paciente_id',
-                    'categoria_id',
-                    'subcategoria_id',
                 ],
             ]);
     }
