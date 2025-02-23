@@ -16,7 +16,7 @@ class LlamadaPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Llamada $target): bool
+    public function create(User $user): bool
     {
         return $user->role === 'admin' || $user->role === 'operator';
     }
@@ -24,17 +24,17 @@ class LlamadaPolicy
     /**
      * Determine whether the user can make outgoing calls.
      */
-    public function makeOutgoingCall(User $user, Patient|Call $target): bool
+    public function makeOutgoingCall(User $user, Paciente|Llamada $target): bool
     {
         if ($this->isAdmin($user)) {
             return true;
         }
 
         if ($this->isOperator($user)) {
-            $zoneId = $target instanceof Patient ? $target->zone_id : $target->patient->zone_id;
+            $zoneId = $target instanceof Paciente ? $target->zona_id : $target->paciente->zona_id;
             
             // Si es una llamada, verificar que sea saliente
-            if ($target instanceof Call && $target->type !== 'outgoing') {
+            if ($target instanceof Llamada && $target->tipo_llamada !== 'saliente') {
                 return false;
             }
             
@@ -47,7 +47,7 @@ class LlamadaPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Call $call): bool
+    public function update(User $user, Llamada $call): bool
     {
         return $user->role === 'admin' || $user->role === 'operator' && $call->paciente->zona_id === $user->zona_id;
     }
@@ -55,7 +55,7 @@ class LlamadaPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Call $call): bool
+    public function delete(User $user, Llamada $call): bool
     {
         // Los administradores pueden eliminar cualquier llamada
         if ($this->isAdmin($user)) {

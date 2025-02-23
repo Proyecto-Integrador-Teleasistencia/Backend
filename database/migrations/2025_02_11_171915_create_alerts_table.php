@@ -23,17 +23,20 @@ return new class extends Migration
                 'seguimiento_dol',
                 'seguimiento_alta',
                 'ausencia_temporal',
-                'retorno'
+                'retorno',
+                'preventivo' 
             ]);
             $table->text('descripcion')->nullable();
             $table->boolean('completado')->default(false);
             $table->dateTime('fecha_completado')->nullable();
+
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
-            $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
+            $table->foreignId('paciente_id')->nullable()->constrained('pacientes')->onDelete('cascade');
+            $table->foreignId('zona_id')->nullable()->constrained('zonas')->onDelete('cascade')->comment('Si es un aviso preventivo que afecta a toda una zona');
             $table->foreignId('operador_id')->nullable()->constrained('users')->onDelete('set null');
+
             $table->timestamps();
-            
-            // Indexar campos de búsqueda frecuente
+
             $table->index('fecha_hora');
             $table->index('tipo');
             $table->index('tipo_aviso');
@@ -41,6 +44,7 @@ return new class extends Migration
             $table->index('completado');
             $table->index(['categoria_id', 'paciente_id']);
             $table->index('operador_id');
+            $table->index('zona_id');
         });
     }
 

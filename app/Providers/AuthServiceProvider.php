@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Call;
+use App\Models\Llamada;
 use App\Models\Paciente;
 use App\Models\Zona;
 use App\Models\Aviso;
@@ -27,7 +27,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         \App\Models\Zona::class => \App\Policies\ZonaPolicy::class,
         Paciente::class => PacientePolicy::class,
-        Call::class => LlamadaPolicy::class,
+        Llamada::class => LlamadaPolicy::class,
         Zona::class => ZonaPolicy::class,
         Aviso::class => AvisoPolicy::class,
         Contacto::class => ContactoPolicy::class,

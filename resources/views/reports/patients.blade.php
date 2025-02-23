@@ -2,81 +2,90 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Informe de Pacientes</title>
+    <title>Informe Detallado de Llamada</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 40px;
         }
-        .page-break {
-            page-break-after: always;
-        }
-        .patient-card {
+        .call-card {
             border: 1px solid #ddd;
             padding: 15px;
             margin-bottom: 20px;
         }
-        .patient-header {
+        .call-header {
             background-color: #f5f5f5;
             padding: 10px;
             margin-bottom: 10px;
-        }
-        .contact-list {
-            margin-left: 20px;
         }
         .section-title {
             color: #2c3e50;
             margin-top: 10px;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-    <h1>Informe de Pacientes</h1>
-    <p>Fecha de generación: {{ now()->format('d/m/Y H:i') }}</p>
+    <h1>Informe Detallado de Llamada</h1>
+    <p>Fecha de Generación: {{ now()->format('d/m/Y H:i:s') }}</p>
 
-    @foreach($patients as $patient)
-        <div class="patient-card">
-            <div class="patient-header">
-                <h2>{{ $patient->nombre }}</h2>
-                <p><strong>DNI:</strong> {{ $patient->dni }}</p>
-            </div>
-
-            <h3 class="section-title">Información Personal</h3>
-            <p><strong>Fecha de Nacimiento:</strong> {{ $patient->fecha_nacimiento->format('d/m/Y') }} ({{ $patient->edad }} años)</p>
-            <p><strong>Teléfono:</strong> {{ $patient->telefono }}</p>
-            <p><strong>Email:</strong> {{ $patient->email ?? 'No disponible' }}</p>
-
-            <h3 class="section-title">Dirección</h3>
-            <p>{{ $patient->direccion }}</p>
-            <p>{{ $patient->ciudad ?? 'Ciudad no especificada' }} - {{ $patient->codigo_postal ?? 'CP no especificado' }}</p>
-            <p><strong>Zona:</strong> {{ $patient->zona->nombre }}</p>
-
-            <h3 class="section-title">Estado</h3>
-            <p><strong>Situación Personal:</strong> {{ $patient->situacion_personal ?? 'No especificada' }}</p>
-            <p><strong>Estado de Salud:</strong> {{ $patient->estado_salud ?? 'No especificado' }}</p>
-            <p><strong>Nivel de Autonomía:</strong> {{ $patient->nivel_autonomia ?? 'No especificado' }}</p>
-            <p><strong>Condición de Vivienda:</strong> {{ $patient->condicion_vivienda ?? 'No especificada' }}</p>
-            <p><strong>Situación Económica:</strong> {{ $patient->situacion_economica ?? 'No especificada' }}</p>
-
-            @if($patient->contactos->count() > 0)
-                <h3 class="section-title">Contactos de Emergencia</h3>
-                <div class="contact-list">
-                    @foreach($patient->contactos as $contacto)
-                        <p>
-                            <strong>{{ $contacto->nombre }} {{ $contacto->apellido }}</strong><br>
-                            Teléfono: {{ $contacto->telefono }}<br>
-                            Relación: {{ $contacto->relacion }}<br>
-                            Prioridad: {{ $contacto->nivel_prioridad }}<br>
-                            @if($contacto->tiene_llaves)
-                                <em>Tiene llaves de la vivienda</em>
-                            @endif
-                        </p>
-                    @endforeach
-                </div>
-            @endif
+    <div class="call-card">
+        <div class="call-header">
+            <h2>ID de Llamada: {{ $llamada['id'] }}</h2>
+            <p><strong>Fecha y Hora:</strong> {{ \Carbon\Carbon::parse($llamada['fecha_hora'])->format('d/m/Y H:i') }}</p>
         </div>
-        @if(!$loop->last)
-            <div class="page-break"></div>
-        @endif
-    @endforeach
+
+        <h3 class="section-title">Detalles Generales</h3>
+        <table>
+            <tr><th>Tipo de Llamada</th><td>{{ ucfirst($llamada['tipo_llamada']) }}</td></tr>
+            <tr><th>Duración</th><td>{{ gmdate('i:s', $llamada['duracion']) }} minutos</td></tr>
+            <tr><th>Estado</th><td>{{ ucfirst($llamada['estado']) }}</td></tr>
+        </table>
+
+        <h3 class="section-title">Motivo y Descripción</h3>
+        <table>
+            <tr><th>Motivo</th><td>{{ $llamada['motivo'] }}</td></tr>
+            <tr><th>Descripción</th><td>{{ $llamada['descripcion'] }}</td></tr>
+        </table>
+
+        <h3 class="section-title">Detalles de Programación</h3>
+        <table>
+            <tr><th>Planificada</th><td>{{ $llamada['planificada'] ? 'Sí' : 'No' }}</td></tr>
+            <tr><th>Fecha Completada</th><td>{{ $llamada['fecha_completada'] ? \Carbon\Carbon::parse($llamada['fecha_completada'])->format('d/m/Y H:i') : 'No completada' }}</td></tr>
+        </table>
+
+        <h3 class="section-title">Identificación Relacionada</h3>
+        <table>
+            <tr><th>ID del Operador</th><td>{{ $llamada['operador_id'] }}</td></tr>
+            <tr><th>ID del Paciente</th><td>{{ $llamada['paciente_id'] }}</td></tr>
+            <tr><th>ID de Categoría</th><td>{{ $llamada['categoria_id'] }}</td></tr>
+            <tr><th>ID de Subcategoría</th><td>{{ $llamada['subcategoria_id'] }}</td></tr>
+            <tr><th>ID de Aviso</th><td>{{ $llamada['aviso_id'] ?? 'No asignado' }}</td></tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Generado por Teleasistencia - {{ now()->format('d/m/Y H:i:s') }}</p>
+    </div>
 </body>
 </html>

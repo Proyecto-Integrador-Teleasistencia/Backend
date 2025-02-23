@@ -6,19 +6,26 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 40px;
         }
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
+        .section-title {
+            color: #2c3e50;
+            margin-top: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
         th {
@@ -37,9 +44,10 @@
 <body>
     <div class="header">
         <h1>Informe de Cridades Realitzades</h1>
-        <p>Data: {{ now()->format('d/m/Y') }}</p>
+        <p>Data de Generació: {{ now()->format('d/m/Y H:i:s') }}</p>
     </div>
 
+    <h3 class="section-title">Detall de Cridades</h3>
     <table>
         <thead>
             <tr>
@@ -56,7 +64,7 @@
                     <td>{{ $call->id }}</td>
                     <td>{{ $call->paciente->nombre }} {{ $call->paciente->apellidos }}</td>
                     <td>{{ \Carbon\Carbon::parse($call->completed_at)->format('d/m/Y H:i') }}</td>
-                    <td>{{ $call->tipo_llamada }}</td>
+                    <td>{{ ucfirst($call->tipo_llamada) }}</td>
                     <td>{{ $call->operador->nombre }}</td>
                 </tr>
             @endforeach

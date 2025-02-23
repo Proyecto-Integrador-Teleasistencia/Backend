@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             OperatorsTableSeeder::class,
             CategoriesTableSeeder::class,
             SubcategoriesTableSeeder::class,
-            AlertsTableSeeder::class,
+            // AlertsTableSeeder::class,
             CallsTableSeeder::class,
             IncidenciasTableSeeder::class,
         ]);

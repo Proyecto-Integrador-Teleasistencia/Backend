@@ -6,12 +6,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Api\AlertsController;
 use App\Http\Controllers\Api\CallsController;
-// use App\Http\Controllers\Api\CategoriesController;
+use App\Http\Controllers\Api\CategoriasController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\OperatorsController;
 use App\Http\Controllers\Api\PatientsController;
 use App\Http\Controllers\Api\ReportsController;
-// use App\Http\Controllers\Api\SubcategoriesController;
+use App\Http\Controllers\Api\SubcategoriasController;
 use App\Http\Controllers\Api\ZonesController;
 use App\Http\Controllers\Api\IncidentsController;
 
@@ -63,11 +63,11 @@ Route::middleware('api')->group(function () {
         
         Route::apiResource('avisos', AlertsController::class);
         Route::apiResource('llamadas', CallsController::class);
-        // Route::apiResource('categorias', CategoriesController::class);
+        Route::apiResource('categorias', CategoriasController::class);
         Route::apiResource('contactos', ContactsController::class);
         Route::apiResource('operadores', OperatorsController::class);
         Route::apiResource('pacientes', PatientsController::class);
-        // Route::apiResource('subcategorias', SubcategoriesController::class);
+        Route::apiResource('subcategorias', SubcategoriasController::class);
         Route::apiResource('zonas', ZonesController::class);
         Route::apiResource('incidencias', IncidentsController::class);
         Route::get('incidencias/paciente/{patient}', [IncidentsController::class, 'getPatientIncidents']);

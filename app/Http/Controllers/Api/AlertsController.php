@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreAlertRequest;
 use App\Http\Requests\UpdateAlertRequest;
 use App\Models\Aviso;
-use App\Http\Resources\AlertResource;
+use App\Http\Resources\AvisoResource;
 use Illuminate\Http\Request;
 
 class AlertsController extends BaseController
@@ -66,7 +66,7 @@ class AlertsController extends BaseController
             }
 
             return $this->sendResponse(
-                AlertResource::collection($alerts),
+                AvisoResource::collection($alerts),
                 'Avisos i alarmes recuperats amb èxit'
             );
         } catch (\Exception $e) {
@@ -109,7 +109,7 @@ class AlertsController extends BaseController
         $alert = Aviso::create($validated);
         
         return $this->sendResponse(
-            new AlertResource($alert),
+            new AvisoResource($alert),
             'Avís/alarma creat amb èxit',
             201
         );
@@ -136,9 +136,9 @@ class AlertsController extends BaseController
     public function show($id)
     {
         try {
-            $alert = Aviso::with(['categoria', 'paciente', 'operador'])->findOrFail($id);
+            $alert = Aviso::with(['categoria', 'paciente', 'operador', 'zona'])->findOrFail($id);
             return $this->sendResponse(
-                new AlertResource($alert),
+                new AvisoResource($alert),
                 'Avís/alarma recuperat ambèxit'
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -181,7 +181,7 @@ class AlertsController extends BaseController
             $alert->update($validated);
             
             return $this->sendResponse(
-                new AlertResource($alert),
+                new AvisoResource($alert),
                 'Avís/alarma actualitzat amb èxit'
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
