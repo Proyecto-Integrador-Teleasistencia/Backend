@@ -121,7 +121,7 @@ class ReportsController extends BaseController
             ? Carbon::parse($request->input('end_date'))->endOfDay()
             : Carbon::now()->endOfDay();
 
-        $zoneId = $request->input('zone_id');
+        $zoneId = $request->input('zona_id');
 
         if (!$zoneId) {
             return $this->sendError('Es necesario especificar una zona');
