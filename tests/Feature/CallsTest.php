@@ -19,6 +19,14 @@ class CallsTest extends TestCase
     {
         parent::setUp();
     
+        $zone = Zona::factory()->create(['id' => 1]);
+
+        // Crear categoría y subcategoría
+        $categoria = Categoria::factory()->create();
+        $subcategoria = Subcategoria::factory()->create([
+            'categoria_id' => $categoria->id,
+        ]);
+
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
