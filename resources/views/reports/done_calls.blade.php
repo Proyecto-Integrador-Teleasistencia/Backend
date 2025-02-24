@@ -12,16 +12,19 @@
             text-align: center;
             margin-bottom: 30px;
         }
-        .section-title {
-            color: #2c3e50;
-            margin-top: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+        .section {
+            margin-bottom: 20px;
+        }
+        h2 {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -47,29 +50,16 @@
         <p>Data de Generació: {{ now()->format('d/m/Y H:i:s') }}</p>
     </div>
 
-    <h3 class="section-title">Detall de Cridades</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Pacient</th>
-                <th>Data</th>
-                <th>Tipus</th>
-                <th>Operador</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($calls as $call)
-                <tr>
-                    <td>{{ $call->id }}</td>
-                    <td>{{ $call->paciente->nombre }} {{ $call->paciente->apellidos }}</td>
-                    <td>{{ \Carbon\Carbon::parse($call->completed_at)->format('d/m/Y H:i') }}</td>
-                    <td>{{ ucfirst($call->tipo_llamada) }}</td>
-                    <td>{{ $call->operador->nombre }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="section">
+        <h2>Detall de Cridada</h2>
+        <table>
+            <tr><th>ID</th><td>{{ $llamada->id }}</td></tr>
+            <tr><th>Pacient</th><td>{{ $llamada->paciente->nombre ?? 'No especificat' }} {{ $llamada->paciente->apellidos ?? '' }}</td></tr>
+            <tr><th>Data</th><td>{{ $llamada->completed_at ? \Carbon\Carbon::parse($llamada->completed_at)->format('d/m/Y H:i') : 'Data no registrada' }}</td></tr>
+            <tr><th>Tipus</th><td>{{ ucfirst($llamada->tipo_llamada) ?? 'No especificat' }}</td></tr>
+            <tr><th>Operador</th><td>{{ $llamada->operador->nombre ?? 'No especificat' }}</td></tr>
+        </table>
+    </div>
 
     <div class="footer">
         <p>Generat per Teleasistencia - {{ now()->format('d/m/Y H:i:s') }}</p>

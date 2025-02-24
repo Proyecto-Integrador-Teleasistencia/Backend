@@ -151,14 +151,14 @@ class CallsController extends BaseController
 
             return $this->sendResponse(
                 CallResource::collection($calls),
-                'Cridades del tipus ' . $type . ' recuperades amb èxit'
+                'Cridades del tipus ' . $type . ' recuperades ambèxit'
             );
         } catch (\Exception $e) {
             return $this->sendError('Error al recuperar les crides per tipus', [], 500);
         }
     }
 
-    public function getCallsByPatientAndType($type, $patientId)
+    public function getCallsByTypeAndPatient($type, $patientId)
     {
         try {
             $patient = Paciente::findOrFail($patientId);
@@ -171,7 +171,24 @@ class CallsController extends BaseController
                 'Cridades del pacient per tipus recuperades amb èxit'
             );
         } catch (\Exception $e) {
-            return $this->sendError('Error al recuperar les crides del pacient per tipus', [], 500);
+            return $this->sendError('Error al recuperar les crides del pacient per tipus', [$e->getMessage()], 500);
+        }
+    }
+
+    public function getCallsByPatientAndType($patientId, $type)
+    {
+        try {
+            $patient = Paciente::findOrFail($patientId);
+            $calls = $patient->llamadas()
+                ->where('tipo_llamada', $type)
+                ->with(['operador', 'categoria', 'subcategoria', 'paciente'])
+                ->get();
+            return $this->sendResponse(
+                CallResource::collection($calls),
+                'Cridades del pacient per tipus recuperades amb èxit'
+            );
+        } catch (\Exception $e) {
+            return $this->sendError('Error al recuperar les crides del pacient per tipus', [$e->getMessage()], 500);
         }
     }
 

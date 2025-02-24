@@ -225,8 +225,7 @@ class ReportsController extends BaseController
     {
         $format = $request->input('format', 'pdf');
         $id = $request->input('id');
-        $llamada = Llamada::with(['paciente', 'operador'])->get();
-        dd($llamada->find($id));
+        $llamada = Llamada::with(['paciente', 'operador'])->findOrFail($id);
 
         try {
             if ($format === 'csv') {
@@ -287,33 +286,16 @@ class ReportsController extends BaseController
      */
     public function doneCalls(Request $request)
     {
-        $date = $request->input('date', Carbon::today());
-        $type = $request->input('type');
-        $zoneId = $request->input('zona_id');
         $format = $request->input('format', 'pdf'); // 'json', 'pdf', o 'csv'
-        
-        $calls = Llamada::with(['paciente', 'operador'])
-            ->where('estado', 'completada')
-            ->whereDate('fecha_hora', $date);
-            
-        if ($type) {
-            $calls->where('tipo_llamada', $type);
-        }
+        $id = $request->input('id');
+        $llamada = Llamada::with(['paciente', 'operador'])->findOrFail($id);
 
-        if ($zoneId) {
-            $calls->whereHas('paciente', function ($query) use ($zoneId) {
-                $query->where('zona_id', $zoneId);
-            });
-        }
-
-        $calls = $calls->orderBy('fecha_completada', 'desc')
-            ->get();
 
         switch($format) {
             case 'pdf':
-                $pdf = \PDF::loadView('reports.done_calls', compact('calls', 'date'));
+                $pdf = \PDF::loadView('reports.done_calls', compact('llamada'));
                 $pdf->setPaper('a4');
-                $filename = 'llamadas_realizadas_' . (is_string($date) ? $date : $date->format('d-m-Y')) . '.pdf';
+                $filename = 'llamadas_realizadas_' . (is_string($llamada->fecha_hora) ? $llamada->fecha_hora : $llamada->fecha_hora->format('d-m-Y')) . '.pdf';
                 return $pdf->download($filename);
             case 'csv':
                 $headers = [
@@ -321,11 +303,11 @@ class ReportsController extends BaseController
                     'Content-Disposition' => 'attachment; filename=llamadas_realizadas_' . $date . '.csv',
                 ];
                 
-                $callback = function() use ($calls) {
+                $callback = function() use ($llamada) {
                     $file = fopen('php://output', 'w');
                     fputcsv($file, ['ID', 'Paciente', 'Fecha', 'Tipo', 'Estado', 'Operador']);
                     
-                    foreach ($calls as $call) {
+                    foreach ($llamada as $call) {
                         fputcsv($file, [
                             $call->id,
                             $call->paciente->nombre . ' ' . $call->paciente->apellidos,
