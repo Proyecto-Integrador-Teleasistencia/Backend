@@ -15,10 +15,10 @@ class ContactsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/contacts",
+     *     path="/api/contactos",
      *     summary="Listar todos los contactos",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de contactos recuperada con éxito",
@@ -39,12 +39,12 @@ class ContactsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/patients/{patient_id}/contacts",
+     *     path="/api/pacientes/{patient}/contactos",
      *     summary="Obtener contactos de un paciente",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="patient_id",
+     *         name="patient",
      *         in="path",
      *         required=true,
      *         @OA\Schema(type="integer")
@@ -75,10 +75,10 @@ class ContactsController extends BaseController
 
 /**
      * @OA\Post(
-     *     path="/api/contacts",
+     *     path="/api/contactos",
      *     summary="Crear un nuevo contacto",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StoreContactRequest")
@@ -107,12 +107,12 @@ class ContactsController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/api/patients/{patient_id}/contacts",
+     *     path="/api/pacientes/{patient}/contactos",
      *     summary="Agregar un contacto a un paciente",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="patient_id",
+     *         name="patient",
      *         in="path",
      *         required=true,
      *         @OA\Schema(type="integer")
@@ -147,10 +147,10 @@ class ContactsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/contacts/{id}",
+     *     path="/api/contactos/{id}",
      *     summary="Obtener detalles de un contacto",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -178,10 +178,10 @@ class ContactsController extends BaseController
 
     /**
      * @OA\Put(
-     *     path="/api/contacts/{id}",
+     *     path="/api/contactos/{id}",
      *     summary="Actualizar un contacto",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -214,10 +214,10 @@ class ContactsController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/api/contacts/{id}",
+     *     path="/api/contactos/{id}",
      *     summary="Eliminar un contacto",
-     *     tags={"Contacts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Contactos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

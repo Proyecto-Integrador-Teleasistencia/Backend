@@ -7,12 +7,16 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 /**
  * @OA\Info(
- *     version="1.0.0",
- *     title="API Documentation",
- *     description="API documentation for your Laravel application",
- *     @OA\Contact(
- *         email="your-email@example.com"
- *     )
+ *    title="Teleasistencia Documentation",
+ *    version="1.0.0",
+ * )
+ * @OA\PathItem(path="/api")
+**  
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
  * )
  */
 abstract class Controller extends BaseController

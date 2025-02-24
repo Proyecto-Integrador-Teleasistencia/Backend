@@ -12,10 +12,10 @@ class IncidentsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/incidents",
+     *     path="/api/incidencias",
      *     summary="Obtener todas las incidencias",
-     *     tags={"Incidents"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Incidencias"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de incidencias recuperada con éxito",
@@ -43,10 +43,10 @@ class IncidentsController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/api/incidents",
+     *     path="/api/incidencias",
      *     summary="Crear una nueva incidencia",
-     *     tags={"Incidents"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Incidencias"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StoreIncidentRequest")
@@ -74,10 +74,10 @@ class IncidentsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/incidents/{id}",
+     *     path="/api/incidencias/{id}",
      *     summary="Obtener detalles de una incidencia",
-     *     tags={"Incidents"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Incidencias"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -106,10 +106,10 @@ class IncidentsController extends BaseController
 
     /**
      * @OA\Put(
-     *     path="/api/incidents/{id}",
+     *     path="/api/incidencias/{id}",
      *     summary="Actualizar una incidencia",
-     *     tags={"Incidents"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Incidencias"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -141,10 +141,10 @@ class IncidentsController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/api/incidents/{id}",
+     *     path="/api/incidencias/{id}",
      *     summary="Eliminar una incidencia",
-     *     tags={"Incidents"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Incidencias"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -171,10 +171,10 @@ class IncidentsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/patients/{patient_id}/incidents",
+     *     path="/api/incidencias/paciente/{patient}",
      *     summary="Obtener todas las incidencias de un paciente",
-     *     tags={"Incidents"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Incidencias"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="patient_id",
      *         in="path",

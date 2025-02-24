@@ -8,7 +8,7 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
- *     schema="ZonaResource",
+ *     schema="ZoneResource",
  *     description="Esquema del recurso Zona",
  *     @OA\Property(
  *         property="id",

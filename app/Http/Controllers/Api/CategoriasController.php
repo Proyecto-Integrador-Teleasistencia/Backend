@@ -15,7 +15,7 @@ class CategoriasController extends BaseController
      *     path="/api/categorias",
      *     summary="Obtener todas las categorías",
      *     tags={"Categories"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de categorías recuperada con éxito",
@@ -54,7 +54,7 @@ class CategoriasController extends BaseController
      *     path="/api/categorias/{id}",
      *     summary="Obtener detalles de una categoría",
      *     tags={"Categories"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

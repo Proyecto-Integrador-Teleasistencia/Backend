@@ -15,10 +15,10 @@ class CallsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/calls",
+     *     path="/api/llamadas",
      *     summary="List calls with filters",
-     *     tags={"Calls"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Llamadas"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="date",
      *         in="query",
@@ -238,17 +238,17 @@ class CallsController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/api/calls",
-     *     summary="Create a new call",
-     *     tags={"Calls"},
-     *     security={{"sanctum":{}}},
+     *     path="/api/llamadas",
+     *     summary="Crear una nueva llamada",
+     *     tags={"Llamadas"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StoreCallRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Call created successfully",
+     *         description="Llamada creada con éxito",
      *         @OA\JsonContent(ref="#/components/schemas/CallResource")
      *     )
      * )
@@ -270,30 +270,54 @@ class CallsController extends BaseController
 
         return $this->sendResponse(
             new CallResource($call),
-            'Crida creada amb èxit',
+            'Crida creada ambèxit',
             201
         );
     }
 
     /**
-     * @OA\Put(
-     *     path="/api/calls/{id}",
-     *     summary="Update a call",
-     *     tags={"Calls"},
-     *     security={{"sanctum":{}}},
+     * @OA\Get(
+     *     path="/api/llamadas/{id}",
+     *     summary="Obtenir una crida per ID",
+     *     tags={"Llamadas"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateCallRequest")
+     *     @OA\Parameter(
+     *         name="date",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date"),
+     *         description="Filter calls by date"
+     *     ),
+     *     @OA\Parameter(
+     *         name="type",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string"),
+     *         description="Filter calls by type"
+     *     ),
+     *     @OA\Parameter(
+     *         name="zone_id",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="integer"),
+     *         description="Filter calls by zone ID"
+     *     ),
+     *     @OA\Parameter(
+     *         name="estado",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string"),
+     *         description="Filter calls by state"
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Call updated successfully",
+     *         description="Call retrieved successfully",
      *         @OA\JsonContent(ref="#/components/schemas/CallResource")
      *     ),
      *     @OA\Response(
@@ -338,20 +362,25 @@ class CallsController extends BaseController
     }
 
     /**
-     * @OA\Delete(
-     *     path="/api/calls/{id}",
-     *     summary="Delete a call",
-     *     tags={"Calls"},
-     *     security={{"sanctum":{}}},
+     * @OA\Put(
+     *     path="/api/llamadas/{id}",
+     *     summary="Update a call",
+     *     tags={"Llamadas"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateCallRequest")
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Call deleted successfully"
+     *         description="Call updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/CallResource")
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -381,10 +410,10 @@ class CallsController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/api/calls/{id}",
-     *     summary="Delete a call",
-     *     tags={"Calls"},
-     *     security={{"sanctum":{}}},
+     *     path="/api/llamadas/{id}",
+     *     summary="Eliminar una llamada",
+     *     tags={"Llamadas"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -393,7 +422,7 @@ class CallsController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Call deleted successfully"
+     *         description="Crida eliminada ambèxit"
      *     )
      * )
      */

@@ -16,7 +16,7 @@ class SubcategoriasController extends BaseController
      *     path="/api/subcategorias",
      *     summary="Obtener todas las subcategorías",
      *     tags={"Subcategorias"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de subcategorías encontrada con éxito",
@@ -57,7 +57,7 @@ class SubcategoriasController extends BaseController
      *     path="/api/subcategorias/{id}",
      *     summary="Obtener una subcategoría por ID",
      *     tags={"Subcategorias"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

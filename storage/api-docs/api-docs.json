@@ -1,0 +1,4474 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Teleasistencia Documentation",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api": {},
+        "/api/avisos": {
+            "get": {
+                "tags": [
+                    "Avisos"
+                ],
+                "summary": "Listar todos los avisos y alarmas con filtros",
+                "operationId": "0079ac224443891e2d55aa3937248b1c",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filtrar por tipo (alert/alarm)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "alert",
+                                "alarm"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtrar por estado",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "in_progress",
+                                "resolved"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de avisos y alarmas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AvisoResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Avisos"
+                ],
+                "summary": "Crear un nuevo aviso o alarma",
+                "operationId": "4287ab19168ddfc8527f258f587bab3b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreAlertRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Aviso o alarma creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AvisoResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/avisos/{id}": {
+            "get": {
+                "tags": [
+                    "Avisos"
+                ],
+                "summary": "Obtener detalles de un aviso o alarma",
+                "operationId": "90a3cd0d853c5bdc4a033206ae38754d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del aviso o alarma",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del aviso o alarma recuperados exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvisoResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Aviso o alarma no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Avisos"
+                ],
+                "summary": "Actualizar un aviso o alarma existente",
+                "operationId": "09e10f1188bfc72bb17d9d5463df3efe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del aviso o alarma",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAlertRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Aviso o alarma actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvisoResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Aviso o alarma no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Avisos"
+                ],
+                "summary": "Eliminar un aviso o alarma",
+                "operationId": "1487e3611c34606e2ddbdbf0c19ee19d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del aviso o alarma",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Aviso o alarma eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Aviso o alarma no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Login",
+                "operationId": "222b2625838e3c57e017987f73598fda",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User signed in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "sample_token"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "zona_id": {
+                                            "type": "integer",
+                                            "example": 3
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Incorrect email or password"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Registration",
+                "operationId": "8e4e3cb7b46126f4696379d3c7eeb4ad",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "sample_token"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error occurred"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Logout",
+                "operationId": "ad65cbbd4e9f201619eae184a5961a98",
+                "responses": {
+                    "200": {
+                        "description": "User logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user information",
+                "operationId": "961ad57987905b44ae2e2f40b82e76de",
+                "responses": {
+                    "200": {
+                        "description": "User information retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "operator"
+                                                },
+                                                "zona_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/llamadas": {
+            "get": {
+                "tags": [
+                    "Llamadas"
+                ],
+                "summary": "List calls with filters",
+                "operationId": "d6ec8925418b26b9412b4dcf78319c01",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Filter by date (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by call type (incoming/outgoing)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "incoming",
+                                "outgoing"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zone_id",
+                        "in": "query",
+                        "description": "Filter by zone ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of calls retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CallResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Llamadas"
+                ],
+                "summary": "Crear una nueva llamada",
+                "operationId": "5d8d789ad21222831413c710c03e8e19",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCallRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Llamada creada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CallResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/llamadas/{id}": {
+            "get": {
+                "tags": [
+                    "Llamadas"
+                ],
+                "summary": "Obtenir una crida per ID",
+                "operationId": "a82c257bf9ff5197f3e740c99f01c325",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Filter calls by date",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter calls by type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "zone_id",
+                        "in": "query",
+                        "description": "Filter calls by zone ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filter calls by state",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Call retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CallResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Call not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Llamadas"
+                ],
+                "summary": "Update a call",
+                "operationId": "434712e7e17a135464bfff7987d6a8fd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCallRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Call updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CallResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Call not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Llamadas"
+                ],
+                "summary": "Eliminar una llamada",
+                "operationId": "fc82744becb3bb8b4ed6ea0ef0738b6d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Crida eliminada ambèxit"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Obtener todas las categorías",
+                "operationId": "7dab55b7d8cf8c6edabd96c94524f5a1",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CategoriaResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontraron categorías"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias/{id}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Obtener detalles de una categoría",
+                "operationId": "23b331d44668d58cda020df86ac2cf8c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría a recuperar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles de la categoría recuperados con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CategoriaResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/contactos": {
+            "get": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Listar todos los contactos",
+                "operationId": "1f556b122d0ecb089889171e7602f716",
+                "responses": {
+                    "200": {
+                        "description": "Lista de contactos recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ContactResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Crear un nuevo contacto",
+                "operationId": "c0de84ff06c131afed93935b5f3c51d1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreContactRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Contacto creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContactResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pacientes/{patient}/contactos": {
+            "get": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Obtener contactos de un paciente",
+                "operationId": "0d296cb7e03f06ecdf38c6694bb4d78b",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de contactos del paciente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ContactResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Agregar un contacto a un paciente",
+                "operationId": "22d3f43ca14a9c910b72da966b65c250",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreContactRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Contacto agregado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContactResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/contactos/{id}": {
+            "get": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Obtener detalles de un contacto",
+                "operationId": "8bb7585a592cdfe1f7bc3cd6e57ad53d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Contacto recuperado con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContactResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Actualizar un contacto",
+                "operationId": "a37b395952a1e761905959447aaa7cc9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateContactRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contacto actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContactResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Contactos"
+                ],
+                "summary": "Eliminar un contacto",
+                "operationId": "a467fb02ac367d5d4c4821e9c0d93026",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Contacto eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/incidencias": {
+            "get": {
+                "tags": [
+                    "Incidencias"
+                ],
+                "summary": "Obtener todas las incidencias",
+                "operationId": "d7e2a4aeb9d8709d7add7dce206f1369",
+                "responses": {
+                    "200": {
+                        "description": "Lista de incidencias recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/IncidentResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Incidencias"
+                ],
+                "summary": "Crear una nueva incidencia",
+                "operationId": "9d35933491df7b751657e0a14de37134",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreIncidentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Incidencia creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IncidentResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/incidencias/{id}": {
+            "get": {
+                "tags": [
+                    "Incidencias"
+                ],
+                "summary": "Obtener detalles de una incidencia",
+                "operationId": "bb0cdc60566dae1ee845db7ba5818e04",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles de la incidencia recuperados exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IncidentResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Incidencias"
+                ],
+                "summary": "Actualizar una incidencia",
+                "operationId": "eaf9a1ad1d537c255ba0430e7ac977d3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateIncidentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Incidencia actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IncidentResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Incidencias"
+                ],
+                "summary": "Eliminar una incidencia",
+                "operationId": "acb7799fd741a258adefacee3184bb7d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Incidencia eliminada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/incidencias/paciente/{patient}": {
+            "get": {
+                "tags": [
+                    "Incidencias"
+                ],
+                "summary": "Obtener todas las incidencias de un paciente",
+                "operationId": "812dcd8624297a8655ceb7318d033127",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de incidencias del paciente recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/IncidentResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/usuarios": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Obtener todos los usuarios",
+                "operationId": "2d36e20d2b0632b4c5fb64b3aca5757b",
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuarios recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/UserResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Crear un nuevo usuario",
+                "operationId": "93ed391160c0401ca6b6ca215cbfabbb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreOperatorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operador creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/usuarios/{id}": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Obtener un usuario por ID",
+                "operationId": "92ffd37e639f4d8b80ba8e8ff46a375f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operador recuperado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Operador no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Actualizar un usuario",
+                "operationId": "e056bc3323dcd6d627e8ec642dd0831a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateOperatorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operador actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Eliminar un usuario",
+                "operationId": "d18aac8a6bd6a09289ae577effa0ea4d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Operador eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pacientes": {
+            "get": {
+                "tags": [
+                    "Pacientes"
+                ],
+                "summary": "Obtener todos los pacientes con filtros opcionales",
+                "operationId": "8f2af66a15fcb73165bfb89756ebd3c7",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "description": "Filtrar por nombre",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "dni",
+                        "in": "query",
+                        "description": "Filtrar por DNI",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tarjeta_sanitaria",
+                        "in": "query",
+                        "description": "Filtrar por tarjeta sanitaria",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "telefono",
+                        "in": "query",
+                        "description": "Filtrar por teléfono",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "zona_id",
+                        "in": "query",
+                        "description": "Filtrar por zona",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de pacientes recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PatientResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pacientes"
+                ],
+                "summary": "Crear un nuevo paciente",
+                "operationId": "7e38e09022520a6315a3790b2882336f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePatientRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Paciente creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pacientes /{id}": {
+            "get": {
+                "tags": [
+                    "Pacientes"
+                ],
+                "summary": "Obtener detalles de un paciente",
+                "operationId": "3bfe25966fdc128447f54d307d2056b6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del paciente recuperados exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pacientes/{id}": {
+            "put": {
+                "tags": [
+                    "Pacientes"
+                ],
+                "summary": "Actualizar un paciente",
+                "operationId": "277e00ad177f805d6921179767b3e996",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePatientRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paciente actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pacientes"
+                ],
+                "summary": "Eliminar un paciente",
+                "operationId": "a656f5f5dffaa315977f94db6e814385",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Paciente eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zonas/{zone_id}/pacientes": {
+            "get": {
+                "tags": [
+                    "Pacientes"
+                ],
+                "summary": "Obtener pacientes por zona",
+                "operationId": "e40d18314bc41130301ecdd674a6b2c2",
+                "parameters": [
+                    {
+                        "name": "zone_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de pacientes de la zona recuperada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PatientResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/check-emergencies": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Verificar emergencias en una zona",
+                "operationId": "25046cd5749b2fa196406c8c6faf35d3",
+                "parameters": [
+                    {
+                        "name": "zone_id",
+                        "in": "query",
+                        "description": "ID de la zona",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Fecha de inicio (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Fecha de fin (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Respuesta de verificación de emergencias",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/emergency-report": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Generar informe de emergencias para una zona",
+                "operationId": "780ba93f2b26e633fde3187cee0bc9f2",
+                "parameters": [
+                    {
+                        "name": "zone_id",
+                        "in": "query",
+                        "description": "ID de la zona",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Fecha de inicio (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Fecha de fin (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PDF del informe de emergencias"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/pacientes": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Obtener lista de pacientes ordenados por apellido",
+                "operationId": "655c3acd2ece54a646ca22b62d41f8d0",
+                "responses": {
+                    "200": {
+                        "description": "Lista de pacientes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PatientResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/llamadas-programadas": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Obtener llamadas programadas",
+                "operationId": "78fd75f7c9e58d9531ca8b45740e7333",
+                "parameters": [
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Formato de exportación (pdf/csv)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pdf",
+                                "csv"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de llamadas programadas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/llamadas-realizadas": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Obtener llamadas completadas del día",
+                "operationId": "55677ad4957570cb5909fae5fd0e1b97",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Fecha a consultar (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de llamadas completadas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/historial-paciente/{id}": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Obtener historial de llamadas de un paciente",
+                "operationId": "2dd71a50ead1927aebe0c8471a5ad7ff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del paciente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Fecha de inicio (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Fecha de fin (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Historial de llamadas del paciente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/subcategorias": {
+            "get": {
+                "tags": [
+                    "Subcategorias"
+                ],
+                "summary": "Obtener todas las subcategorías",
+                "operationId": "a428069cb0aa69d3882aef9bcbbd0469",
+                "responses": {
+                    "200": {
+                        "description": "Lista de subcategorías encontrada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SubcategoriaResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontraron subcategorías"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/subcategorias/{id}": {
+            "get": {
+                "tags": [
+                    "Subcategorias"
+                ],
+                "summary": "Obtener una subcategoría por ID",
+                "operationId": "a7daeaa42744195dbca846fff14b5f27",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la subcategoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subcategoría encontrada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/SubcategoriaResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subcategoría no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zonas": {
+            "post": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Crear una nueva zona",
+                "operationId": "f664bfc7440779cb6e5fbedbf25e4fd4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreZoneRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Zona creada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZonaResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zonas/{zona}": {
+            "put": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Actualizar una zona existente",
+                "operationId": "8e7a51e628b6b5a867952fa5916a9b49",
+                "parameters": [
+                    {
+                        "name": "zona",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateZoneRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Zona actualizada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZonaResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Eliminar una zona",
+                "operationId": "c00cece1b13b70a1f36cca634a33179c",
+                "parameters": [
+                    {
+                        "name": "zona",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Zona eliminada con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zones": {
+            "get": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Listar todas las zonas",
+                "operationId": "020f2ffa2b5524fef024650df8253c40",
+                "responses": {
+                    "200": {
+                        "description": "Lista de zonas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ZonaResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zones/{id}": {
+            "get": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Obtener información de una zona",
+                "operationId": "e06126ff77656b96c86386859a1b5737",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Información de la zona obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZonaResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zones/{id}/patients": {
+            "get": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Listar pacientes en una zona",
+                "operationId": "d607e4364c964ad7a9df6ee737f92e20",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de pacientes en la zona",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PatientResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/zones/{id}/operators": {
+            "get": {
+                "tags": [
+                    "Zonas"
+                ],
+                "summary": "Listar operadores asignados a una zona",
+                "operationId": "d3c93480a6b1bb6557f870e710dcafe7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de operadores asignados a la zona",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/UserResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginRequest": {
+                "description": "Esquema de validación para el inicio de sesión",
+                "required": [
+                    "email",
+                    "password",
+                    "device_name"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "Correo electrónico del usuario",
+                        "type": "string",
+                        "format": "email",
+                        "example": "usuario@example.com"
+                    },
+                    "password": {
+                        "description": "Contraseña del usuario",
+                        "type": "string",
+                        "format": "password",
+                        "example": "MiContraseñaSegura123"
+                    },
+                    "device_name": {
+                        "description": "Nombre del dispositivo desde el que se realiza el inicio de sesión",
+                        "type": "string",
+                        "example": "iPhone 12"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterRequest": {
+                "description": "Esquema de validación para el registro",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "device_name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Nombre del usuario",
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del usuario",
+                        "type": "string",
+                        "format": "email",
+                        "example": "usuario@example.com"
+                    },
+                    "password": {
+                        "description": "Contraseña del usuario",
+                        "type": "string",
+                        "format": "password",
+                        "example": "MiContraseñaSegura123"
+                    },
+                    "device_name": {
+                        "description": "Nombre del dispositivo desde el que se realiza el inicio de sesión",
+                        "type": "string",
+                        "example": "iPhone 12"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreAlertRequest": {
+                "description": "Validación para la creación y actualización de alertas",
+                "required": [
+                    "tipo",
+                    "fecha_hora",
+                    "descripcion",
+                    "completado",
+                    "categoria_id",
+                    "paciente_id",
+                    "operador_id"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID de la alerta existente (opcional)",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "tipo": {
+                        "description": "Tipo de alerta",
+                        "type": "string",
+                        "enum": [
+                            "puntual",
+                            "periodico"
+                        ],
+                        "example": "puntual"
+                    },
+                    "fecha_hora": {
+                        "description": "Fecha y hora de la alerta",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24T01:45:22Z"
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la alerta",
+                        "type": "string",
+                        "example": "Paciente necesita atención inmediata"
+                    },
+                    "completado": {
+                        "description": "Estado de la alerta",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "fecha_completado": {
+                        "description": "Fecha y hora en que la alerta fue completada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "categoria_id": {
+                        "description": "ID de la categoría de la alerta",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la alerta",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "operador_id": {
+                        "description": "ID del operador responsable de la alerta",
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "StoreCallRequest": {
+                "description": "Validación para la creación de llamadas",
+                "required": [
+                    "fecha_hora",
+                    "tipo_llamada",
+                    "operador_id",
+                    "paciente_id",
+                    "categoria_id"
+                ],
+                "properties": {
+                    "fecha_hora": {
+                        "description": "Fecha y hora en que se realizó la llamada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24T15:30:00Z"
+                    },
+                    "tipo_llamada": {
+                        "description": "Tipo de llamada realizada",
+                        "type": "string",
+                        "enum": [
+                            "entrante",
+                            "saliente"
+                        ],
+                        "example": "entrante"
+                    },
+                    "duracion": {
+                        "description": "Duración de la llamada en segundos",
+                        "type": "integer",
+                        "example": 300,
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la llamada",
+                        "type": "string",
+                        "example": "Llamada de seguimiento realizada con el paciente",
+                        "nullable": true
+                    },
+                    "operador_id": {
+                        "description": "ID del operador responsable de la llamada",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la llamada",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "categoria_id": {
+                        "description": "ID de la categoría asignada a la llamada",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "subcategoria_id": {
+                        "description": "ID de la subcategoría asignada a la llamada",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreContactRequest": {
+                "description": "Validación para la creación de contactos de pacientes",
+                "required": [
+                    "paciente_id",
+                    "nombre",
+                    "telefono",
+                    "relacion"
+                ],
+                "properties": {
+                    "paciente_id": {
+                        "description": "ID del paciente asociado al contacto",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "nombre": {
+                        "description": "Nombre del contacto",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Carlos Pérez"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del contacto",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "relacion": {
+                        "description": "Relación con el paciente",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "Hermano"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreIncidentRequest": {
+                "description": "Validación para la creación de incidencias",
+                "required": [
+                    "paciente_id"
+                ],
+                "properties": {
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la incidencia",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la incidencia",
+                        "type": "string",
+                        "example": "El paciente sufrió una caída durante la noche",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreOperatorRequest": {
+                "description": "Validación para la creación de operadores",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "phone",
+                    "shift",
+                    "status",
+                    "hire_date",
+                    "zonas"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Nombre completo del operador",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "description": "Correo electrónico único del operador",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "example": "juan.perez@example.com"
+                    },
+                    "password": {
+                        "description": "Contraseña del operador (mínimo 8 caracteres)",
+                        "type": "string",
+                        "format": "password",
+                        "minLength": 8,
+                        "example": "SecurePass123"
+                    },
+                    "phone": {
+                        "description": "Número de teléfono del operador",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "shift": {
+                        "description": "Turno asignado al operador",
+                        "type": "string",
+                        "enum": [
+                            "morning",
+                            "afternoon",
+                            "night"
+                        ],
+                        "example": "morning"
+                    },
+                    "status": {
+                        "description": "Estado actual del operador",
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "on_leave"
+                        ],
+                        "example": "active"
+                    },
+                    "hire_date": {
+                        "description": "Fecha de contratación del operador",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-05-10"
+                    },
+                    "termination_date": {
+                        "description": "Fecha de terminación del contrato (opcional, debe ser posterior a la fecha de contratación)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-12-01",
+                        "nullable": true
+                    },
+                    "zona_id": {
+                        "description": "ID de la zona principal asignada",
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "zonas": {
+                        "description": "Lista de zonas asignadas al operador",
+                        "type": "array",
+                        "items": {
+                            "description": "ID de zona",
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "StorePatientRequest": {
+                "description": "Validación para la creación de pacientes",
+                "required": [
+                    "nombre",
+                    "fecha_nacimiento",
+                    "direccion",
+                    "dni",
+                    "tarjeta_sanitaria",
+                    "telefono",
+                    "zona_id"
+                ],
+                "properties": {
+                    "nombre": {
+                        "description": "Nombre completo del paciente",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "María López"
+                    },
+                    "fecha_nacimiento": {
+                        "description": "Fecha de nacimiento del paciente",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1985-04-12"
+                    },
+                    "direccion": {
+                        "description": "Dirección del paciente",
+                        "type": "string",
+                        "example": "Calle Falsa 123, Madrid"
+                    },
+                    "ciudad": {
+                        "description": "Ciudad de residencia del paciente",
+                        "type": "string",
+                        "example": "Madrid",
+                        "nullable": true
+                    },
+                    "codigo_postal": {
+                        "description": "Código postal del paciente",
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "28080",
+                        "nullable": true
+                    },
+                    "dni": {
+                        "description": "DNI único del paciente",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "12345678A"
+                    },
+                    "tarjeta_sanitaria": {
+                        "description": "Número de tarjeta sanitaria único",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "TS1234567890"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del paciente",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del paciente",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 100,
+                        "example": "maria.lopez@example.com",
+                        "nullable": true
+                    },
+                    "zona_id": {
+                        "description": "ID de la zona asignada al paciente",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "situacion_personal": {
+                        "description": "Situación personal del paciente",
+                        "type": "string",
+                        "example": "Vive solo",
+                        "nullable": true
+                    },
+                    "estado_salud": {
+                        "description": "Estado de salud actual del paciente",
+                        "type": "string",
+                        "example": "Hipertensión",
+                        "nullable": true
+                    },
+                    "condicion_vivienda": {
+                        "description": "Condición de la vivienda del paciente",
+                        "type": "string",
+                        "example": "Vivienda propia en buen estado",
+                        "nullable": true
+                    },
+                    "nivel_autonomia": {
+                        "description": "Nivel de autonomía del paciente",
+                        "type": "string",
+                        "example": "Autónomo",
+                        "nullable": true
+                    },
+                    "situacion_economica": {
+                        "description": "Situación económica del paciente",
+                        "type": "string",
+                        "example": "Media-baja",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreZoneRequest": {
+                "description": "Validación para la creación de zonas",
+                "required": [
+                    "nombre",
+                    "codigo"
+                ],
+                "properties": {
+                    "nombre": {
+                        "description": "Nombre único de la zona",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Zona Norte"
+                    },
+                    "codigo": {
+                        "description": "Código único de la zona",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "ZN-001"
+                    },
+                    "activa": {
+                        "description": "Estado de la zona (activa o inactiva)",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "estado_texto": {
+                        "description": "Descripción del estado de la zona",
+                        "type": "string",
+                        "example": "En mantenimiento",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateAlertRequest": {
+                "description": "Validación para la actualización de alertas",
+                "required": [
+                    "tipo",
+                    "fecha_hora",
+                    "descripcion",
+                    "completado",
+                    "categoria_id",
+                    "paciente_id",
+                    "operador_id"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID de la alerta existente",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "tipo": {
+                        "description": "Tipo de alerta",
+                        "type": "string",
+                        "enum": [
+                            "puntual",
+                            "periodico"
+                        ],
+                        "example": "puntual"
+                    },
+                    "fecha_hora": {
+                        "description": "Fecha y hora de la alerta",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24T15:30:00Z"
+                    },
+                    "descripcion": {
+                        "description": "Descripción de la alerta",
+                        "type": "string",
+                        "example": "Revisión médica programada"
+                    },
+                    "completado": {
+                        "description": "Indica si la alerta ha sido completada",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "fecha_completado": {
+                        "description": "Fecha y hora en que se completó la alerta",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-25T10:00:00Z",
+                        "nullable": true
+                    },
+                    "categoria_id": {
+                        "description": "ID de la categoría de la alerta",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la alerta",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "operador_id": {
+                        "description": "ID del operador encargado de la alerta",
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCallRequest": {
+                "description": "Validación para la actualización de llamadas",
+                "required": [
+                    "fecha_hora",
+                    "tipo_llamada",
+                    "operador_id",
+                    "paciente_id",
+                    "categoria_id"
+                ],
+                "properties": {
+                    "fecha_hora": {
+                        "description": "Fecha y hora en que se realizó la llamada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24T15:30:00Z"
+                    },
+                    "tipo_llamada": {
+                        "description": "Tipo de llamada realizada",
+                        "type": "string",
+                        "enum": [
+                            "entrante",
+                            "saliente"
+                        ],
+                        "example": "entrante"
+                    },
+                    "duracion": {
+                        "description": "Duración de la llamada en segundos",
+                        "type": "integer",
+                        "example": 300,
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la llamada",
+                        "type": "string",
+                        "example": "Llamada de seguimiento con el paciente",
+                        "nullable": true
+                    },
+                    "operador_id": {
+                        "description": "ID del operador que realizó la llamada",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la llamada",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "categoria_id": {
+                        "description": "ID de la categoría asignada a la llamada",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "subcategoria_id": {
+                        "description": "ID de la subcategoría asignada a la llamada",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateContactRequest": {
+                "description": "Validación para la actualización de contactos de pacientes",
+                "required": [
+                    "paciente_id",
+                    "nombre",
+                    "telefono",
+                    "relacion"
+                ],
+                "properties": {
+                    "paciente_id": {
+                        "description": "ID del paciente asociado al contacto",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "nombre": {
+                        "description": "Nombre del contacto",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Carlos Pérez"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del contacto",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "relacion": {
+                        "description": "Relación con el paciente",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "Hermano"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateIncidentRequest": {
+                "description": "Validación para la actualización de incidencias",
+                "properties": {
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la incidencia",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la incidencia",
+                        "type": "string",
+                        "example": "El paciente experimentó una caída durante la noche"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateOperatorRequest": {
+                "description": "Validación para la actualización de operadores",
+                "properties": {
+                    "name": {
+                        "description": "Nombre completo del operador",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "description": "Correo electrónico único del operador",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "example": "juan.perez@example.com"
+                    },
+                    "password": {
+                        "description": "Contraseña del operador (mínimo 8 caracteres)",
+                        "type": "string",
+                        "format": "password",
+                        "minLength": 8,
+                        "example": "SecurePass123"
+                    },
+                    "phone": {
+                        "description": "Número de teléfono del operador",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "shift": {
+                        "description": "Turno asignado al operador",
+                        "type": "string",
+                        "enum": [
+                            "morning",
+                            "afternoon",
+                            "night"
+                        ],
+                        "example": "morning"
+                    },
+                    "status": {
+                        "description": "Estado actual del operador",
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "on_leave"
+                        ],
+                        "example": "active"
+                    },
+                    "hire_date": {
+                        "description": "Fecha de contratación del operador",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-05-10"
+                    },
+                    "termination_date": {
+                        "description": "Fecha de terminación del contrato (opcional, debe ser posterior a la fecha de contratación)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-12-01",
+                        "nullable": true
+                    },
+                    "zone_id": {
+                        "description": "ID de la zona principal asignada",
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "zones": {
+                        "description": "Lista de zonas asignadas al operador",
+                        "type": "array",
+                        "items": {
+                            "description": "ID de zona",
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePatientRequest": {
+                "description": "Validación para la actualización de pacientes",
+                "required": [
+                    "nombre",
+                    "fecha_nacimiento",
+                    "direccion",
+                    "dni",
+                    "tarjeta_sanitaria",
+                    "telefono",
+                    "zona_id"
+                ],
+                "properties": {
+                    "nombre": {
+                        "description": "Nombre completo del paciente",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "María López"
+                    },
+                    "fecha_nacimiento": {
+                        "description": "Fecha de nacimiento del paciente",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1985-04-12"
+                    },
+                    "direccion": {
+                        "description": "Dirección del paciente",
+                        "type": "string",
+                        "example": "Calle Falsa 123, Madrid"
+                    },
+                    "ciudad": {
+                        "description": "Ciudad de residencia del paciente",
+                        "type": "string",
+                        "example": "Madrid",
+                        "nullable": true
+                    },
+                    "codigo_postal": {
+                        "description": "Código postal del paciente",
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "28080",
+                        "nullable": true
+                    },
+                    "dni": {
+                        "description": "DNI único del paciente",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "12345678A"
+                    },
+                    "tarjeta_sanitaria": {
+                        "description": "Número de tarjeta sanitaria único",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "TS1234567890"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del paciente",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del paciente",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 100,
+                        "example": "maria.lopez@example.com",
+                        "nullable": true
+                    },
+                    "zona_id": {
+                        "description": "ID de la zona asignada al paciente",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "situacion_personal": {
+                        "description": "Situación personal del paciente",
+                        "type": "string",
+                        "example": "Vive solo",
+                        "nullable": true
+                    },
+                    "estado_salud": {
+                        "description": "Estado de salud actual del paciente",
+                        "type": "string",
+                        "example": "Hipertensión",
+                        "nullable": true
+                    },
+                    "condicion_vivienda": {
+                        "description": "Condición de la vivienda del paciente",
+                        "type": "string",
+                        "example": "Vivienda propia en buen estado",
+                        "nullable": true
+                    },
+                    "nivel_autonomia": {
+                        "description": "Nivel de autonomía del paciente",
+                        "type": "string",
+                        "example": "Autónomo",
+                        "nullable": true
+                    },
+                    "situacion_economica": {
+                        "description": "Situación económica del paciente",
+                        "type": "string",
+                        "example": "Media-baja",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateZoneRequest": {
+                "description": "Validación para la actualización de zonas",
+                "properties": {
+                    "nombre": {
+                        "description": "Nombre único de la zona",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Zona Norte"
+                    },
+                    "codigo": {
+                        "description": "Código único de la zona",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "ZN-001"
+                    },
+                    "activa": {
+                        "description": "Estado de la zona (activa o inactiva)",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "estado_texto": {
+                        "description": "Descripción del estado de la zona",
+                        "type": "string",
+                        "example": "En mantenimiento",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AvisoResource": {
+                "description": "Esquema del recurso Aviso",
+                "properties": {
+                    "id": {
+                        "description": "Identificador del aviso",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tipo": {
+                        "description": "Tipo de aviso",
+                        "type": "string",
+                        "enum": [
+                            "puntual",
+                            "periodico"
+                        ],
+                        "example": "puntual"
+                    },
+                    "fecha_hora": {
+                        "description": "Fecha y hora programada para el aviso",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 15:30:00"
+                    },
+                    "descripcion": {
+                        "description": "Descripción del aviso",
+                        "type": "string",
+                        "example": "Revisión médica programada para el paciente"
+                    },
+                    "completado": {
+                        "description": "Indica si el aviso ha sido completado",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "fecha_completado": {
+                        "description": "Fecha y hora en que se completó el aviso",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-25 10:00:00",
+                        "nullable": true
+                    },
+                    "categoria": {
+                        "$ref": "#/components/schemas/CategoriaResource"
+                    },
+                    "paciente": {
+                        "$ref": "#/components/schemas/PatientResource"
+                    },
+                    "operador": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "zona": {
+                        "$ref": "#/components/schemas/ZonaResource"
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del aviso",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización del aviso",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "CallResource": {
+                "description": "Esquema del recurso Llamada",
+                "properties": {
+                    "id": {
+                        "description": "Identificador de la llamada",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "fecha_hora": {
+                        "description": "Fecha y hora en que se realizó la llamada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 15:30:00"
+                    },
+                    "tipo_llamada": {
+                        "description": "Tipo de llamada realizada",
+                        "type": "string",
+                        "enum": [
+                            "entrante",
+                            "saliente"
+                        ],
+                        "example": "entrante"
+                    },
+                    "duracion": {
+                        "description": "Duración de la llamada en segundos",
+                        "type": "integer",
+                        "example": 300
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la llamada",
+                        "type": "string",
+                        "example": "Llamada de seguimiento con el paciente",
+                        "nullable": true
+                    },
+                    "planificada": {
+                        "description": "Indica si la llamada fue planificada o no",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "operador_id": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "paciente_id": {
+                        "$ref": "#/components/schemas/PatientResource"
+                    },
+                    "categoria_id": {
+                        "$ref": "#/components/schemas/CategoriaResource"
+                    },
+                    "subcategoria_id": {
+                        "$ref": "#/components/schemas/SubcategoriaResource"
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación de la llamada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización de la llamada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoriaResource": {
+                "description": "Esquema del recurso Categoría",
+                "properties": {
+                    "id": {
+                        "description": "Identificador de la categoría",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre de la categoría",
+                        "type": "string",
+                        "example": "Urgencias Médicas"
+                    },
+                    "descripcion": {
+                        "description": "Descripción de la categoría",
+                        "type": "string",
+                        "example": "Categoría para gestionar urgencias médicas prioritarias",
+                        "nullable": true
+                    },
+                    "subcategorias": {
+                        "description": "Lista de subcategorías asociadas a la categoría",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubcategoriaResource"
+                        }
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación de la categoría",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización de la categoría",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "ContactResource": {
+                "description": "Esquema del recurso Contacto",
+                "properties": {
+                    "id": {
+                        "description": "Identificador del contacto",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre completo del contacto",
+                        "type": "string",
+                        "example": "Carlos Pérez"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del contacto",
+                        "type": "string",
+                        "example": "+34 612 345 678"
+                    },
+                    "relacion": {
+                        "description": "Relación del contacto con el paciente",
+                        "type": "string",
+                        "example": "Hermano"
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del contacto",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización del contacto",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "IncidentResource": {
+                "description": "Esquema del recurso Incidencia",
+                "properties": {
+                    "id": {
+                        "description": "Identificador de la incidencia",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "paciente_id": {
+                        "description": "ID del paciente asociado a la incidencia",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la incidencia",
+                        "type": "string",
+                        "example": "El paciente presentó una caída durante la noche",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación de la incidencia",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización de la incidencia",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "OperatorResource": {
+                "description": "Esquema del recurso Operador",
+                "properties": {
+                    "id": {
+                        "description": "Identificador del operador",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre completo del operador",
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del operador",
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@example.com"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del operador",
+                        "type": "string",
+                        "example": "+34 612 345 678"
+                    },
+                    "fecha_contratacion": {
+                        "description": "Fecha de contratación del operador",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-05-10"
+                    },
+                    "fecha_baja": {
+                        "description": "Fecha de baja del operador (si aplica)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-12-01",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "description": "Indica si el operador está activo",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del operador",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización del operador",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedCollection": {
+                "description": "Esquema de respuesta paginada de recursos",
+                "properties": {
+                    "data": {
+                        "description": "Colección de datos paginados",
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "pagination": {
+                        "description": "Información de la paginación",
+                        "properties": {
+                            "total": {
+                                "description": "Número total de elementos disponibles",
+                                "type": "integer",
+                                "example": 100
+                            },
+                            "per_page": {
+                                "description": "Número de elementos por página",
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "current_page": {
+                                "description": "Número de la página actual",
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "last_page": {
+                                "description": "Número total de páginas disponibles",
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "from": {
+                                "description": "Índice del primer elemento en la página actual",
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "to": {
+                                "description": "Índice del último elemento en la página actual",
+                                "type": "integer",
+                                "example": 10
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PatientResource": {
+                "description": "Esquema del recurso Paciente",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único del paciente",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre completo del paciente",
+                        "type": "string",
+                        "example": "María López"
+                    },
+                    "fecha_nacimiento": {
+                        "description": "Fecha de nacimiento del paciente",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1985-04-12"
+                    },
+                    "direccion": {
+                        "description": "Dirección del paciente",
+                        "type": "string",
+                        "example": "Calle Falsa 123, Madrid"
+                    },
+                    "ciudad": {
+                        "description": "Ciudad de residencia del paciente",
+                        "type": "string",
+                        "example": "Madrid",
+                        "nullable": true
+                    },
+                    "codigo_postal": {
+                        "description": "Código postal del paciente",
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "28080",
+                        "nullable": true
+                    },
+                    "dni": {
+                        "description": "DNI único del paciente",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "12345678A"
+                    },
+                    "tarjeta_sanitaria": {
+                        "description": "Número de tarjeta sanitaria único",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "TS1234567890"
+                    },
+                    "telefono": {
+                        "description": "Número de teléfono del paciente",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+34 612 345 678"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del paciente",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 100,
+                        "example": "maria.lopez@example.com",
+                        "nullable": true
+                    },
+                    "zona_id": {
+                        "description": "ID de la zona asignada al paciente",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "situacion_personal": {
+                        "description": "Situación personal del paciente",
+                        "type": "string",
+                        "example": "Vive solo",
+                        "nullable": true
+                    },
+                    "estado_salud": {
+                        "description": "Estado de salud actual del paciente",
+                        "type": "string",
+                        "example": "Hipertensión",
+                        "nullable": true
+                    },
+                    "condicion_vivienda": {
+                        "description": "Condición de la vivienda del paciente",
+                        "type": "string",
+                        "example": "Vivienda propia en buen estado",
+                        "nullable": true
+                    },
+                    "nivel_autonomia": {
+                        "description": "Nivel de autonomía del paciente",
+                        "type": "string",
+                        "example": "Autónomo",
+                        "nullable": true
+                    },
+                    "situacion_economica": {
+                        "description": "Situación económica del paciente",
+                        "type": "string",
+                        "example": "Media-baja",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del paciente",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización del paciente",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "SubcategoriaResource": {
+                "description": "Esquema del recurso Subcategoría",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único de la subcategoría",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre de la subcategoría",
+                        "type": "string",
+                        "example": "Emergencia leve"
+                    },
+                    "categoria_id": {
+                        "$ref": "#/components/schemas/CategoriaResource"
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación de la subcategoría",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización de la subcategoría",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "description": "Esquema del recurso Usuario",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único del usuario",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre completo del usuario",
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del usuario",
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@example.com"
+                    },
+                    "role": {
+                        "description": "Rol asignado al usuario",
+                        "type": "string",
+                        "example": "admin"
+                    },
+                    "is_active": {
+                        "description": "Indica si el usuario está activo",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "zona_id": {
+                        "description": "ID de la zona asignada al usuario",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del usuario",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización del usuario",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "ZonaResource": {
+                "description": "Esquema del recurso Zona",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único de la zona",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre de la zona",
+                        "type": "string",
+                        "example": "Zona Norte"
+                    },
+                    "codigo": {
+                        "description": "Código único de la zona",
+                        "type": "string",
+                        "example": "ZN-001"
+                    },
+                    "activa": {
+                        "description": "Estado de la zona, activa o inactiva",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "estado_texto": {
+                        "description": "Descripción del estado actual de la zona",
+                        "type": "string",
+                        "example": "En mantenimiento",
+                        "nullable": true
+                    },
+                    "numero_operadores": {
+                        "description": "Número total de operadores asignados a la zona",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "numero_pacientes": {
+                        "description": "Número total de pacientes asignados a la zona",
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "operadores": {
+                        "description": "Lista de operadores asignados a la zona",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    },
+                    "pacientes": {
+                        "description": "Lista de pacientes asignados a la zona",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PatientResource"
+                        }
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación de la zona",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización de la zona",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "ZoneResource": {
+                "description": "Esquema del recurso Zona",
+                "properties": {
+                    "id": {
+                        "description": "Identificador único de la zona",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre de la zona",
+                        "type": "string",
+                        "example": "Zona Norte"
+                    },
+                    "codigo": {
+                        "description": "Código único de la zona",
+                        "type": "string",
+                        "example": "ZN-001"
+                    },
+                    "activa": {
+                        "description": "Estado de la zona, activa o inactiva",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "estado_texto": {
+                        "description": "Descripción del estado actual de la zona",
+                        "type": "string",
+                        "example": "En mantenimiento",
+                        "nullable": true
+                    },
+                    "numero_operadores": {
+                        "description": "Número total de operadores asignados a la zona",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "numero_pacientes": {
+                        "description": "Número total de pacientes asignados a la zona",
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "operadores": {
+                        "description": "Lista de operadores asignados a la zona",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    },
+                    "pacientes": {
+                        "description": "Lista de pacientes asignados a la zona",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PatientResource"
+                        }
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación de la zona",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-23 12:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización de la zona",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-24 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "Aviso": {
+                "required": [
+                    "id",
+                    "tipo",
+                    "fecha_hora",
+                    "descripcion",
+                    "categoria_id",
+                    "paciente_id",
+                    "zona_id",
+                    "operador_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "tipo": {
+                        "description": "Tipo de aviso",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "puntual"
+                    },
+                    "fecha_hora": {
+                        "description": "Fecha y hora del aviso",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": "true",
+                        "example": "2022-01-01 12:00:00"
+                    },
+                    "descripcion": {
+                        "description": "Descripción del aviso",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Aviso de rutina"
+                    },
+                    "completado": {
+                        "description": "Indica si el aviso fue completado",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "false"
+                    },
+                    "fecha_completado": {
+                        "description": "Fecha y hora de cuando se completo el aviso",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "categoria_id": {
+                        "description": "Id de la categoría",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "paciente_id": {
+                        "description": "Id del paciente",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "zona_id": {
+                        "description": "Id de la zona",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "operador_id": {
+                        "description": "Id del operador",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Aviso"
+                }
+            },
+            "Categoria": {
+                "required": [
+                    "id",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "nombre": {
+                        "description": "Nombre de la categoría",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "descripcion": {
+                        "description": "Descripción de la categoría",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "subcategorias": {
+                        "description": "Subcategorías de esta categoría",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Subcategoria"
+                        },
+                        "readOnly": "true"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Categoria"
+                }
+            },
+            "Contacto": {
+                "title": "Contacto",
+                "description": "Contacto de un paciente",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "paciente_id": {
+                        "description": "Id del paciente",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "nombre": {
+                        "description": "Nombre del contacto",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "John Doe"
+                    },
+                    "apellido": {
+                        "description": "Apellido del contacto",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Doe"
+                    },
+                    "telefono": {
+                        "description": "Tel\\u00e9fono del contacto",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "123-456-789"
+                    },
+                    "relacion": {
+                        "description": "Relaci\\u00f3n del contacto con el paciente",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Hijo"
+                    },
+                    "direccion": {
+                        "description": "Direcci\\u00f3n del contacto",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Calle 1, 2, 3"
+                    },
+                    "disponibilidad": {
+                        "description": "Disponibilidad del contacto",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Ma\\u00f1ana"
+                    },
+                    "tiene_llaves": {
+                        "description": "Tiene llaves de la vivienda del paciente",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "nivel_prioridad": {
+                        "description": "Nivel de prioridad del contacto",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Contacto"
+                }
+            },
+            "Incidencia": {
+                "required": [
+                    "id",
+                    "paciente_id",
+                    "descripcion"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "paciente_id": {
+                        "description": "Paciente ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "descripcion": {
+                        "description": "Descripción de la incidencia",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Se cayó en la ducha"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Incidencia"
+                }
+            },
+            "Llamada": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "fecha_hora": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": "true",
+                        "example": "2022-01-01 12:00:00"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Descripción de la llamada"
+                    },
+                    "tipo_llamada": {
+                        "type": "string",
+                        "enum": [
+                            "entrante",
+                            "saliente"
+                        ],
+                        "readOnly": "true",
+                        "example": "entrante"
+                    },
+                    "duracion": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "30"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "completada",
+                            "pendiente"
+                        ],
+                        "readOnly": "true",
+                        "example": "completada"
+                    },
+                    "motivo": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Motivo de la llamada"
+                    },
+                    "operador": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "paciente": {
+                        "$ref": "#/components/schemas/Paciente"
+                    },
+                    "categoria": {
+                        "$ref": "#/components/schemas/Categoria"
+                    },
+                    "subcategoria": {
+                        "$ref": "#/components/schemas/Subcategoria"
+                    }
+                },
+                "type": "object"
+            },
+            "Paciente": {
+                "required": [
+                    "id",
+                    "nombre",
+                    "fecha_nacimiento",
+                    "direccion",
+                    "zona_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "nombre": {
+                        "description": "Nombre del paciente",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Juan Pérez"
+                    },
+                    "fecha_nacimiento": {
+                        "description": "Fecha de nacimiento del paciente",
+                        "type": "string",
+                        "format": "date",
+                        "readOnly": "true",
+                        "example": "1940-01-01"
+                    },
+                    "direccion": {
+                        "description": "Dirección del paciente",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Calle falsa 123"
+                    },
+                    "direccion_completa": {
+                        "description": "Dirección completa del paciente",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Calle falsa 123 (Zona: Zona 1)"
+                    },
+                    "zona_id": {
+                        "description": "ID de la zona del paciente",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "zona": {
+                        "$ref": "#/components/schemas/Zona"
+                    },
+                    "contactos": {
+                        "description": "Contactos del paciente",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Contacto"
+                        },
+                        "readOnly": "true"
+                    },
+                    "llamadas": {
+                        "description": "Llamadas del paciente",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Llamada"
+                        },
+                        "readOnly": "true"
+                    },
+                    "alertas": {
+                        "description": "Alertas del paciente",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Aviso"
+                        },
+                        "readOnly": "true"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Paciente"
+                }
+            },
+            "Subcategoria": {
+                "required": [
+                    "id",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "nombre": {
+                        "description": "Nombre de la subcategoría",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "categoria_id": {
+                        "description": "Id de la categoría",
+                        "type": "integer",
+                        "readOnly": "true"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Subcategoria"
+                }
+            },
+            "User": {
+                "required": [
+                    "id",
+                    "nombre",
+                    "email",
+                    "role"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "nombre": {
+                        "description": "Nombre del usuario",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del usuario",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "role": {
+                        "description": "Rol del usuario",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "telefono": {
+                        "description": "Teléfono del usuario",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "fecha_contratacion": {
+                        "description": "Fecha de contratación del usuario",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": "true"
+                    },
+                    "fecha_baja": {
+                        "description": "Fecha de baja del usuario",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": "true"
+                    },
+                    "is_admin": {
+                        "description": "Indica si el usuario es administrador",
+                        "type": "boolean",
+                        "readOnly": "true"
+                    },
+                    "zona_id": {
+                        "description": "Id de la zona del usuario",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "User"
+                }
+            },
+            "Zona": {
+                "required": [
+                    "id",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "nombre": {
+                        "description": "Nombre de la zona",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "descripcion": {
+                        "description": "Descripción de la zona",
+                        "type": "string",
+                        "readOnly": "true"
+                    },
+                    "pacientes": {
+                        "description": "Pacientes en esta zona",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Paciente"
+                        },
+                        "readOnly": "true"
+                    },
+                    "operadores": {
+                        "description": "Operadores asignados a esta zona",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        },
+                        "readOnly": "true"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Zona"
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Avisos",
+            "description": "Avisos"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Llamadas",
+            "description": "Llamadas"
+        },
+        {
+            "name": "Categories",
+            "description": "Categories"
+        },
+        {
+            "name": "Contactos",
+            "description": "Contactos"
+        },
+        {
+            "name": "Incidencias",
+            "description": "Incidencias"
+        },
+        {
+            "name": "Usuarios",
+            "description": "Usuarios"
+        },
+        {
+            "name": "Pacientes",
+            "description": "Pacientes"
+        },
+        {
+            "name": "Reports",
+            "description": "Reports"
+        },
+        {
+            "name": "Subcategorias",
+            "description": "Subcategorias"
+        },
+        {
+            "name": "Zonas",
+            "description": "Zonas"
+        }
+    ]
+}

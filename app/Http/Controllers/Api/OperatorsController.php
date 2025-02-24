@@ -13,13 +13,13 @@ class OperatorsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/operators",
-     *     summary="Obtener todos los operadores",
-     *     tags={"Operators"},
-     *     security={{"sanctum":{}}},
+     *     path="/api/usuarios",
+     *     summary="Obtener todos los usuarios",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de operadores recuperada con éxito",
+     *         description="Lista de usuarios recuperada con éxito",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
@@ -37,16 +37,16 @@ class OperatorsController extends BaseController
             ->get();
         return $this->sendResponse(
             UserResource::collection($users),
-            'Llista d\'operadors recuperada amb èxit'
+            'Llista d\'operadors recuperada ambèxit'
         );
     }
 
     /**
      * @OA\Post(
-     *     path="/api/operators",
-     *     summary="Crear un nuevo operador",
-     *     tags={"Operators"},
-     *     security={{"sanctum":{}}},
+     *     path="/api/usuarios",
+     *     summary="Crear un nuevo usuario",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StoreOperatorRequest")
@@ -81,11 +81,46 @@ class OperatorsController extends BaseController
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/usuarios/{id}",
+     *     summary="Obtener un usuario por ID",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Operador recuperado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Operador no encontrado"
+     *     )
+     * )
+     */
+    public function show($id)
+    {
+        $operator = User::where('role', 'operator')
+            ->with('zona')
+            ->findOrFail($id);
+
+        return $this->sendResponse(
+            new UserResource($operator),
+            'Operador recuperat ambèxit'
+        );
+    }
+
+    /**
      * @OA\Put(
-     *     path="/api/operators/{id}",
-     *     summary="Actualizar un operador",
-     *     tags={"Operators"},
-     *     security={{"sanctum":{}}},
+     *     path="/api/usuarios/{id}",
+     *     summary="Actualizar un usuario",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -100,36 +135,6 @@ class OperatorsController extends BaseController
      *         response=200,
      *         description="Operador actualizado exitosamente",
      *         @OA\JsonContent(ref="#/components/schemas/UserResource")
-     *     )
-     * )
-     */
-    public function show($id)
-    {
-        $operator = User::where('role', 'operator')
-            ->with('zona')
-            ->findOrFail($id);
-
-        return $this->sendResponse(
-            new UserResource($operator),
-            'Operador recuperat amb èxit'
-        );
-    }
-
-    /**
-     * @OA\Delete(
-     *     path="/api/operators/{id}",
-     *     summary="Eliminar un operador",
-     *     tags={"Operators"},
-     *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="Operador eliminado exitosamente"
      *     )
      * )
      */
@@ -150,15 +155,15 @@ class OperatorsController extends BaseController
             $operator->zones()->sync($validated['zones']);
         }
 
-        return $this->sendResponse(new UserResource($operator), 'Operador actualitzat amb èxit', 200);
+        return $this->sendResponse(new UserResource($operator), 'Operador actualitzat ambèxit', 200);
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/operators/{id}",
-     *     summary="Eliminar un operador",
-     *     tags={"Operators"},
-     *     security={{"sanctum":{}}},
+     *     path="/api/usuarios/{id}",
+     *     summary="Eliminar un usuario",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

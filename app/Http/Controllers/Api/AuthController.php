@@ -111,7 +111,7 @@ class AuthController extends BaseController
      *     path="/api/logout",
      *     summary="User Logout",
      *     tags={"Authentication"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="User logged out successfully",
@@ -134,7 +134,7 @@ class AuthController extends BaseController
      *     path="/api/user",
      *     summary="Get authenticated user information",
      *     tags={"Authentication"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="User information retrieved successfully",

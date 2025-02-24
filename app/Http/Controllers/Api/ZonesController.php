@@ -19,7 +19,7 @@ class ZonesController extends BaseController
      *     path="/api/zonas",
      *     summary="Crear una nueva zona",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StoreZoneRequest")
@@ -27,7 +27,7 @@ class ZonesController extends BaseController
      *     @OA\Response(
      *         response=201,
      *         description="Zona creada con éxito",
-     *         @OA\JsonContent(ref="#/components/schemas/ZoneResource")
+     *         @OA\JsonContent(ref="#/components/schemas/ZonaResource")
      *     )
      * )
      */
@@ -52,7 +52,7 @@ class ZonesController extends BaseController
      *     path="/api/zonas/{zona}",
      *     summary="Actualizar una zona existente",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="zona",
      *         in="path",
@@ -66,7 +66,7 @@ class ZonesController extends BaseController
      *     @OA\Response(
      *         response=200,
      *         description="Zona actualizada con éxito",
-     *         @OA\JsonContent(ref="#/components/schemas/ZoneResource")
+     *         @OA\JsonContent(ref="#/components/schemas/ZonaResource")
      *     )
      * )
      */
@@ -90,7 +90,7 @@ class ZonesController extends BaseController
      *     path="/api/zonas/{zona}",
      *     summary="Eliminar una zona",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="zona",
      *         in="path",
@@ -122,7 +122,7 @@ class ZonesController extends BaseController
      *     path="/api/zones",
      *     summary="Listar todas las zonas",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de zonas",
@@ -132,7 +132,7 @@ class ZonesController extends BaseController
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/ZoneResource")
+     *                 @OA\Items(ref="#/components/schemas/ZonaResource")
      *             )
      *         )
      *     )
@@ -159,7 +159,7 @@ class ZonesController extends BaseController
      *     path="/api/zones/{id}",
      *     summary="Obtener información de una zona",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -169,7 +169,7 @@ class ZonesController extends BaseController
      *     @OA\Response(
      *         response=200,
      *         description="Información de la zona obtenida con éxito",
-     *         @OA\JsonContent(ref="#/components/schemas/ZoneResource")
+     *         @OA\JsonContent(ref="#/components/schemas/ZonaResource")
      *     )
      * )
      */
@@ -193,7 +193,7 @@ class ZonesController extends BaseController
      *     path="/api/zones/{id}/patients",
      *     summary="Listar pacientes en una zona",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -236,7 +236,7 @@ class ZonesController extends BaseController
      *     path="/api/zones/{id}/operators",
      *     summary="Listar operadores asignados a una zona",
      *     tags={"Zonas"},
-     *     security={{"sanctum":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

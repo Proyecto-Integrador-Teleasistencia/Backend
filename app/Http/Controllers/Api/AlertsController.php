@@ -14,10 +14,10 @@ class AlertsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/alerts",
+     *     path="/api/avisos",
      *     summary="Listar todos los avisos y alarmas con filtros",
-     *     tags={"Alerts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Avisos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="type",
      *         in="query",
@@ -81,8 +81,8 @@ class AlertsController extends BaseController
      * @OA\Post(
      *     path="/api/avisos",
      *     summary="Crear un nuevo aviso o alarma",
-     *     tags={"Alerts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Avisos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StoreAlertRequest")
@@ -116,10 +116,10 @@ class AlertsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/alerts/{id}",
+     *     path="/api/avisos/{id}",
      *     summary="Obtener detalles de un aviso o alarma",
-     *     tags={"Alerts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Avisos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -157,10 +157,10 @@ class AlertsController extends BaseController
 
     /**
      * @OA\Put(
-     *     path="/api/alerts/{id}",
+     *     path="/api/avisos/{id}",
      *     summary="Actualizar un aviso o alarma existente",
-     *     tags={"Alerts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Avisos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -210,10 +210,10 @@ class AlertsController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/api/alerts/{id}",
+     *     path="/api/avisos/{id}",
      *     summary="Eliminar un aviso o alarma",
-     *     tags={"Alerts"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Avisos"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",

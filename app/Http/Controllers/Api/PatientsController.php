@@ -16,10 +16,10 @@ class PatientsController extends BaseController
 {
     /**
      * @OA\Get(
-     *     path="/api/patients",
+     *     path="/api/pacientes",
      *     summary="Obtener todos los pacientes con filtros opcionales",
-     *     tags={"Patients"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Pacientes"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="nombre", in="query", description="Filtrar por nombre", @OA\Schema(type="string")),
      *     @OA\Parameter(name="dni", in="query", description="Filtrar por DNI", @OA\Schema(type="string")),
      *     @OA\Parameter(name="tarjeta_sanitaria", in="query", description="Filtrar por tarjeta sanitaria", @OA\Schema(type="string")),
@@ -70,10 +70,10 @@ class PatientsController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/api/patients",
+     *     path="/api/pacientes",
      *     summary="Crear un nuevo paciente",
-     *     tags={"Patients"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Pacientes"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/StorePatientRequest")
@@ -105,10 +105,10 @@ class PatientsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/patients/{id}",
+     *     path="/api/pacientes /{id}",
      *     summary="Obtener detalles de un paciente",
-     *     tags={"Patients"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Pacientes"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(
      *         response=200,
@@ -150,10 +150,10 @@ class PatientsController extends BaseController
 
     /**
      * @OA\Put(
-     *     path="/api/patients/{id}",
+     *     path="/api/pacientes/{id}",
      *     summary="Actualizar un paciente",
-     *     tags={"Patients"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Pacientes"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\RequestBody(
      *         required=true,
@@ -179,10 +179,10 @@ class PatientsController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/api/patients/{id}",
+     *     path="/api/pacientes/{id}",
      *     summary="Eliminar un paciente",
-     *     tags={"Patients"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Pacientes"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(
      *         response=204,
@@ -198,10 +198,10 @@ class PatientsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/zones/{zone_id}/patients",
+     *     path="/api/zonas/{zone_id}/pacientes",
      *     summary="Obtener pacientes por zona",
-     *     tags={"Patients"},
-     *     security={{"sanctum":{}}},
+     *     tags={"Pacientes"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="zone_id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(
      *         response=200,

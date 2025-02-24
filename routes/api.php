@@ -60,7 +60,8 @@ Route::middleware('api')->group(function () {
         // Users
         Route::get('usuarios', [OperatorsController::class, 'index']);
         Route::get('usuarios/{user}', [OperatorsController::class, 'show']);
-        
+
+        // Patients
         Route::apiResource('avisos', AlertsController::class);
         Route::apiResource('llamadas', CallsController::class);
         Route::apiResource('categorias', CategoriasController::class);
