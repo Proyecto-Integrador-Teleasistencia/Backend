@@ -4,7 +4,90 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateOperatorRequest",
+ *     description="Validación para la actualización de operadores",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         maxLength=255,
+ *         description="Nombre completo del operador",
+ *         example="Juan Pérez"
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         format="email",
+ *         maxLength=255,
+ *         description="Correo electrónico único del operador",
+ *         example="juan.perez@example.com"
+ *     ),
+ *     @OA\Property(
+ *         property="password",
+ *         type="string",
+ *         format="password",
+ *         minLength=8,
+ *         description="Contraseña del operador (mínimo 8 caracteres)",
+ *         example="SecurePass123"
+ *     ),
+ *     @OA\Property(
+ *         property="phone",
+ *         type="string",
+ *         maxLength=20,
+ *         description="Número de teléfono del operador",
+ *         example="+34 612 345 678"
+ *     ),
+ *     @OA\Property(
+ *         property="shift",
+ *         type="string",
+ *         enum={"morning", "afternoon", "night"},
+ *         description="Turno asignado al operador",
+ *         example="morning"
+ *     ),
+ *     @OA\Property(
+ *         property="status",
+ *         type="string",
+ *         enum={"active", "inactive", "on_leave"},
+ *         description="Estado actual del operador",
+ *         example="active"
+ *     ),
+ *     @OA\Property(
+ *         property="hire_date",
+ *         type="string",
+ *         format="date",
+ *         description="Fecha de contratación del operador",
+ *         example="2023-05-10"
+ *     ),
+ *     @OA\Property(
+ *         property="termination_date",
+ *         type="string",
+ *         format="date",
+ *         nullable=true,
+ *         description="Fecha de terminación del contrato (opcional, debe ser posterior a la fecha de contratación)",
+ *         example="2025-12-01"
+ *     ),
+ *     @OA\Property(
+ *         property="zone_id",
+ *         type="integer",
+ *         nullable=true,
+ *         description="ID de la zona principal asignada",
+ *         example=2
+ *     ),
+ *     @OA\Property(
+ *         property="zones",
+ *         type="array",
+ *         description="Lista de zonas asignadas al operador",
+ *         @OA\Items(
+ *             type="integer",
+ *             description="ID de zona",
+ *             example=3
+ *         )
+ *     )
+ * )
+ */
 class UpdateOperatorRequest extends FormRequest
 {
     public function authorize()

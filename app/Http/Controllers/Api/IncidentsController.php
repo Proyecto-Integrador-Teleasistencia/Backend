@@ -6,13 +6,28 @@ use App\Models\Incidencia;
 use App\Http\Resources\IncidentResource;
 use App\Http\Requests\StoreIncidentRequest;
 use App\Http\Requests\UpdateIncidentRequest;
+use OpenApi\Annotations as OA;
 
 class IncidentsController extends BaseController
 {
     /**
-     * Mostrar un listado de incidencias.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *     path="/api/incidents",
+     *     summary="Obtener todas las incidencias",
+     *     tags={"Incidents"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de incidencias recuperada con éxito",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/IncidentResource")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -27,10 +42,21 @@ class IncidentsController extends BaseController
     }
 
     /**
-     * Almacenar una nueva incidencia.
-     *
-     * @param  \App\Http\Requests\StoreIncidentRequest  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *     path="/api/incidents",
+     *     summary="Crear una nueva incidencia",
+     *     tags={"Incidents"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StoreIncidentRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Incidencia creada exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/IncidentResource")
+     *     )
+     * )
      */
     public function store(StoreIncidentRequest $request)
     {
@@ -47,10 +73,23 @@ class IncidentsController extends BaseController
     }
 
     /**
-     * Mostrar una incidencia específica.
-     *
-     * @param  \App\Models\Incidencia  $incidencia
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *     path="/api/incidents/{id}",
+     *     summary="Obtener detalles de una incidencia",
+     *     tags={"Incidents"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles de la incidencia recuperados exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/IncidentResource")
+     *     )
+     * )
      */
     public function show($id)
     {
@@ -66,11 +105,27 @@ class IncidentsController extends BaseController
     }
 
     /**
-     * Actualizar una incidencia específica.
-     *
-     * @param  \App\Http\Requests\UpdateIncidentRequest  $request
-     * @param  \App\Models\Incidencia  $incidencia
-     * @return \Illuminate\Http\Response
+     * @OA\Put(
+     *     path="/api/incidents/{id}",
+     *     summary="Actualizar una incidencia",
+     *     tags={"Incidents"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateIncidentRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Incidencia actualizada exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/IncidentResource")
+     *     )
+     * )
      */
     public function update(UpdateIncidentRequest $request, Incidencia $incidencia)
     {
@@ -85,10 +140,22 @@ class IncidentsController extends BaseController
     }
 
     /**
-     * Eliminar una incidencia específica.
-     *
-     * @param  \App\Models\Incidencia  $incidencia
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     *     path="/api/incidents/{id}",
+     *     summary="Eliminar una incidencia",
+     *     tags={"Incidents"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Incidencia eliminada exitosamente"
+     *     )
+     * )
      */
     public function destroy(Incidencia $incidencia)
     {
@@ -103,11 +170,29 @@ class IncidentsController extends BaseController
     }
 
     /**
-     * Obtener todas las incidencias de un paciente específico.
-     *
-     * @param  string  $patientId
-     * @param  string  $patientId
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *     path="/api/patients/{patient_id}/incidents",
+     *     summary="Obtener todas las incidencias de un paciente",
+     *     tags={"Incidents"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="patient_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de incidencias del paciente recuperada con éxito",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/IncidentResource")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function getPatientIncidents(string $patientId)
     {

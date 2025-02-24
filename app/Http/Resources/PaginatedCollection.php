@@ -3,6 +3,61 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Schema(
+ *     schema="PaginatedCollection",
+ *     description="Esquema de respuesta paginada de recursos",
+ *     @OA\Property(
+ *         property="data",
+ *         type="array",
+ *         description="Colección de datos paginados",
+ *         @OA\Items(type="object")
+ *     ),
+ *     @OA\Property(
+ *         property="pagination",
+ *         type="object",
+ *         description="Información de la paginación",
+ *         @OA\Property(
+ *             property="total",
+ *             type="integer",
+ *             description="Número total de elementos disponibles",
+ *             example=100
+ *         ),
+ *         @OA\Property(
+ *             property="per_page",
+ *             type="integer",
+ *             description="Número de elementos por página",
+ *             example=10
+ *         ),
+ *         @OA\Property(
+ *             property="current_page",
+ *             type="integer",
+ *             description="Número de la página actual",
+ *             example=1
+ *         ),
+ *         @OA\Property(
+ *             property="last_page",
+ *             type="integer",
+ *             description="Número total de páginas disponibles",
+ *             example=10
+ *         ),
+ *         @OA\Property(
+ *             property="from",
+ *             type="integer",
+ *             description="Índice del primer elemento en la página actual",
+ *             example=1
+ *         ),
+ *         @OA\Property(
+ *             property="to",
+ *             type="integer",
+ *             description="Índice del último elemento en la página actual",
+ *             example=10
+ *         )
+ *     )
+ * )
+ */
 
 class PaginatedCollection extends ResourceCollection
 {

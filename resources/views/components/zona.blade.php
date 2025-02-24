@@ -30,9 +30,9 @@
             <div class="sm:col-span-2">
                 <dt class="text-sm font-medium text-gray-500">{{ __('Operadores') }}</dt>
                 <dd class="mt-1 text-sm text-gray-900">
-                    @if($zona->operator->count() > 0)
+                    @if($zona->operators->count() < 0)
                         <ul class="list-disc list-inside">
-                            @foreach($zona->operator as $operador)
+                            @foreach($zona->operators as $operador)
                                 <li>{{ $operador->nombre }} ({{ $operador->email }})</li>
                             @endforeach
                         </ul>

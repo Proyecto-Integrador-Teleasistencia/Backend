@@ -3,7 +3,42 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateContactRequest",
+ *     description="Validación para la actualización de contactos de pacientes",
+ *     required={"paciente_id", "nombre", "telefono", "relacion"},
+ *     @OA\Property(
+ *         property="paciente_id",
+ *         type="integer",
+ *         description="ID del paciente asociado al contacto",
+ *         example=5
+ *     ),
+ *     @OA\Property(
+ *         property="nombre",
+ *         type="string",
+ *         maxLength=100,
+ *         description="Nombre del contacto",
+ *         example="Carlos Pérez"
+ *     ),
+ *     @OA\Property(
+ *         property="telefono",
+ *         type="string",
+ *         maxLength=20,
+ *         description="Número de teléfono del contacto",
+ *         example="+34 612 345 678"
+ *     ),
+ *     @OA\Property(
+ *         property="relacion",
+ *         type="string",
+ *         maxLength=50,
+ *         description="Relación con el paciente",
+ *         example="Hermano"
+ *     )
+ * )
+ */
 class UpdateContactRequest extends FormRequest
 {
     public function authorize()

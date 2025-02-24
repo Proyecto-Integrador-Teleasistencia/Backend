@@ -5,21 +5,75 @@ namespace App\Http\Requests;
 use App\Models\Llamada;
 use App\Models\Paciente;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="StoreCallRequest",
+ *     description="Validación para la creación de llamadas",
+ *     required={"fecha_hora", "tipo_llamada", "operador_id", "paciente_id", "categoria_id"},
+ *     @OA\Property(
+ *         property="fecha_hora",
+ *         type="string",
+ *         format="date-time",
+ *         description="Fecha y hora en que se realizó la llamada",
+ *         example="2025-02-24T15:30:00Z"
+ *     ),
+ *     @OA\Property(
+ *         property="tipo_llamada",
+ *         type="string",
+ *         enum={"entrante", "saliente"},
+ *         description="Tipo de llamada realizada",
+ *         example="entrante"
+ *     ),
+ *     @OA\Property(
+ *         property="duracion",
+ *         type="integer",
+ *         nullable=true,
+ *         description="Duración de la llamada en segundos",
+ *         example=300
+ *     ),
+ *     @OA\Property(
+ *         property="descripcion",
+ *         type="string",
+ *         nullable=true,
+ *         description="Descripción detallada de la llamada",
+ *         example="Llamada de seguimiento realizada con el paciente"
+ *     ),
+ *     @OA\Property(
+ *         property="operador_id",
+ *         type="integer",
+ *         description="ID del operador responsable de la llamada",
+ *         example=3
+ *     ),
+ *     @OA\Property(
+ *         property="paciente_id",
+ *         type="integer",
+ *         description="ID del paciente asociado a la llamada",
+ *         example=5
+ *     ),
+ *     @OA\Property(
+ *         property="categoria_id",
+ *         type="integer",
+ *         description="ID de la categoría asignada a la llamada",
+ *         example=2
+ *     ),
+ *     @OA\Property(
+ *         property="subcategoria_id",
+ *         type="integer",
+ *         nullable=true,
+ *         description="ID de la subcategoría asignada a la llamada",
+ *         example=1
+ *     )
+ * )
+ */
 class StoreCallRequest extends FormRequest
 {
     public function authorize()
     {
-        // Verificar si el usuario puede crear llamadas
         if (!$this->user()->can('create', Llamada::class)) {
             return false;
         }
-
-        // Si es una llamada saliente, verificar permisos adicionales
-        // if ($this->input('tipo_llamada') === 'saliente') {
-        //     $patient = Paciente::findOrFail($this->input('paciente_id'));
-        //     return $this->user()->can('makeOutgoingCall', $patient);
-        // }
 
         return true;
     }

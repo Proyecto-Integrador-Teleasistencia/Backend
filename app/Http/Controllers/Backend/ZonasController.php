@@ -15,7 +15,7 @@ class ZonasController extends Controller
      */
     public function index()
     {
-        $zonas = Zona::withCount('operator')->paginate(10);
+        $zonas = Zona::withCount('operators')->paginate(10);
         return view('backend.zonas.index', compact('zonas'));
     }
 
@@ -33,6 +33,7 @@ class ZonasController extends Controller
      */
     public function store(StoreZonaRequest $request)
     {
+        // dd($request->validated());
         $validated = $request->validated();
         $validated['activa'] = $request->has('activa');
 
@@ -47,7 +48,7 @@ class ZonasController extends Controller
      */
     public function show(Zona $zona)
     {
-        $zona->load('operator');
+        $zona->load('operators');
         return view('backend.zonas.show', compact('zona'));
     }
 
@@ -78,7 +79,7 @@ class ZonasController extends Controller
      */
     public function destroy(Zona $zona)
     {
-        if ($zona->operator()->exists()) {
+        if ($zona->operators()->exists()) {
             return redirect()->route('backend.zonas.index')
                 ->with('error', 'No se puede eliminar una zona que tiene operadores asignados');
         }

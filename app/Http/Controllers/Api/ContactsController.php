@@ -9,11 +9,28 @@ use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Http\Resources\ContactResource;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
 class ContactsController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/contacts",
+     *     summary="Listar todos los contactos",
+     *     tags={"Contacts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de contactos recuperada con éxito",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/ContactResource")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -23,7 +40,7 @@ class ContactsController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/patients/{patient_id}/contacts",
-     *     summary="List contacts of a patient",
+     *     summary="Obtener contactos de un paciente",
      *     tags={"Contacts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -34,11 +51,17 @@ class ContactsController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of patient's contacts"
+     *         description="Lista de contactos del paciente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/ContactResource")
+     *             )
+     *         )
      *     )
      * )
      */
-
      public function getPatientContacts($patientId)
      {
          try {
@@ -50,8 +73,22 @@ class ContactsController extends BaseController
          }
      }
 
-    /**
-     * Store a newly created resource in storage.
+/**
+     * @OA\Post(
+     *     path="/api/contacts",
+     *     summary="Crear un nuevo contacto",
+     *     tags={"Contacts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StoreContactRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Contacto creado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/ContactResource")
+     *     )
+     * )
      */
     public function store(StoreContactRequest $request)
     {
@@ -71,7 +108,7 @@ class ContactsController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/patients/{patient_id}/contacts",
-     *     summary="Add a contact to a patient",
+     *     summary="Agregar un contacto a un paciente",
      *     tags={"Contacts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -80,9 +117,14 @@ class ContactsController extends BaseController
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StoreContactRequest")
+     *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Contact created successfully"
+     *         description="Contacto agregado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/ContactResource")
      *     )
      * )
      */
@@ -104,7 +146,23 @@ class ContactsController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/contacts/{id}",
+     *     summary="Obtener detalles de un contacto",
+     *     tags={"Contacts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contacto recuperado con éxito",
+     *         @OA\JsonContent(ref="#/components/schemas/ContactResource")
+     *     )
+     * )
      */
     public function show($id)
     {
@@ -121,7 +179,7 @@ class ContactsController extends BaseController
     /**
      * @OA\Put(
      *     path="/api/contacts/{id}",
-     *     summary="Update a contact",
+     *     summary="Actualizar un contacto",
      *     tags={"Contacts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -130,9 +188,14 @@ class ContactsController extends BaseController
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateContactRequest")
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Contact updated successfully"
+     *         description="Contacto actualizado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/ContactResource")
      *     )
      * )
      */
@@ -152,7 +215,7 @@ class ContactsController extends BaseController
     /**
      * @OA\Delete(
      *     path="/api/contacts/{id}",
-     *     summary="Delete a contact",
+     *     summary="Eliminar un contacto",
      *     tags={"Contacts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -163,7 +226,7 @@ class ContactsController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Contact deleted successfully"
+     *         description="Contacto eliminado exitosamente"
      *     )
      * )
      */

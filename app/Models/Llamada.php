@@ -7,7 +7,23 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     @OA\Property(property="id", type="integer", readOnly="true", example="1"),
+ *     @OA\Property(property="fecha_hora", type="string", format="date-time", readOnly="true", example="2022-01-01 12:00:00"),
+ *     @OA\Property(property="descripcion", type="string", readOnly="true", example="Descripción de la llamada"),
+ *     @OA\Property(property="tipo_llamada", type="string", enum={"entrante", "saliente"}, readOnly="true", example="entrante"),
+ *     @OA\Property(property="duracion", type="integer", readOnly="true", example="30"),
+ *     @OA\Property(property="estado", type="string", enum={"completada", "pendiente"}, readOnly="true", example="completada"),
+ *     @OA\Property(property="motivo", type="string", readOnly="true", example="Motivo de la llamada"),
+ *     @OA\Property(property="operador", type="object", readOnly="true", ref="#/components/schemas/User"),
+ *     @OA\Property(property="paciente", type="object", readOnly="true", ref="#/components/schemas/Paciente"),
+ *     @OA\Property(property="categoria", type="object", readOnly="true", ref="#/components/schemas/Categoria"),
+ *     @OA\Property(property="subcategoria", type="object", readOnly="true", ref="#/components/schemas/Subcategoria"),
+ * )
+ */
 class Llamada extends Model
 {
     use HasFactory;

@@ -13,25 +13,23 @@ use Illuminate\Support\Str;
 use App\Http\Resources\CallResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\AvisoResource;
+use OpenApi\Annotations as OA;
 
 class ReportsController extends BaseController
 {
     /**
      * @OA\Get(
      *     path="/api/reports/check-emergencies",
-     *     summary="Check if there are any emergencies in a zone",
+     *     summary="Verificar emergencias en una zona",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="zone_id",
-     *         in="query",
-     *         description="Zone ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
+     *     @OA\Parameter(name="zone_id", in="query", description="ID de la zona", required=true, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="start_date", in="query", description="Fecha de inicio (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="end_date", in="query", description="Fecha de fin (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
      *     @OA\Response(
      *         response=200,
-     *         description="Emergency check response"
+     *         description="Respuesta de verificación de emergencias",
+     *         @OA\JsonContent(type="object")
      *     )
      * )
      */
@@ -81,33 +79,15 @@ class ReportsController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/reports/emergency-report",
-     *     summary="Generate emergency report for a zone",
+     *     summary="Generar informe de emergencias para una zona",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="zone_id",
-     *         in="query",
-     *         description="Zone ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="start_date",
-     *         in="query",
-     *         description="Start date (Y-m-d)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *     @OA\Parameter(
-     *         name="end_date",
-     *         in="query",
-     *         description="End date (Y-m-d)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
+     *     @OA\Parameter(name="zone_id", in="query", description="ID de la zona", required=true, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="start_date", in="query", description="Fecha de inicio (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="end_date", in="query", description="Fecha de fin (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
      *     @OA\Response(
      *         response=200,
-     *         description="Emergency report PDF"
+     *         description="PDF del informe de emergencias"
      *     )
      * )
      */
@@ -156,12 +136,13 @@ class ReportsController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/reports/patients",
-     *     summary="Get patients list ordered by surname",
+     *     summary="Obtener lista de pacientes ordenados por apellido",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of patients"
+     *         description="Lista de pacientes",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/PatientResource"))
      *     )
      * )
      */
@@ -182,6 +163,18 @@ class ReportsController extends BaseController
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/reports/pacientes",
+     *     summary="Obtener informes de todos los pacientes",
+     *     tags={"Reports"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de informes de pacientes"
+     *     )
+     * )
+     */
     public function getAllInformes()
     {
         try {
@@ -204,20 +197,14 @@ class ReportsController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/reports/pacientes",
-     *     summary="Get all patient reports",
+     *     path="/api/reports/scheduled-calls",
+     *     summary="Obtener llamadas programadas",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="date",
-     *         in="query",
-     *         description="Date to check (Y-m-d)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
+     *     @OA\Parameter(name="format", in="query", description="Formato de exportación (pdf/csv)", required=false, @OA\Schema(type="string", enum={"pdf", "csv"})),
      *     @OA\Response(
      *         response=200,
-     *         description="List of scheduled calls"
+     *         description="Listado de llamadas programadas"
      *     )
      * )
      */
@@ -265,22 +252,16 @@ class ReportsController extends BaseController
         }
     }
 
-    /**
+   /**
      * @OA\Get(
      *     path="/api/reports/done-calls",
-     *     summary="Get completed calls for a day",
+     *     summary="Obtener llamadas completadas del día",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="date",
-     *         in="query",
-     *         description="Date to check (Y-m-d)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
+     *     @OA\Parameter(name="date", in="query", description="Fecha a consultar (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
      *     @OA\Response(
      *         response=200,
-     *         description="List of completed calls"
+     *         description="Listado de llamadas completadas"
      *     )
      * )
      */
@@ -337,32 +318,15 @@ class ReportsController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/reports/patient-history/{id}",
-     *     summary="Get patient's call history",
+     *     summary="Obtener historial de llamadas de un paciente",
      *     tags={"Reports"},
      *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="start_date",
-     *         in="query",
-     *         description="Start date (Y-m-d)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *     @OA\Parameter(
-     *         name="end_date",
-     *         in="query",
-     *         description="End date (Y-m-d)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
+     *     @OA\Parameter(name="id", in="path", description="ID del paciente", required=true, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="start_date", in="query", description="Fecha de inicio (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="end_date", in="query", description="Fecha de fin (Y-m-d)", required=false, @OA\Schema(type="string", format="date")),
      *     @OA\Response(
      *         response=200,
-     *         description="Patient's call history"
+     *         description="Historial de llamadas del paciente"
      *     )
      * )
      */

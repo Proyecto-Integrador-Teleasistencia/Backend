@@ -8,39 +8,39 @@ use App\Http\Requests\UpdateAlertRequest;
 use App\Models\Aviso;
 use App\Http\Resources\AvisoResource;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
 class AlertsController extends BaseController
 {
     /**
      * @OA\Get(
      *     path="/api/alerts",
-     *     summary="List alerts and alarms",
+     *     summary="Listar todos los avisos y alarmas con filtros",
      *     tags={"Alerts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="type",
      *         in="query",
-     *         description="Filter by type (alert/alarm)",
+     *         description="Filtrar por tipo (alert/alarm)",
      *         required=false,
      *         @OA\Schema(type="string", enum={"alert", "alarm"})
      *     ),
      *     @OA\Parameter(
      *         name="status",
      *         in="query",
-     *         description="Filter by status",
+     *         description="Filtrar por estado",
      *         required=false,
      *         @OA\Schema(type="string", enum={"pending", "in_progress", "resolved"})
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of alerts and alarms",
+     *         description="Lista de avisos y alarmas",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/Alert")
+     *                 @OA\Items(ref="#/components/schemas/AvisoResource")
      *             )
      *         )
      *     )
@@ -80,20 +80,19 @@ class AlertsController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/avisos",
-     *     summary="Create a new alert or alarm",
+     *     summary="Crear un nuevo aviso o alarma",
      *     tags={"Alerts"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/AlertRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/StoreAlertRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Alert created successfully",
+     *         description="Aviso o alarma creada exitosamente",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", ref="#/components/schemas/Alert")
+     *             @OA\Property(property="data", ref="#/components/schemas/AvisoResource")
      *         )
      *     )
      * )
@@ -118,18 +117,24 @@ class AlertsController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/alerts/{id}",
-     *     summary="Get alert/alarm details",
+     *     summary="Obtener detalles de un aviso o alarma",
      *     tags={"Alerts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
+     *         description="ID del aviso o alarma",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Alert details retrieved successfully"
+     *         description="Detalles del aviso o alarma recuperados exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/AvisoResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Aviso o alarma no encontrado"
      *     )
      * )
      */
@@ -139,7 +144,8 @@ class AlertsController extends BaseController
             $alert = Aviso::with(['categoria', 'paciente', 'operador', 'zona'])->findOrFail($id);
             return $this->sendResponse(
                 new AvisoResource($alert),
-                'Avís/alarma recuperat ambèxit'
+                'Avís/alarma recuperat ambèxit',
+                200
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return $this->sendError(
@@ -152,18 +158,28 @@ class AlertsController extends BaseController
     /**
      * @OA\Put(
      *     path="/api/alerts/{id}",
-     *     summary="Update an alert/alarm",
+     *     summary="Actualizar un aviso o alarma existente",
      *     tags={"Alerts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
+     *         description="ID del aviso o alarma",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateAlertRequest")
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Alert updated successfully"
+     *         description="Aviso o alarma actualizado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/AvisoResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Aviso o alarma no encontrado"
      *     )
      * )
      */
@@ -195,18 +211,23 @@ class AlertsController extends BaseController
     /**
      * @OA\Delete(
      *     path="/api/alerts/{id}",
-     *     summary="Delete an alert/alarm",
+     *     summary="Eliminar un aviso o alarma",
      *     tags={"Alerts"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
+     *         description="ID del aviso o alarma",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Alert deleted successfully"
+     *         description="Aviso o alarma eliminado exitosamente"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Aviso o alarma no encontrado"
      *     )
      * )
      */

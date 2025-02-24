@@ -3,7 +3,74 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateAlertRequest",
+ *     description="Validación para la actualización de alertas",
+ *     required={"tipo", "fecha_hora", "descripcion", "completado", "categoria_id", "paciente_id", "operador_id"},
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         nullable=true,
+ *         description="ID de la alerta existente",
+ *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="tipo",
+ *         type="string",
+ *         enum={"puntual", "periodico"},
+ *         description="Tipo de alerta",
+ *         example="puntual"
+ *     ),
+ *     @OA\Property(
+ *         property="fecha_hora",
+ *         type="string",
+ *         format="date-time",
+ *         description="Fecha y hora de la alerta",
+ *         example="2025-02-24T15:30:00Z"
+ *     ),
+ *     @OA\Property(
+ *         property="descripcion",
+ *         type="string",
+ *         description="Descripción de la alerta",
+ *         example="Revisión médica programada"
+ *     ),
+ *     @OA\Property(
+ *         property="completado",
+ *         type="boolean",
+ *         description="Indica si la alerta ha sido completada",
+ *         example=true
+ *     ),
+ *     @OA\Property(
+ *         property="fecha_completado",
+ *         type="string",
+ *         format="date-time",
+ *         nullable=true,
+ *         description="Fecha y hora en que se completó la alerta",
+ *         example="2025-02-25T10:00:00Z"
+ *     ),
+ *     @OA\Property(
+ *         property="categoria_id",
+ *         type="integer",
+ *         description="ID de la categoría de la alerta",
+ *         example=3
+ *     ),
+ *     @OA\Property(
+ *         property="paciente_id",
+ *         type="integer",
+ *         description="ID del paciente asociado a la alerta",
+ *         example=5
+ *     ),
+ *     @OA\Property(
+ *         property="operador_id",
+ *         type="integer",
+ *         description="ID del operador encargado de la alerta",
+ *         example=2
+ *     )
+ * )
+ */
 class UpdateAlertRequest extends FormRequest
 {
     public function authorize()

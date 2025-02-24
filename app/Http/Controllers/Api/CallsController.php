@@ -9,6 +9,7 @@ use App\Http\Requests\StoreCallRequest;
 use App\Http\Requests\UpdateCallRequest;
 use App\Http\Resources\CallResource;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
 class CallsController extends BaseController
 {
@@ -28,7 +29,7 @@ class CallsController extends BaseController
      *     @OA\Parameter(
      *         name="type",
      *         in="query",
-     *         description="Filter by type (incoming/outgoing)",
+     *         description="Filter by call type (incoming/outgoing)",
      *         required=false,
      *         @OA\Schema(type="string", enum={"incoming", "outgoing"})
      *     ),
@@ -41,7 +42,16 @@ class CallsController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of calls"
+     *         description="List of calls retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/CallResource")
+     *             )
+     *         )
      *     )
      * )
      */
@@ -91,24 +101,7 @@ class CallsController extends BaseController
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/patients/{patient_id}/calls",
-     *     summary="List calls of a patient",
-     *     tags={"Calls"},
-     *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="patient_id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of patient's calls"
-     *     )
-     * )
-     */
+    
     public function getPatientCalls($patientId)
     {
         try {
@@ -249,9 +242,14 @@ class CallsController extends BaseController
      *     summary="Create a new call",
      *     tags={"Calls"},
      *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StoreCallRequest")
+     *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Call created successfully"
+     *         description="Call created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/CallResource")
      *     )
      * )
      */
@@ -278,9 +276,9 @@ class CallsController extends BaseController
     }
 
     /**
-     * @OA\Get(
+     * @OA\Put(
      *     path="/api/calls/{id}",
-     *     summary="Get call details",
+     *     summary="Update a call",
      *     tags={"Calls"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -289,9 +287,18 @@ class CallsController extends BaseController
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateCallRequest")
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Call details retrieved successfully"
+     *         description="Call updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/CallResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Call not found"
      *     )
      * )
      */
@@ -331,9 +338,9 @@ class CallsController extends BaseController
     }
 
     /**
-     * @OA\Put(
+     * @OA\Delete(
      *     path="/api/calls/{id}",
-     *     summary="Update a call",
+     *     summary="Delete a call",
      *     tags={"Calls"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -344,7 +351,11 @@ class CallsController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Call updated successfully"
+     *         description="Call deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Call not found"
      *     )
      * )
      */

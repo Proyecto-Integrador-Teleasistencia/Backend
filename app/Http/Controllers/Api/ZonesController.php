@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreZoneRequest;
 use App\Http\Requests\UpdateZoneRequest;
+use OpenApi\Annotations as OA;
 
 class ZonesController extends BaseController
 {
@@ -115,22 +116,23 @@ class ZonesController extends BaseController
             return $this->sendError('Error al eliminar la zona', $e->getMessage());
         }
     }
+
     /**
      * @OA\Get(
      *     path="/api/zones",
-     *     summary="List all zones",
-     *     tags={"Zones"},
+     *     summary="Listar todas las zonas",
+     *     tags={"Zonas"},
      *     security={{"sanctum":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of zones",
+     *         description="Lista de zonas",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/Zone")
+     *                 @OA\Items(ref="#/components/schemas/ZoneResource")
      *             )
      *         )
      *     )
@@ -155,8 +157,8 @@ class ZonesController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/zones/{id}",
-     *     summary="Get zone information",
-     *     tags={"Zones"},
+     *     summary="Obtener información de una zona",
+     *     tags={"Zonas"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -166,7 +168,8 @@ class ZonesController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Zone information retrieved successfully"
+     *         description="Información de la zona obtenida con éxito",
+     *         @OA\JsonContent(ref="#/components/schemas/ZoneResource")
      *     )
      * )
      */
@@ -188,8 +191,8 @@ class ZonesController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/zones/{id}/patients",
-     *     summary="List patients in a zone",
-     *     tags={"Zones"},
+     *     summary="Listar pacientes en una zona",
+     *     tags={"Zonas"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -199,7 +202,16 @@ class ZonesController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of patients in the zone"
+     *         description="Lista de pacientes en la zona",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/PatientResource")
+     *             )
+     *         )
      *     )
      * )
      */
@@ -222,8 +234,8 @@ class ZonesController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/zones/{id}/operators",
-     *     summary="List operators assigned to a zone",
-     *     tags={"Zones"},
+     *     summary="Listar operadores asignados a una zona",
+     *     tags={"Zonas"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -233,7 +245,16 @@ class ZonesController extends BaseController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of operators assigned to the zone"
+     *         description="Lista de operadores asignados a la zona",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/UserResource")
+     *             )
+     *         )
      *     )
      * )
      */

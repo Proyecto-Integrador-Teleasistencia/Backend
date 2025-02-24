@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use OpenApi\Annotations as OA;
 
 class AuthController extends BaseController
 {
@@ -16,11 +17,7 @@ class AuthController extends BaseController
      *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"email", "password"},
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/LoginRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -28,15 +25,16 @@ class AuthController extends BaseController
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="token", type="string", example="sample_token"),
-     *             @OA\Property(property="name", type="string", example="John Doe")
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="zona_id", type="integer", example=3)
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorised",
+     *         description="Unauthorized",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="error", type="string", example="incorrect Email/Password")
+     *             @OA\Property(property="error", type="string", example="Incorrect email or password")
      *         )
      *     )
      * )
@@ -61,16 +59,10 @@ class AuthController extends BaseController
      *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name", "email", "password", "confirm_password"},
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123"),
-     *             @OA\Property(property="confirm_password", type="string", format="password", example="password123")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
      *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response=201,
      *         description="User registered successfully",
      *         @OA\JsonContent(
      *             type="object",
@@ -83,7 +75,7 @@ class AuthController extends BaseController
      *         description="Validation error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="error", type="object")
+     *             @OA\Property(property="error", type="string", example="Validation error occurred")
      *         )
      *     )
      * )
@@ -153,7 +145,8 @@ class AuthController extends BaseController
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="name", type="string", example="John Doe"),
      *                 @OA\Property(property="email", type="string", example="john@example.com"),
-     *                 @OA\Property(property="role", type="string", example="operator")
+     *                 @OA\Property(property="role", type="string", example="operator"),
+     *                 @OA\Property(property="zona_id", type="integer", example=3)
      *             )
      *         )
      *     ),

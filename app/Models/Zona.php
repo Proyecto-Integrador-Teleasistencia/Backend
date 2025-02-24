@@ -7,7 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     required={"id", "nombre"},
+ *     @OA\Xml(name="Zona"),
+ *     @OA\Property(property="id", type="integer", readOnly="true", example="1"),
+ *     @OA\Property(property="nombre", type="string", readOnly="true", description="Nombre de la zona"),
+ *     @OA\Property(property="descripcion", type="string", readOnly="true", description="Descripción de la zona"),
+ *     @OA\Property(property="pacientes", type="array", readOnly="true", description="Pacientes en esta zona", @OA\Items(ref="#/components/schemas/Paciente")),
+ *     @OA\Property(property="operadores", type="array", readOnly="true", description="Operadores asignados a esta zona", @OA\Items(ref="#/components/schemas/User")),
+ * )
+ */
 class Zona extends Model
 {
     use HasFactory;

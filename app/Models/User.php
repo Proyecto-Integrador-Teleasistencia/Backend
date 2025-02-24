@@ -7,7 +7,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     required={"id", "nombre", "email", "role"},
+ *     @OA\Xml(name="User"),
+ *     @OA\Property(property="id", type="integer", readOnly="true", example="1"),
+ *     @OA\Property(property="nombre", type="string", readOnly="true", description="Nombre del usuario"),
+ *     @OA\Property(property="email", type="string", readOnly="true", description="Correo electrónico del usuario"),
+ *     @OA\Property(property="role", type="string", readOnly="true", description="Rol del usuario"),
+ *     @OA\Property(property="telefono", type="string", readOnly="true", description="Teléfono del usuario"),
+ *     @OA\Property(property="fecha_contratacion", type="string", readOnly="true", description="Fecha de contratación del usuario", format="date-time"),
+ *     @OA\Property(property="fecha_baja", type="string", readOnly="true", description="Fecha de baja del usuario", format="date-time"),
+ *     @OA\Property(property="is_admin", type="boolean", readOnly="true", description="Indica si el usuario es administrador"),
+ *     @OA\Property(property="zona_id", type="integer", readOnly="true", description="Id de la zona del usuario", example="1"),
+ * )
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

@@ -4,6 +4,45 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Schema(
+ *     schema="SubcategoriaResource",
+ *     description="Esquema del recurso Subcategoría",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         description="Identificador único de la subcategoría",
+ *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="nombre",
+ *         type="string",
+ *         description="Nombre de la subcategoría",
+ *         example="Emergencia leve"
+ *     ),
+ *     @OA\Property(
+ *         property="categoria_id",
+ *         ref="#/components/schemas/CategoriaResource",
+ *         description="Categoría a la que pertenece la subcategoría"
+ *     ),
+ *     @OA\Property(
+ *         property="created_at",
+ *         type="string",
+ *         format="date-time",
+ *         description="Fecha de creación de la subcategoría",
+ *         example="2025-02-23 12:00:00"
+ *     ),
+ *     @OA\Property(
+ *         property="updated_at",
+ *         type="string",
+ *         format="date-time",
+ *         description="Fecha de última actualización de la subcategoría",
+ *         example="2025-02-24 12:00:00"
+ *     )
+ * )
+ */
 
 class SubcategoriaResource extends JsonResource
 {

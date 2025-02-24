@@ -8,7 +8,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ * required={"id", "nombre", "fecha_nacimiento", "direccion", "zona_id"},
+ * @OA\Xml(name="Paciente"),
+ * @OA\Property(property="id", type="integer", readOnly="true", example="1"),
+ * @OA\Property(property="nombre", type="string", readOnly="true", description="Nombre del paciente", example="Juan Pérez"),
+ * @OA\Property(property="fecha_nacimiento", type="date", readOnly="true", description="Fecha de nacimiento del paciente", example="1940-01-01"),
+ * @OA\Property(property="direccion", type="string", readOnly="true", description="Dirección del paciente", example="Calle falsa 123"),
+ * @OA\Property(property="direccion_completa", type="string", readOnly="true", description="Dirección completa del paciente", example="Calle falsa 123 (Zona: Zona 1)"),
+ * @OA\Property(property="zona_id", type="integer", readOnly="true", description="ID de la zona del paciente", example="1"),
+ * @OA\Property(property="zona", type="object", readOnly="true", description="Zona del paciente", ref="#/components/schemas/Zona"),
+ * @OA\Property(property="contactos", type="array", readOnly="true", description="Contactos del paciente", @OA\Items(ref="#/components/schemas/Contacto")),
+ * @OA\Property(property="llamadas", type="array", readOnly="true", description="Llamadas del paciente", @OA\Items(ref="#/components/schemas/Llamada")),
+ * @OA\Property(property="alertas", type="array", readOnly="true", description="Alertas del paciente", @OA\Items(ref="#/components/schemas/Aviso")),
+ * )
+ */
 class Paciente extends Model
 {
     use HasFactory;

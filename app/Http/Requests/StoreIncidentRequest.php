@@ -3,22 +3,36 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="StoreIncidentRequest",
+ *     description="Validación para la creación de incidencias",
+ *     required={"paciente_id"},
+ *     @OA\Property(
+ *         property="paciente_id",
+ *         type="integer",
+ *         description="ID del paciente asociado a la incidencia",
+ *         example=5
+ *     ),
+ *     @OA\Property(
+ *         property="descripcion",
+ *         type="string",
+ *         nullable=true,
+ *         description="Descripción detallada de la incidencia",
+ *         example="El paciente sufrió una caída durante la noche"
+ *     )
+ * )
+ */
 class StoreIncidentRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -27,11 +41,6 @@ class StoreIncidentRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -41,12 +50,6 @@ class StoreIncidentRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get the proper failed validation response for the request.
-     *
-     * @param  array<string, string>  $errors
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
     public function response(array $errors): \Symfony\Component\HttpFoundation\Response
     {
         return response()->json(['success' => false, 'message' => 'Error creant la incidència'], 422);

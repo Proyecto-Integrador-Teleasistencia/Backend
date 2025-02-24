@@ -10,9 +10,32 @@ use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Annotations as OA;
 
 class PatientsController extends BaseController
 {
+    /**
+     * @OA\Get(
+     *     path="/api/patients",
+     *     summary="Obtener todos los pacientes con filtros opcionales",
+     *     tags={"Patients"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="nombre", in="query", description="Filtrar por nombre", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="dni", in="query", description="Filtrar por DNI", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="tarjeta_sanitaria", in="query", description="Filtrar por tarjeta sanitaria", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="telefono", in="query", description="Filtrar por teléfono", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="zona_id", in="query", description="Filtrar por zona", @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de pacientes recuperada con éxito",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/PatientResource"))
+     *         )
+     *     )
+     * )
+     */
     public function index(Request $request)
     {
         try {
@@ -45,6 +68,23 @@ class PatientsController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/patients",
+     *     summary="Crear un nuevo paciente",
+     *     tags={"Patients"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StorePatientRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Paciente creado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/PatientResource")
+     *     )
+     * )
+     */
     public function store(StorePatientRequest $request)
     {
         $this->authorize('create', Paciente::class);
@@ -63,6 +103,20 @@ class PatientsController extends BaseController
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/patients/{id}",
+     *     summary="Obtener detalles de un paciente",
+     *     tags={"Patients"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles del paciente recuperados exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/PatientResource")
+     *     )
+     * )
+     */
     public function show(Request $request, $id)
     {
         try {
@@ -94,6 +148,24 @@ class PatientsController extends BaseController
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/patients/{id}",
+     *     summary="Actualizar un paciente",
+     *     tags={"Patients"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdatePatientRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paciente actualizado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/PatientResource")
+     *     )
+     * )
+     */
     public function update(UpdatePatientRequest $request, $id)
     {
         $patient = Paciente::findOrFail($id);
@@ -105,12 +177,43 @@ class PatientsController extends BaseController
         return $this->sendResponse(new PatientResource($patient), 'Paciente actualitzat ambèxit', 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/patients/{id}",
+     *     summary="Eliminar un paciente",
+     *     tags={"Patients"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Paciente eliminado exitosamente"
+     *     )
+     * )
+     */
     public function destroy(Paciente $paciente)
     {
         $paciente->delete();
         return response()->noContent();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/zones/{zone_id}/patients",
+     *     summary="Obtener pacientes por zona",
+     *     tags={"Patients"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="zone_id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de pacientes de la zona recuperada con éxito",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/PatientResource"))
+     *         )
+     *     )
+     * )
+     */
     public function getPatientsByZones($zoneId)
     {
         try {
