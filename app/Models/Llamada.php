@@ -50,7 +50,6 @@ class Llamada extends Model
         'updated_at' => 'datetime'
     ];
 
-    // Accessors
     public function getDuracionFormateadaAttribute(): string
     {
         $minutos = floor($this->duracion / 60);
@@ -63,7 +62,6 @@ class Llamada extends Model
         return $this->fecha_hora->diffInHours(Carbon::now()) < 24;
     }
 
-    // Scopes
     public function scopeEntrantes(Builder $query): Builder
     {
         return $query->where('tipo_llamada', 'entrante');

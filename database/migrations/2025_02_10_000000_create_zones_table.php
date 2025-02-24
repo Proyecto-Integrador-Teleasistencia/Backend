@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('zonas', function (Blueprint $table) {
@@ -18,16 +15,12 @@ return new class extends Migration
             $table->boolean('activa')->default(true);
             $table->timestamps();
             
-            // Índices para búsquedas frecuentes
             $table->index('nombre');
             $table->index('codigo');
             $table->index('activa');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('zonas');

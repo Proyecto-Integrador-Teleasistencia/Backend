@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('llamadas', function (Blueprint $table) {
@@ -31,7 +28,6 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Indexaciones
             $table->index('fecha_hora');
             $table->index('tipo_llamada');
             $table->index('estado');
@@ -43,9 +39,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('llamadas');

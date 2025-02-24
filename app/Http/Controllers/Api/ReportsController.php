@@ -127,10 +127,7 @@ class ReportsController extends BaseController
 
         $filename = 'informe_emergencies_zona_' . Str::slug($zone->nombre) . '_' . now()->format('Y-m-d_His') . '.pdf';
         return $pdf->download($filename);
-        // return $this->sendResponse(
-        //     AvisoResource::collection($emergencies),
-        //     'Informe d\'emergències recuperat amb èxit'
-        // );
+
     }
 
     /**
@@ -204,7 +201,6 @@ class ReportsController extends BaseController
 
         try {
             if ($format === 'csv') {
-                // Configurar cabeceras para CSV
                 $headers = [
                     'Content-Type' => 'text/csv',
                     'Content-Disposition' => 'attachment; filename="llamadas_programadas_' . $llamada->id . '.csv"',
@@ -212,7 +208,6 @@ class ReportsController extends BaseController
 
                 $callback = function() use ($llamada) {
                     $file = fopen('php://output', 'w'); 
-                    // Escribir encabezado del CSV
                     fputcsv($file, ['ID', 'Paciente', 'Fecha Programada', 'Tipo', 'Estado', 'Operador']);
                     foreach ($llamada as $call) {
                         fputcsv($file, [
@@ -230,7 +225,6 @@ class ReportsController extends BaseController
                 return response()->streamDownload($callback, 'llamadas_programadas_' . $llamada->id . '.csv', $headers);
             }
 
-            // Generar PDF con todas las llamadas; se asume que la vista 'reports.scheduled_calls' recorre $calls
             $pdf = \PDF::loadView('reports.scheduled_calls', compact('llamada'));
             $pdf->setPaper('a4');
             $filename = 'llamadas_programadas_' . (is_string($llamada->fecha_hora) ? $llamada->fecha_hora : $llamada->fecha_hora->format('d-m-Y')) . '.pdf';
@@ -343,9 +337,6 @@ class ReportsController extends BaseController
         $endDateObj = Carbon::parse($endDate);
         $filename = 'històric_de_cridades_' . $patient->nombre . '_' . $startDateObj->format('Y-m-d') . '.pdf';
         return $pdf->download($filename);
-        // return $this->sendResponse([
-        //     'patient' => new PatientResource($patient),
-        //     'calls' => CallResource::collection($calls)
-        // ], 'Històric de cridades del pacient recuperat amb èxit');
+
     }
 }

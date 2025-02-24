@@ -16,9 +16,6 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         $this->call([
@@ -33,7 +30,6 @@ class DatabaseSeeder extends Seeder
             IncidenciasTableSeeder::class,
         ]);
 
-        // Create default admin user
         User::factory()->create([
             'nombre' => 'Admin User',
             'email' => 'admin@example.com',

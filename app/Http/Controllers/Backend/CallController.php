@@ -24,12 +24,10 @@ class CallController extends Controller
     {
         $patient = Paciente::findOrFail($request->patient_id);
         
-        // Verificar si el usuario puede hacer llamadas salientes a este paciente
         if ($request->tipo_llamada === 'saliente') {
             $this->authorize('makeOutgoingCall', $patient);
         }
 
-        // Validar y crear la llamada
         $validatedData = $request->validate([
             'patient_id' => 'required|exists:pacientes,id',
             'tipo_llamada' => 'required|in:entrante,saliente',

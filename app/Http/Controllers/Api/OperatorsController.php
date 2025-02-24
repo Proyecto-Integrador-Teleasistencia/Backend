@@ -67,7 +67,6 @@ class OperatorsController extends BaseController
 
         $operator = User::create($validated);
         
-        // Asignar zonas al operador
         if (isset($validated['zona'])) {
             $operator->zona()->associate($validated['zona']);
             $operator->save();
@@ -150,7 +149,6 @@ class OperatorsController extends BaseController
 
         $operator->update($validated);
         
-        // Actualizar zonas si se proporcionaron
         if (isset($validated['zones'])) {
             $operator->zones()->sync($validated['zones']);
         }

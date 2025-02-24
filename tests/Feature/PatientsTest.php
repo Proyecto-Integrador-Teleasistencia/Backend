@@ -114,7 +114,6 @@ class PatientsTest extends TestCase
 
     public function test_can_delete_patient()
     {
-        // Create a patient in the same zone as the user
         $patient = Paciente::factory()->create([
             'zona_id' => $this->zone->id
         ]);
@@ -123,7 +122,6 @@ class PatientsTest extends TestCase
 
         $response->assertStatus(204);
         
-        // Verify the patient was actually deleted
         $this->assertDatabaseMissing('pacientes', ['id' => $patient->id]);
     }
 }

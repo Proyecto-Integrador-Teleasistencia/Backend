@@ -11,12 +11,8 @@ use Illuminate\Support\Facades\Hash;
 
 class OperatorsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Crear operadores
         $admin = User::create([
             'nombre' => 'Samuel Carbonell',
             'email' => 'samuel.carbonell@email.com',
@@ -37,7 +33,6 @@ class OperatorsTableSeeder extends Seeder
             'fecha_baja' => null
         ]);
 
-        // Asignar zonas a los operadores
         $admin->update(['zona_id' => 1]);
         $operator->update(['zona_id' => 2]);
     }

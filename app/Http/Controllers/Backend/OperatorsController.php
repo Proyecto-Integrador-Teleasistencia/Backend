@@ -17,18 +17,12 @@ class OperatorsController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * Display a listing of the operators.
-     */
     public function index()
     {
         $operators = User::where('role', 'operator')->with('zona')->paginate(10);
         return view('backend.operators.index', compact('operators'));
     }
 
-    /**
-     * Show the form for creating a new operator.
-     */
     public function create()
     {
         $this->authorize('create', User::class);
@@ -36,15 +30,11 @@ class OperatorsController extends Controller
         return view('backend.operators.create', compact('zonas'));
     }
 
-    /**
-     * Store a newly created operator in storage.
-     */
     public function store(StoreOperatorRequest $request)
     {
         $this->authorize('create', User::class);
         $validated = $request->validated();
 
-        // Preparar los datos para crear el operador
         $operatorData = [
             'nombre' => $validated['nombre'],
             'email' => $validated['email'],
@@ -60,9 +50,6 @@ class OperatorsController extends Controller
             ->with('success', 'Operador creado correctamente');
     }
 
-    /**
-     * Display the specified operator.
-     */
     public function show(User $operator)
     {
         if ($operator->role !== 'operator') {
@@ -72,9 +59,6 @@ class OperatorsController extends Controller
         return view('backend.operators.show', compact('operator'));
     }
 
-    /**
-     * Show the form for editing the specified operator.
-     */
     public function edit(User $operator)
     {
         $this->authorize('update', $operator);
@@ -88,9 +72,6 @@ class OperatorsController extends Controller
         return view('backend.operators.edit', compact('operator', 'zonas'));
     }
 
-    /**
-     * Update the specified operator in storage.
-     */
     public function update(UpdateOperatorRequest $request, User $operator)
     {
         $this->authorize('update', $operator);
@@ -100,7 +81,6 @@ class OperatorsController extends Controller
 
         $validated = $request->validated();
 
-        // Preparar los datos de actualización
         $updateData = [
             'nombre' => $validated['nombre'],
             'email' => $validated['email'],
@@ -120,9 +100,6 @@ class OperatorsController extends Controller
             ->with('success', 'Operador actualizado correctamente');
     }
 
-    /**
-     * Remove the specified operator from storage.
-     */
     public function destroy(User $operator)
     {
         $this->authorize('delete', $operator);

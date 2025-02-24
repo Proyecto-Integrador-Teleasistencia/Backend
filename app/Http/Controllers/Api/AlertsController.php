@@ -51,7 +51,6 @@ class AlertsController extends BaseController
         try {
             $query = Aviso::with(['categoria']);
 
-            // Filtrar por periocidad
             if ($request->has('periocidad')) {
                 $query->where('periocidad', $request->periocidad);
             }
@@ -100,7 +99,6 @@ class AlertsController extends BaseController
     public function store(StoreAlertRequest $request)
     {
         $validated = $request->validated();
-        // Asignar el operador actual si no se especifica
         if (!isset($validated['operador_id'])) {
             $validated['operador_id'] = auth()->id();
         }
@@ -189,7 +187,6 @@ class AlertsController extends BaseController
             $alert = Aviso::findOrFail($id);
             $validated = $request->validated();
             
-            // Si se está cambiando el estado a "resolved", registrar la fecha de resolución
             if (isset($validated['status']) && $validated['status'] === 'resolved' && $alert->status !== 'resolved') {
                 $validated['resolved_at'] = now();
             }

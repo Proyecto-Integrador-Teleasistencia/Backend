@@ -34,27 +34,21 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
     ];
 
-    /**
-     * Register any authentication / authorization services.
-     */
     public function boot(): void
     {
         $this->registerPolicies();
 
         Gate::define('update', [\App\Policies\OperatorPolicy::class, 'update']);
 
-        // Gate para gestionar zonas
         Gate::define('manage-zone', function ($user, $zone) {
             return $user->role === 'admin' || $user->zona_id === $zone->id;
         });
 
-        // Gate para llamadas salientes
         Gate::define('make-outgoing-call', function ($user, $patient) {
             if ($user->role === 'admin') return true;
             return $user->zones->contains($patient->zone_id);
         });
 
-        // Gate para gestión de pacientes
         Gate::define('manage-patient', function ($user, $patient) {
             if ($user->role === 'admin') return true;
             return $user->zones->contains($patient->zone_id);

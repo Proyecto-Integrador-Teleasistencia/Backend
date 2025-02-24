@@ -54,7 +54,6 @@ class Paciente extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Accesores
     public function getEdadAttribute(): int
     {
         return $this->fecha_nacimiento->age;
@@ -65,7 +64,6 @@ class Paciente extends Model
         return "{$this->direccion} (Zona: {$this->zona->nombre})";
     }
 
-    // Mutadores
     protected function setDniAttribute(string $value): void
     {
         $this->attributes['dni'] = strtoupper($value);
@@ -76,7 +74,6 @@ class Paciente extends Model
         $this->attributes['email'] = strtolower($value);
     }
 
-    // Alcances
     public function scopeEnZona(Builder $query, int $zonaId): Builder
     {
         return $query->where('zona_id', $zonaId);

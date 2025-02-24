@@ -21,7 +21,7 @@ class CallEvent implements ShouldBroadcast
     public function __construct(Call $call, string $eventType)
     {
         $this->call = $call;
-        $this->eventType = $eventType; // 'created' o 'updated'
+        $this->eventType = $eventType; 
     }
 
     public function broadcastOn()

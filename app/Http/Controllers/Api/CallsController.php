@@ -257,13 +257,6 @@ class CallsController extends BaseController
     {
         $validated = $request->validated();
 
-        // Verificar si es una llamada saliente y el usuario tiene permiso
-        // if ($validated['tipo_llamada'] === 'saliente') {
-        //     $patient = Paciente::findOrFail($validated['paciente_id']);
-        //     $this->authorize('makeOutgoingCall', $patient);
-        // }
-
-        // Asignar el operador actual
         $validated['operador_id'] = auth()->id();
 
         $call = Llamada::create($validated);

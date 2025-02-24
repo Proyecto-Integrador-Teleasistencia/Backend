@@ -23,18 +23,15 @@ class EnsureTokenIsValid
 
         $token = $request->user()->currentAccessToken();
 
-        // Si es un token transitorio, permitir
         if ($token instanceof TransientToken) {
             return $next($request);
         }
 
-        // Verificar si el token ha expirado
         if ($token->created_at->addMinutes(config('sanctum.expiration'))->isPast()) {
             $token->delete();
             return response()->json(['message' => 'Token expirado'], 401);
         }
 
-        // Verificar si el usuario está activo
         if (!$request->user()->is_active) {
             $token->delete();
             return response()->json(['message' => 'Usuario desactivado'], 403);

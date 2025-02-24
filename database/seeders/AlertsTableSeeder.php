@@ -11,7 +11,6 @@ class AlertsTableSeeder extends Seeder
 {
     public function run(): void
     {
-        // Insertar datos base
         DB::table('avisos')->insert([
             [
                 'tipo' => 'puntual',
@@ -26,7 +25,6 @@ class AlertsTableSeeder extends Seeder
             ]
         ]);
 
-        // Crear avisos aleatorios adicionales
         Aviso::factory()
             ->count(10)
             ->create();

@@ -10,30 +10,21 @@ use App\Http\Requests\Backend\UpdateZonaRequest;
 
 class ZonasController extends Controller
 {
-    /**
-     * Muestra un listado de las zonas.
-     */
+
     public function index()
     {
         $zonas = Zona::withCount('operators')->paginate(10);
         return view('backend.zonas.index', compact('zonas'));
     }
 
-    /**
-     * Muestra el formulario para crear una nueva zona.
-     */
     public function create()
     {
         $zonas = Zona::all();
         return view('backend.zonas.create', compact('zonas'));
     }
 
-    /**
-     * Almacena una nueva zona en la base de datos.
-     */
     public function store(StoreZonaRequest $request)
     {
-        // dd($request->validated());
         $validated = $request->validated();
         $validated['activa'] = $request->has('activa');
 
@@ -43,26 +34,17 @@ class ZonasController extends Controller
             ->with('success', 'Zona creada correctamente');
     }
 
-    /**
-     * Muestra una zona específica.
-     */
     public function show(Zona $zona)
     {
         $zona->load('operators');
         return view('backend.zonas.show', compact('zona'));
     }
 
-    /**
-     * Muestra el formulario para editar una zona.
-     */
     public function edit(Zona $zona)
     {
         return view('backend.zonas.edit', compact('zona'));
     }
 
-    /**
-     * Actualiza una zona específica en la base de datos.
-     */
     public function update(UpdateZonaRequest $request, Zona $zona)
     {
         $validated = $request->validated();
@@ -74,9 +56,6 @@ class ZonasController extends Controller
             ->with('success', 'Zona actualizada correctamente');
     }
 
-    /**
-     * Elimina una zona específica de la base de datos.
-     */
     public function destroy(Zona $zona)
     {
         if ($zona->operators()->exists()) {

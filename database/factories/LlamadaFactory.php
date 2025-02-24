@@ -9,30 +9,19 @@ use App\Models\User;
 use App\Models\Aviso;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Llamada>
- */
 class LlamadaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $planificada = fake()->boolean(80); // 80% probabilidad de ser planificada
+        $planificada = fake()->boolean(80);
 
-        // Obtener registros existentes
         $paciente = Paciente::inRandomOrder()->first();
         $categoria = Categoria::inRandomOrder()->first();
         $subcategoria = Subcategoria::where('categoria_id', $categoria->id)->inRandomOrder()->first();
         $operador = User::where('role', 'operator')->inRandomOrder()->first();
 
-        // Fecha base para la llamada
         $fecha_llamada = fake()->dateTimeBetween('-6 months', 'now');
 
-        // Si es planificada, crear un aviso asociado
         $aviso_id = null;
         if ($planificada) {
             $aviso = Aviso::create([

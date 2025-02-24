@@ -10,12 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 class ContactPersonsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+
     public function run(): void
     {
-        // Insertar datos base
         DB::table('contactos')->insert([
             [
                 'paciente_id' => 1,
@@ -37,7 +34,6 @@ class ContactPersonsTableSeeder extends Seeder
             ]
         ]);
 
-        // Crear contactos aleatorios adicionales (1-3 por paciente)
         Paciente::all()->each(function ($paciente) {
             Contacto::factory()
                 ->count(fake()->numberBetween(1, 3))

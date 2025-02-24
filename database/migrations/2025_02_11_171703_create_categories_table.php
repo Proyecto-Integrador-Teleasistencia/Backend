@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::create('categorias', function (Blueprint $table) {
@@ -16,14 +14,10 @@ return new class extends Migration
             $table->string('nombre', 100)->unique();
             $table->timestamps();
             
-            // Indexar el nombre para búsquedas frecuentes
             $table->index('nombre');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('categorias');

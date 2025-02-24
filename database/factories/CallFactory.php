@@ -13,7 +13,7 @@ class CallFactory extends Factory
 {
     public function definition(): array
     {
-        $planificada = fake()->boolean(80); // 80% probabilidad de ser planificada
+        $planificada = fake()->boolean(80);
 
         $paciente = Paciente::inRandomOrder()->first();
         $categoria = Categoria::inRandomOrder()->first();

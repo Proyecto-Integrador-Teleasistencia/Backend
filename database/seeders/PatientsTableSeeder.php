@@ -10,14 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class PatientsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run(): void
     {
-        // Insertar datos base
         DB::table('pacientes')->insert([
             [
                 'nombre' => 'Samuel Pastor',
@@ -55,7 +49,6 @@ class PatientsTableSeeder extends Seeder
             ]
         ]);
 
-        // Crear pacientes aleatorios adicionales (3-5 por zona)
         Zona::all()->each(function ($zone) {
             Paciente::factory()
                 ->count(fake()->numberBetween(3, 5))

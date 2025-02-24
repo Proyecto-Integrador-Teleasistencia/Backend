@@ -11,7 +11,6 @@ class CrossOriginOpenerPolicy
     {
         $response = $next($request);
         
-        // Configurar COOP para permitir popups de Google
         $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
         
         return $response;

@@ -17,7 +17,6 @@ class PatientController extends Controller
     public function index()
     {
         $patients = Paciente::when(auth()->user()->role !== 'admin', function ($query) {
-            // Si no es admin, solo ver pacientes de sus zonas
             return $query->whereIn('zone_id', auth()->user()->zones->pluck('id'));
         })->with('zone')->paginate(10);
 
@@ -42,7 +41,6 @@ class PatientController extends Controller
             'zona_id' => 'required|exists:zonas,id'
         ]);
 
-        // Verificar si el operador puede gestionar la zona seleccionada
         if (auth()->user()->role !== 'admin') {
             Gate::authorize('manage-zone', $patient->zone);
         }

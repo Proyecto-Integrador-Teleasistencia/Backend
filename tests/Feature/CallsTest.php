@@ -80,10 +80,6 @@ class CallsTest extends TestCase
             'Authorization' => 'Bearer ' . $this->token,
         ])->postJson('/api/llamadas', $callData);
 
-        // Debugging: Print the response content
-        // echo "\nResponse Content:\n";
-        // print_r($response->json());
-        // echo "\n";
 
         $response->assertStatus(201)
             ->assertJsonStructure([
@@ -116,7 +112,6 @@ class CallsTest extends TestCase
 
     public function test_can_update_call()
     {
-        // Create a call in the same zone as the user
         $call = Llamada::factory()->create([
             'categoria_id' => $this->categoria->id,
             'subcategoria_id' => $this->subcategoria->id,
@@ -156,7 +151,6 @@ class CallsTest extends TestCase
 
     public function test_can_delete_call()
     {
-        // Create a call in the same zone as the user
         $call = Llamada::factory()->create([
             'categoria_id' => $this->categoria->id,
             'subcategoria_id' => $this->subcategoria->id,

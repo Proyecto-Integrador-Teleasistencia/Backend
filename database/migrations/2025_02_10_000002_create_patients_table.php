@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('email', 100)->nullable()->unique();
             $table->foreignId('zona_id')->constrained()->onDelete('restrict');
             
-            // Campos de situación
             $table->text('situacion_personal')->nullable();
             $table->text('estado_salud')->nullable();
             $table->text('condicion_vivienda')->nullable();
@@ -33,7 +32,6 @@ return new class extends Migration
 
             $table->timestamps();
             
-            // Índices para búsquedas frecuentes
             $table->index('nombre');
             $table->index('dni');
             $table->index('tarjeta_sanitaria');

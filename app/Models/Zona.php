@@ -38,7 +38,6 @@ class Zona extends Model
         'updated_at' => 'datetime'
     ];
 
-    // Accessors
     public function getEstadoTextoAttribute(): string
     {
         return $this->activa ? 'Activa' : 'Inactiva';
@@ -49,7 +48,6 @@ class Zona extends Model
         return $this->operators()->count();
     }
 
-    // Mutators
     protected function setNombreAttribute(string $value): void
     {
         $this->attributes['nombre'] = ucfirst(strtolower($value));
@@ -60,7 +58,6 @@ class Zona extends Model
         $this->attributes['codigo'] = strtoupper($value);
     }
 
-    // Scopes
     public function scopeActiva(Builder $query): Builder
     {
         return $query->where('activa', true);

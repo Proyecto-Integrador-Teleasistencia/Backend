@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('contactos', function (Blueprint $table) {
@@ -19,7 +16,6 @@ return new class extends Migration
             $table->string('relacion', 50)->default('Familiar');
             $table->timestamps();
             
-            // Índices para búsquedas frecuentes
             $table->index('nombre');
             $table->index('telefono');
             $table->index('paciente_id');
@@ -27,9 +23,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('contactos');

@@ -19,7 +19,7 @@ class ZoneFactory extends Factory
         return [
             'name' => fake()->unique()->city(),
             'description' => fake()->sentence(),
-            'active' => fake()->boolean(80), // 80% probabilidad de estar activa
+            'active' => fake()->boolean(80),
         ];
     }
 }

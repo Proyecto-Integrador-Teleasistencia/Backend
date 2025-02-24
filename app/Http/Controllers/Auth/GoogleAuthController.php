@@ -10,13 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class GoogleAuthController extends Controller
 {
-    // Redirige a Google
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
 
-    // Manejar la respuesta de Google
     public function handleGoogleCallback(Request $request)
     {
         try {
@@ -25,7 +23,6 @@ class GoogleAuthController extends Controller
                 return response()->json(['error' => 'Token no proporcionado'], 400);
             }
 
-            // Decodificar el token JWT de Google
             $client = new \Google_Client(['client_id' => config('services.google.client_id')]);
             try {
                 $payload = $client->verifyIdToken($request->token);
@@ -44,32 +41,27 @@ class GoogleAuthController extends Controller
                 return response()->json(['error' => 'Token inválido'], 401);
             }
 
-            // Crear objeto de usuario con la información del payload
             $googleUser = new \Laravel\Socialite\Two\User();
             $googleUser->id = $payload['sub'];
             $googleUser->email = $payload['email'];
             $googleUser->name = $payload['name'];
             $googleUser->avatar = $payload['picture'] ?? null;
 
-            // Buscar si existe el usuario con ese email
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            // Si no existe el usuario, devolver error
             if (!$user) {
                 return response()->json([
                     'error' => 'Unauthorized. Only existing users can login with Google.'
                 ], 403);
             }
 
-            // Actualizar el google_id si no lo tiene
             if (empty($user->google_id)) {
                 $user->update([
                     'google_id' => $googleUser->getId(),
-                    'name' => $googleUser->getName() // Actualizamos el nombre por si ha cambiado en Google
+                    'name' => $googleUser->getName() 
                 ]);
             }
 
-            // Crear token con Sanctum
             $token = $user->createToken('google-token')->plainTextToken;
 
             return response()->json([
@@ -91,14 +83,12 @@ class GoogleAuthController extends Controller
         }
     }
 
-    // Cerrar sesión
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out successfully']);
     }
 
-    // Obtener información del usuario autenticado
     public function getUser(Request $request)
     {
         return response()->json($request->user());
