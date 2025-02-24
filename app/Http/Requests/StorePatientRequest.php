@@ -122,10 +122,7 @@ class StorePatientRequest extends FormRequest
 {
     public function authorize()
     {
-        if ($this->user()->can('create', Patient::class)) {
-            return true;
-        }
-        return false;
+        return $this->user()->can('create', Paciente::class);
     }
 
     public function rules()
